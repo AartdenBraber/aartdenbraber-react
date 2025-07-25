@@ -1,0 +1,13 @@
+{
+  "short_name": "Belangenatelier",
+  "name": "Belangenatelier app",
+  "icons": [{
+    "src": "/images/favicon/android-chrome-512x512.png",
+    "sizes": "512x512",
+    "type": "image/png"
+  }],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}

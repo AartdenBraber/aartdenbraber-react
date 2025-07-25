@@ -1,0 +1,21 @@
+// Override default variables before the import
+$body-bg: #ffffff;
+$font-family-base: Corbel, "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+
+// Import Bootstrap and its default variables
+@import "~bootstrap/scss/bootstrap.scss";
+
+$body-bg-rgb: hex-to-rgb-str($body-bg);
+$dark-rgb: #{hex-to-rgb-str($dark)};
+
+:root {
+  --bs-bg: #{$body-bg};
+  --bs-bg-rgb: #{$body-bg-rgb};
+
+  --bs-dark-rgb: 1, 104, 255;
+  // --bs-font-size-base: calc(1rem + 0.9vw);
+}
+
+@function hex-to-rgb-str($color) {
+  @return red($color) + "," + green($color) + "," + blue($color);
+}

@@ -1,0 +1,55 @@
+:root {
+  --color-dark: #0F0C09;
+  --color-light: #fff;
+  --palette-color-1: #16e1dc;
+  --palette-color-2: #94087f;
+  --palette-color-3: #dacf6d;
+  --palette-color-4: #0056ff;
+  --palette-color-5: #e06666;
+
+  --font-family-headings: Special, Georgia, Times, "Times New Roman", serif;
+}
+.special-font-family {
+  font-family: var(--font-family-headings);
+}
+h1, h2, h3 {
+  font-family: var(--font-family-headings);
+  display: inline-block;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+a {
+  color: inherit !important;
+}
+.table-responsive-inner {
+  overflow-x: auto;
+
+  background:
+    /* Shadow covers */
+    linear-gradient(to right, black 30%, rgba(0,0,0,0)),
+    linear-gradient(to left, black 30%, rgba(0,0,0,0)) 100% 0,
+    
+    /* Shadows */
+    radial-gradient(farthest-side at 0% 50%, rgba(255,255,255,.2), rgba(255,255,255,0)),
+    radial-gradient(farthest-side at 100% 50%, rgba(255,255,255,.2), rgba(255,255,255,0)) 100% 0;
+
+  background-repeat: no-repeat;
+  background-color: black; /* Changed this from white to black */
+  background-size: 40px 100%, 40px 100%, 14px 100%, 14px 100%;
+
+  /* Opera doesn't support this in the shorthand */
+  background-attachment: local, local, scroll, scroll;
+}
+
+img {
+    width: 100%;
+    height: auto;
+}
+
+hr {
+  margin: 1em 2em!important;
+  border-color: var(--color-dark)!important;
+}

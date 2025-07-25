@@ -1,0 +1,1 @@
+Use https://favicon.io/favicon-converter/ to convert an image
