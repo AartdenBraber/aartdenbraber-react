@@ -1,0 +1,36 @@
+/* Verwijder standaard viewer-beperkingen */
+.rpv-core__viewer {
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+/* Optioneel: viewer-breedte beter laten aansluiten */
+.rpv-core__inner-page {
+  width: 100% !important;
+  max-width: 850px;
+
+  margin: 0 auto;
+}
+
+.textLayer {
+  font-family: sans-serif;
+  line-height: 1;
+  white-space: pre;
+  user-select: text;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  pointer-events: none;
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.textLayer > span {
+  position: absolute;
+  white-space: pre;
+  transform-origin: 0 0;
+  cursor: text;
+}

@@ -4,6 +4,10 @@
   "private": true,
   "dependencies": {
     "@contentful/rich-text-react-renderer": "^15.17.1",
+    "@fontsource/raleway": "^5.2.6",
+    "@fontsource/roboto-slab": "^5.2.6",
+    "@react-pdf-viewer/core": "^3.12.0",
+    "@react-pdf-viewer/default-layout": "^3.12.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -14,10 +18,12 @@
     "bootstrap": "^5.3.1",
     "contentful": "^10.6.5",
     "dompurify": "^3.0.3",
+    "pdfjs-dist": "^3.11.174",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.11.2",
     "react-scripts": "^5.0.1",
+    "typeface-roboto-slab": "^1.1.13",
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4"
   },

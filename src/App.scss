@@ -2532,11 +2532,13 @@ footer {
   z-index: 2;
 }
 .hide-outside-pdf-viewer {
+  position: fixed;
   z-index: 1;
 }
 .pdf-download-button-container {
   position: fixed;
   bottom: 1.5rem;
-  right: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
   backdrop-filter: blur(5px);
 }
