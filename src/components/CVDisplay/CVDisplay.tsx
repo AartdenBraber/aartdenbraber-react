@@ -6,7 +6,9 @@ import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
 import './CVDisplay.scss';
 import PdfWithTextLayer from '../../utils/PdfWithTextLayer';
 
-export const CVdocumentUrl = '/CV-Aart-den-Braber-EN.pdf';
+export const CVdocumentUrl = process.env.NODE_ENV === 'production'
+    ? '/CV-Aart-den-Braber-EN.pdf'
+    : '/CV-DUMMY.pdf'
 
 const CVDisplay: React.FC = () => {
     return (

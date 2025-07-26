@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import './FocusSpotlight.scss';
 
 interface FocusSpotlightProps {
@@ -9,20 +9,18 @@ const FocusSpotlight: React.FC<FocusSpotlightProps> = ({ image }) => {
     const wrapperRef = useRef<HTMLDivElement>(null);
     const spotlightRef = useRef<HTMLDivElement>(null);
     const animationFrame = useRef<number | null>(null);
-    const position = useRef({ x: -9999, y: -9999 });
 
-    const updateSpotlight = () => {
-        if (spotlightRef.current) {
-            spotlightRef.current.style.setProperty('--x', `${position.current.x}px`);
-            spotlightRef.current.style.setProperty('--y', `${position.current.y}px`);
-        }
-    };
+    const updateSpotlight = (x: number, y: number) => {
+        if (!spotlightRef.current) return;
 
-    const scheduleUpdate = () => {
         if (animationFrame.current !== null) {
             cancelAnimationFrame(animationFrame.current);
         }
-        animationFrame.current = requestAnimationFrame(updateSpotlight);
+
+        animationFrame.current = requestAnimationFrame(() => {
+            spotlightRef.current!.style.setProperty('--x', `${x}px`);
+            spotlightRef.current!.style.setProperty('--y', `${y}px`);
+        });
     };
 
     const handleMove = (e: MouseEvent | TouchEvent) => {
@@ -41,10 +39,10 @@ const FocusSpotlight: React.FC<FocusSpotlightProps> = ({ image }) => {
         if (!wrapper) return;
 
         const rect = wrapper.getBoundingClientRect();
-        position.current.x = clientX - rect.left;
-        position.current.y = clientY - rect.top;
+        const x = clientX - rect.left;
+        const y = clientY - rect.top;
 
-        scheduleUpdate();
+        updateSpotlight(x, y);
     };
 
     useEffect(() => {
