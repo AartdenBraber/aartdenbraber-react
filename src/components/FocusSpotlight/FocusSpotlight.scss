@@ -30,9 +30,16 @@
 .blurred {
   filter: blur(10px);
   z-index: 1;
+  will-change: filter;
 }
-
 .spotlight {
+  --x: -9999px;
+  --y: -9999px;
+  --spot-size: 200px;
+  --spot-inner: 60%;
+  --spot-middle: 70%;
+  --spot-outer: 80%;
+
   position: absolute;
   top: 0;
   left: 0;
@@ -42,45 +49,76 @@
   pointer-events: none;
 
   mask-image: radial-gradient(
-    circle 200px at var(--x, -9999px) var(--y, -9999px),
+    circle var(--spot-size) at var(--x) var(--y),
     white 0%,
-    white 60%,
     transparent 100%
   );
   -webkit-mask-image: radial-gradient(
-    circle 200px at var(--x, -9999px) var(--y, -9999px),
+    circle var(--spot-size) at var(--x) var(--y),
     white 0%,
-    white 60%,
     transparent 100%
   );
-  will-change: mask-image, transform;
-  contain: strict;
-}
 
-.spotlight::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 3;
-
-  mask-image: radial-gradient(
-    circle 220px at var(--x, -9999px) var(--y, -9999px),
-    transparent 60%,
-    white 70%,
-    transparent 80%
-  );
-  -webkit-mask-image: radial-gradient(
-    circle 220px at var(--x, -9999px) var(--y, -9999px),
-    transparent 60%,
-    white 70%,
-    transparent 80%
-  );
-
-  background-color: rgba(255, 255, 255, 0.1);
   will-change: mask-image;
+  contain: strict;
+  backface-visibility: hidden;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 3;
+
+    mask-image: radial-gradient(
+      circle var(--spot-size) at var(--x, -9999px) var(--y, -9999px),
+      transparent var(--spot-inner),
+      white var(--spot-middle),
+      transparent var(--spot-outer)
+    );
+    -webkit-mask-image: radial-gradient(
+      circle var(--spot-size) at var(--x, -9999px) var(--y, -9999px),
+      transparent var(--spot-inner),
+      white var(--spot-middle),
+      transparent var(--spot-outer)
+    );
+
+    background-color: rgba(255, 255, 255, 0.1);
+    will-change: mask-image;
+    contain: strict;
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 4;
+
+    opacity: 0.4;
+    transition: opacity 1s ease-out;
+
+    mask-image: radial-gradient(
+      circle var(--spot-size) at var(--x, -9999px) var(--y, -9999px),
+      transparent 0%,
+      white var(--spot-middle),
+      transparent var(--spot-outer)
+    );
+    -webkit-mask-image: radial-gradient(
+      circle var(--spot-size) at var(--x, -9999px) var(--y, -9999px),
+      transparent 0%,
+      white var(--spot-middle),
+      transparent var(--spot-outer)
+    );
+
+    background-color: white;
+  }
+  &.animate-ring::before {
+    opacity: 0;
+  }
 }
 
 .focused {
   z-index: 2;
+  will-change: transform, opacity;
 }

@@ -465,7 +465,7 @@ a:visited {
 }
 .site-description {
   display: block;
-  font-size: 0.8em;
+  font-size: 0.9em;
   padding-top: 5px;
   margin: 0;
   font-family: Raleway, Calibri, Arial, sans-serif;
@@ -1197,53 +1197,6 @@ section.homepage-intro .entry-content {
 
 .no-focus-circle .background-image {
   background-attachment: scroll;
-}
-.circle {
-  position: absolute;
-
-  top: -999px;
-  left: -999px; /* start out of view */
-  //border-radius:50%;
-  width: 230px;
-  height: 230px;
-  box-sizing: border-box;
-}
-.circle,
-.circle .inside {
-  background-attachment: fixed;
-}
-
-.circle .inside {
-  position: absolute;
-  top: 0;
-  left: 0;
-  //border-radius: 50%;
-  background-image: url(assets/images/top-bg.jpg);
-  background-position: 70% center;
-  /* background-image: url(assets/images/top-circle-hover.jpg); */
-}
-
-.blur-big {
-  height: 100%;
-  width: 100%;
-
-  -webkit-filter: blur(3px);
-  -moz-filter: blur(3px);
-  -o-filter: blur(3px);
-  filter: blur(3px);
-  filter: progid:DXImageTransform.Microsoft.Blur(PixelRadius='3');
-}
-/* positioned slightly 'inside' the big blur */
-.blur-small {
-  margin: 5px;
-  height: 220px;
-  width: 220px;
-
-  -webkit-filter: blur(1px);
-  -moz-filter: blur(1px);
-  -o-filter: blur(1px);
-  filter: blur(1px);
-  filter: progid:DXImageTransform.Microsoft.Blur(PixelRadius='1');
 }
 .clear {
   margin: 10px;
@@ -2414,10 +2367,10 @@ object {
     width: 3em;
   }
   .site-title {
-    font-size: 1.3em;
+    font-size: 1.7em;
   }
   .site-description {
-    font-size: 0.55em;
+    font-size: 0.75em;
   }
   .stick-to-top .site-title-container {
     font-size: 1em;

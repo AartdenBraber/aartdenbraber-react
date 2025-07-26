@@ -1,14 +1,10 @@
 import React from 'react';
-import '@react-pdf-viewer/core/lib/styles/index.css';
-import '@react-pdf-viewer/default-layout/lib/styles/index.css';
-import { Worker, Viewer } from '@react-pdf-viewer/core';
-import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
 import './CVDisplay.scss';
 import PdfWithTextLayer from '../../utils/PdfWithTextLayer';
 
 export const CVdocumentUrl = process.env.NODE_ENV === 'production'
     ? '/CV-Aart-den-Braber-EN.pdf'
-    : '/CV-DUMMY.pdf'
+    : '/CV-DEV.pdf'
 
 const CVDisplay: React.FC = () => {
     return (

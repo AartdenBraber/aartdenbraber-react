@@ -6,6 +6,8 @@ interface FocusSpotlightProps {
 }
 
 const FocusSpotlight: React.FC<FocusSpotlightProps> = ({ image }) => {
+    const hasAnimated = useRef(false);
+
     const wrapperRef = useRef<HTMLDivElement>(null);
     const spotlightRef = useRef<HTMLDivElement>(null);
     const animationFrame = useRef<number | null>(null);
@@ -43,6 +45,11 @@ const FocusSpotlight: React.FC<FocusSpotlightProps> = ({ image }) => {
         const y = clientY - rect.top;
 
         updateSpotlight(x, y);
+
+        if (!hasAnimated.current) {
+            hasAnimated.current = true;
+            spotlightRef.current?.classList.add('animate-ring');
+        }
     };
 
     useEffect(() => {

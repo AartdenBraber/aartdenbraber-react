@@ -2,10 +2,13 @@ import React, { useEffect, useState } from 'react';
 import './Hero.scss';
 import logo from '../../assets/images/logo.png';
 import FocusSpotlight from '../FocusSpotlight/FocusSpotlight'; // pas pad aan indien nodig
-import topBg from '../../assets/images/top-bg.jpg';
 
 const Hero: React.FC = () => {
     const [greeting, setGreeting] = useState(getGreeting());
+
+    const topBg = process.env.NODE_ENV === 'production'
+        ? '/images/top-bg.jpg'
+        : '/images/top-bg-DEV.jpg';
 
     useEffect(() => {
         const updateGreeting = () => setGreeting(getGreeting());
