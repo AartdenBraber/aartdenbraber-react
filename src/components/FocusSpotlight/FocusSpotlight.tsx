@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import './FocusSpotlight.scss';
 
 interface FocusSpotlightProps {
@@ -6,56 +6,59 @@ interface FocusSpotlightProps {
 }
 
 const FocusSpotlight: React.FC<FocusSpotlightProps> = ({ image }) => {
-    const spotlightRef = useRef<HTMLDivElement>(null);
     const wrapperRef = useRef<HTMLDivElement>(null);
+    const spotlightRef = useRef<HTMLDivElement>(null);
+    const animationFrame = useRef<number | null>(null);
+    const position = useRef({ x: -9999, y: -9999 });
 
-    const [position, setPosition] = useState({ x: -9999, y: -9999 });
+    const updateSpotlight = () => {
+        if (spotlightRef.current) {
+            spotlightRef.current.style.setProperty('--x', `${position.current.x}px`);
+            spotlightRef.current.style.setProperty('--y', `${position.current.y}px`);
+        }
+    };
 
-    const updatePosition = (clientX: number, clientY: number) => {
+    const scheduleUpdate = () => {
+        if (animationFrame.current !== null) {
+            cancelAnimationFrame(animationFrame.current);
+        }
+        animationFrame.current = requestAnimationFrame(updateSpotlight);
+    };
+
+    const handleMove = (e: MouseEvent | TouchEvent) => {
+        let clientX = 0;
+        let clientY = 0;
+
+        if ('touches' in e && e.touches.length > 0) {
+            clientX = e.touches[0].clientX;
+            clientY = e.touches[0].clientY;
+        } else if ('clientX' in e) {
+            clientX = e.clientX;
+            clientY = e.clientY;
+        }
+
         const wrapper = wrapperRef.current;
         if (!wrapper) return;
 
         const rect = wrapper.getBoundingClientRect();
+        position.current.x = clientX - rect.left;
+        position.current.y = clientY - rect.top;
 
-        const x = clientX - rect.left;
-        const y = clientY - rect.top;
-
-        setPosition({ x, y });
+        scheduleUpdate();
     };
 
-
-
     useEffect(() => {
-        const handleMove = (e: MouseEvent | TouchEvent) => {
-            let clientX = 0;
-            let clientY = 0;
-
-            if (e instanceof TouchEvent && e.touches.length > 0) {
-                clientX = e.touches[0].clientX;
-                clientY = e.touches[0].clientY;
-            } else if (e instanceof MouseEvent) {
-                clientX = e.clientX;
-                clientY = e.clientY;
-            }
-
-            updatePosition(clientX, clientY);
-        };
-
         window.addEventListener('mousemove', handleMove);
         window.addEventListener('touchmove', handleMove);
 
         return () => {
             window.removeEventListener('mousemove', handleMove);
             window.removeEventListener('touchmove', handleMove);
+            if (animationFrame.current !== null) {
+                cancelAnimationFrame(animationFrame.current);
+            }
         };
     }, []);
-
-    useEffect(() => {
-        if (spotlightRef.current) {
-            spotlightRef.current.style.setProperty('--x', `${position.x}px`);
-            spotlightRef.current.style.setProperty('--y', `${position.y}px`);
-        }
-    }, [position]);
 
     return (
         <div className="spotlight-background">
@@ -67,7 +70,6 @@ const FocusSpotlight: React.FC<FocusSpotlightProps> = ({ image }) => {
             </div>
         </div>
     );
-
 };
 
 export default FocusSpotlight;

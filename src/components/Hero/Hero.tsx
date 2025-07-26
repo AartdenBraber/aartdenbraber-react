@@ -51,7 +51,14 @@ const Hero: React.FC = () => {
                 </main>
 
                 <footer className="scroll-to-next-section-container">
-                    <a href="#main" className="scroll-to-next-section">
+                    <a
+                        onClick={() => {
+                            window.scrollBy({
+                                top: window.innerHeight,
+                                behavior: 'smooth',
+                            });
+                        }}
+                        className="scroll-to-next-section">
                         <span className="scroll-icon"></span>
                     </a>
                 </footer>

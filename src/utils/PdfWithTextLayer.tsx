@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { getDocument, GlobalWorkerOptions, PDFDocumentProxy } from 'pdfjs-dist';
-import { documentUrl } from '../components/CVDisplay/CVDisplay';
+import { CVdocumentUrl } from '../components/CVDisplay/CVDisplay';
 
 GlobalWorkerOptions.workerSrc = 'https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
 
@@ -10,7 +10,7 @@ const PdfWithTextLayer: React.FC = () => {
   const hasRenderedRef = useRef(false);
 
   useEffect(() => {
-    getDocument(documentUrl).promise.then(setPdf);
+    getDocument(CVdocumentUrl).promise.then(setPdf);
   }, []);
 
   useEffect(() => {

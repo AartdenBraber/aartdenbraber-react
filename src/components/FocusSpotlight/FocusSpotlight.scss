@@ -50,6 +50,32 @@
     white 0%,
     transparent 100%
   );
+  will-change: mask-image, transform;
+  contain: strict;
+}
+
+.spotlight::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+
+  mask-image: radial-gradient(
+    circle 220px at var(--x, -9999px) var(--y, -9999px),
+    transparent 60%,
+    white 70%,
+    transparent 80%
+  );
+  -webkit-mask-image: radial-gradient(
+    circle 220px at var(--x, -9999px) var(--y, -9999px),
+    transparent 60%,
+    white 70%,
+    transparent 80%
+  );
+
+  background-color: rgba(255, 255, 255, 0.1);
+  will-change: mask-image;
 }
 
 .focused {
