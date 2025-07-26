@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import FocusSpotlight from '../FocusSpotlight/FocusSpotlight';
 
 export interface IntroProps {
     anything?: string;
@@ -24,7 +25,8 @@ const Intro: React.FC<IntroProps> = () => {
         setAge(age);
     }, []);
 
-    return (
+    return (<>
+
         <section className="page-content homepage-intro parallax clearfix">
             <div
                 className="parallax-bg background-cover"
@@ -57,7 +59,7 @@ const Intro: React.FC<IntroProps> = () => {
                 </div>
             </div>
         </section>
-
+    </>
     );
 };
 

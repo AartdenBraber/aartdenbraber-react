@@ -1264,6 +1264,7 @@ section.homepage-intro .entry-content {
 .hero-title-container {
   position: absolute;
   display: table;
+  z-index: 2;
   top: 0;
   left: 0;
   width: 100%;

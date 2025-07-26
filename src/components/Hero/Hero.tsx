@@ -1,29 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import './Hero.scss';
-import logo from '../../assets/images/logo.png'
+import logo from '../../assets/images/logo.png';
+import FocusSpotlight from '../FocusSpotlight/FocusSpotlight'; // pas pad aan indien nodig
+import topBg from '../../assets/images/top-bg.jpg';
 
-
-export interface HeroProps {
-    anything?: string;
-}
-
-const Hero: React.FC<HeroProps> = () => {
+const Hero: React.FC = () => {
     const [greeting, setGreeting] = useState(getGreeting());
 
     useEffect(() => {
         const updateGreeting = () => setGreeting(getGreeting());
 
-        // Bepaal hoe lang tot de volgende volle minuut
         const now = new Date();
         const msToNextMinute = (60 - now.getSeconds()) * 1000 - now.getMilliseconds();
 
-        // Eerst een timeout tot de volgende volle minuut
         const timeout = setTimeout(() => {
             updateGreeting();
-
-            // Daarna elke minuut opnieuw updaten
             const interval = setInterval(updateGreeting, 60000);
-
             return () => clearInterval(interval);
         }, msToNextMinute);
 
@@ -32,13 +24,7 @@ const Hero: React.FC<HeroProps> = () => {
 
     return (
         <section className="top-hero js-top-hero clearfix">
-            <div className="background-image background-cover"></div>
-
-            <div className="circle">
-                <div className="inside blur-big background-cover"></div>
-                <div className="inside blur-small background-cover"></div>
-                <div className="inside clear background-cover"></div>
-            </div>
+            <FocusSpotlight image={topBg} />
 
             <div className="hero-content">
                 <header className="site-header">
@@ -52,6 +38,7 @@ const Hero: React.FC<HeroProps> = () => {
                         </div>
                     </a>
                 </header>
+
                 <main className="hero-title-container">
                     <div className="hero-title-wrapper">
                         <div className="hero-title-inside">
@@ -69,22 +56,15 @@ const Hero: React.FC<HeroProps> = () => {
                     </a>
                 </footer>
             </div>
-
-
         </section>
     );
 };
 
 const getGreeting = () => {
     const hour = new Date().getHours();
-
-    if (hour < 12) {
-        return 'Good morning';
-    } else if (hour < 18) {
-        return 'Good afternoon';
-    } else {
-        return 'Good evening';
-    }
+    if (hour < 12) return 'Good morning';
+    if (hour < 18) return 'Good afternoon';
+    return 'Good evening';
 };
 
 export default Hero;
