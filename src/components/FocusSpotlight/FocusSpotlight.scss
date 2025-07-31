@@ -11,10 +11,10 @@
 
 .background-wrapper {
   position: absolute;
-  top: -2.5%;
-  left: -2.5%;
-  width: 105%;
-  height: 105%;
+  top: -5%;
+  left: -5%;
+  width: 110%;
+  height: 110%;
   overflow: hidden;
 }
 
@@ -28,7 +28,7 @@
 }
 
 .blurred {
-  filter: blur(10px);
+  filter: blur(20px);
   z-index: 1;
   will-change: filter;
 }
@@ -36,9 +36,9 @@
   --x: -9999px;
   --y: -9999px;
   --spot-size: 200px;
-  --spot-inner: 60%;
-  --spot-middle: 70%;
-  --spot-outer: 80%;
+  --spot-inner: 50%;
+  --spot-middle: 90%;
+  --spot-outer: 100%;
 
   position: absolute;
   top: 0;
@@ -51,12 +51,14 @@
   mask-image: radial-gradient(
     circle var(--spot-size) at var(--x) var(--y),
     white 0%,
-    transparent 100%
+    white 80%,
+    transparent 90%
   );
   -webkit-mask-image: radial-gradient(
     circle var(--spot-size) at var(--x) var(--y),
     white 0%,
-    transparent 100%
+    white 80%,
+    transparent 90%
   );
 
   will-change: mask-image;
@@ -95,18 +97,17 @@
     pointer-events: none;
     z-index: 4;
 
-    opacity: 0.4;
-    transition: opacity 1s ease-out;
+    animation: fade-out-ring 2s forwards;
 
     mask-image: radial-gradient(
       circle var(--spot-size) at var(--x, -9999px) var(--y, -9999px),
-      transparent 0%,
-      white var(--spot-middle),
+      white 0%,
+      white 0%,
       transparent var(--spot-outer)
     );
     -webkit-mask-image: radial-gradient(
       circle var(--spot-size) at var(--x, -9999px) var(--y, -9999px),
-      transparent 0%,
+      white 0%,
       white var(--spot-middle),
       transparent var(--spot-outer)
     );
@@ -114,6 +115,17 @@
     background-color: white;
   }
   &.animate-ring::before {
+    opacity: 0;
+  }
+}
+@keyframes fade-out-ring {
+  0% {
+    opacity: 0.5;
+  }
+  80% {
+    opacity: 0.5;
+  }
+  100% {
     opacity: 0;
   }
 }

@@ -31,7 +31,7 @@ const Hero: React.FC = () => {
 
             <div className="hero-content">
                 <header className="site-header">
-                    <a className="site-branding" href="https://aartdenbraber.nl/" rel="home">
+                    <a className="site-branding">
                         <div className="logo-container">
                             <img className="logo" src={logo} alt="Logo" />
                         </div>
@@ -47,7 +47,7 @@ const Hero: React.FC = () => {
                         <div className="hero-title-inside">
                             <p id="hero-greeting" className="hero-greeting">{greeting}!</p>
                             <h1 className="hero-title">
-                                My focus is on crafting unique ideas with elegance
+                                I focus on crafting sustainable applications — technically strong, user-friendly, and future-proof.
                             </h1>
                         </div>
                     </div>
@@ -72,8 +72,8 @@ const Hero: React.FC = () => {
 
 const getGreeting = () => {
     const hour = new Date().getHours();
-    if (hour < 12) return 'Good morning';
-    if (hour < 18) return 'Good afternoon';
+    if (hour <= 11) return 'Good morning';
+    if (hour <= 17) return 'Good afternoon';
     return 'Good evening';
 };
 

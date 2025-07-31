@@ -52,13 +52,21 @@ const FocusSpotlight: React.FC<FocusSpotlightProps> = ({ image }) => {
         }
     };
 
+    const handleMouseLeave = () => {
+        // Zet spotlight ver buiten beeld
+        updateSpotlight(-9999, -9999);
+    };
+
     useEffect(() => {
         window.addEventListener('mousemove', handleMove);
         window.addEventListener('touchmove', handleMove);
+        window.addEventListener('mouseout', handleMouseLeave);
 
         return () => {
             window.removeEventListener('mousemove', handleMove);
             window.removeEventListener('touchmove', handleMove);
+            window.removeEventListener('mouseout', handleMouseLeave);
+
             if (animationFrame.current !== null) {
                 cancelAnimationFrame(animationFrame.current);
             }
