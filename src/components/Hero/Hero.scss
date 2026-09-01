@@ -1,5 +1,7 @@
 .hero {
   position: relative;
+  // Boven de sectienavigatie, zodat die er nooit overheen valt.
+  z-index: 2;
   display: flex;
   min-height: 100svh;
   background: var(--color-dark);

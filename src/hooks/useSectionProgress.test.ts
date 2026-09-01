@@ -7,10 +7,14 @@ const secties: SectionBounds[] = [
 ];
 
 const scherm = 1000;
-// De leeslijn ligt op 35 procent van het scherm, dus 350px onder de bovenrand.
-const scrollNaar = (positie: number) => resolveSectionState(secties, positie - 350, scherm);
+/** De hero is allang voorbij; de sectiekeuze staat daar los van. */
+const HERO_VOORBIJ = -5000;
 
-describe('resolveSectionState', () => {
+// De leeslijn ligt op 35 procent van het scherm, dus 350px onder de bovenrand.
+const scrollNaar = (positie: number) =>
+  resolveSectionState(secties, positie - 350, scherm, HERO_VOORBIJ);
+
+describe('resolveSectionState, welke sectie', () => {
   it('houdt de eerste sectie aan zolang de lezer er nog boven zit', () => {
     expect(scrollNaar(0).activeId).toBe('over-mij');
     expect(scrollNaar(500).activeId).toBe('over-mij');
@@ -33,24 +37,38 @@ describe('resolveSectionState', () => {
     expect(scrollNaar(50000).progress).toBe(1);
   });
 
-  it('blijft weg zolang de hero in beeld is', () => {
-    expect(resolveSectionState(secties, 0, scherm).visible).toBe(false);
-    expect(resolveSectionState(secties, 600, scherm).visible).toBe(false);
-    expect(resolveSectionState(secties, 601, scherm).visible).toBe(true);
-  });
-
   it('valt niet om zonder secties', () => {
-    expect(resolveSectionState([], 2000, scherm)).toEqual({
+    expect(resolveSectionState([], 2000, scherm, HERO_VOORBIJ)).toEqual({
       activeId: null,
       progress: 0,
-      visible: true,
+      reveal: 1,
     });
   });
 
   it('deelt niet door nul bij een sectie zonder hoogte', () => {
-    const state = resolveSectionState([{ id: 'leeg', top: 0, height: 0 }], 500, scherm);
+    const state = resolveSectionState([{ id: 'leeg', top: 0, height: 0 }], 500, scherm, HERO_VOORBIJ);
 
     expect(state.activeId).toBe('leeg');
     expect(Number.isFinite(state.progress)).toBe(true);
+  });
+});
+
+describe('resolveSectionState, tevoorschijn komen', () => {
+  const bijHero = (heroOnderkant: number) =>
+    resolveSectionState(secties, 0, scherm, heroOnderkant).reveal;
+
+  it('blijft weg zolang de hero nog in beeld staat', () => {
+    expect(bijHero(900)).toBe(0);
+    expect(bijHero(1)).toBe(0);
+    expect(bijHero(0)).toBe(0);
+  });
+
+  it('schuift geleidelijk tevoorschijn zodra de hero voorbij is', () => {
+    expect(bijHero(-70)).toBeCloseTo(0.5);
+    expect(bijHero(-140)).toBe(1);
+  });
+
+  it('gaat niet voorbij 1', () => {
+    expect(bijHero(-10000)).toBe(1);
   });
 });

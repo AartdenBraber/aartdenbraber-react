@@ -4,21 +4,22 @@
 .section-nav {
   position: fixed;
   top: 50%;
-  left: max(1.25rem, calc(50vw - var(--content-width) / 2 - 12rem));
-  z-index: 20;
+  left: max(0.75rem, calc(50vw - var(--content-width) / 2 - 13rem));
+  // Onder de hero. Zo komt hij eronder vandaan in plaats van erover te
+  // verschijnen, en valt hij er nooit overheen.
+  z-index: 1;
   padding: var(--space-s);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-l);
   background: rgba(255, 255, 255, 0.82);
   box-shadow: var(--shadow-card);
   backdrop-filter: blur(14px) saturate(1.1);
-  transform: translateY(-50%);
-  opacity: 0;
+  // Schuift naar links weg naarmate de hero hem verder bedekt.
+  transform: translateY(-50%) translateX(calc((var(--reveal, 0) - 1) * 2rem));
+  opacity: var(--reveal, 0);
   visibility: hidden;
-  transition: opacity 0.35s ease, visibility 0.35s;
 
   &[data-visible='true'] {
-    opacity: 1;
     visibility: visible;
   }
 }
@@ -90,13 +91,13 @@
     top: 0;
     left: 0;
     right: 0;
+    transform: translateY(calc((var(--reveal, 0) - 1) * 100%));
     padding: 0;
     border: 0;
     border-bottom: 1px solid var(--color-border);
     border-radius: 0;
     background: rgba(255, 255, 255, 0.9);
     box-shadow: none;
-    transform: none;
   }
 
   .section-nav__list {
