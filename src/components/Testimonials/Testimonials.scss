@@ -1,29 +1,33 @@
-.testimonials__grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
-  gap: var(--space-m);
+// De aanbevelingen lopen sterk uiteen in lengte. Kolommen laten elk citaat zijn
+// eigen hoogte houden, waar een grid ze allemaal zou uitrekken tot de langste.
+.testimonials {
+  columns: 3;
+  column-gap: var(--space-m);
 }
 
 .testimonial {
   display: flex;
   flex-direction: column;
   gap: var(--space-m);
-  height: 100%;
-  margin: 0;
+  margin: 0 0 var(--space-m);
   padding: var(--space-l);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-l);
   background: var(--color-surface);
+  break-inside: avoid;
 
   blockquote {
     margin: 0;
     color: var(--color-ink-soft);
+
+    p + p {
+      margin-top: var(--space-s);
+    }
   }
 
   figcaption {
     display: flex;
     flex-direction: column;
-    margin-top: auto;
     padding-top: var(--space-s);
     border-top: 1px solid var(--color-border);
   }
@@ -33,12 +37,27 @@
   font-weight: 700;
 }
 
-.testimonial__role {
+.testimonial__meta {
+  display: flex;
+  flex-direction: column;
   color: var(--color-ink-muted);
   font-size: var(--step--1);
+  line-height: 1.45;
 }
 
 .testimonials__more {
-  margin-top: var(--space-l);
+  margin-top: var(--space-s);
   font-weight: 600;
+}
+
+@media (max-width: 64rem) {
+  .testimonials {
+    columns: 2;
+  }
+}
+
+@media (max-width: 44rem) {
+  .testimonials {
+    columns: 1;
+  }
 }

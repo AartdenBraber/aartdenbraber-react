@@ -14,6 +14,7 @@ const nl: SiteContent = {
       { href: '#wat-ik-doe', label: 'Wat ik doe' },
       { href: '#werkervaring', label: 'Werkervaring' },
       { href: '#aanbevelingen', label: 'Aanbevelingen' },
+      { href: '#vragen', label: 'Vragen' },
       { href: '#contact', label: 'Contact' },
     ],
   },
@@ -44,7 +45,7 @@ const nl: SiteContent = {
     facts: [
       { label: 'Actief sinds', value: '2011' },
       { label: 'Opleiding', value: 'HBO Communication & Multimedia Design, Haagse Hogeschool' },
-      { label: 'Certificering', value: 'ServiceNow Certified Application Developer' },
+      { label: 'Werkterrein', value: 'Overheid en financiële sector' },
       { label: 'Talen', value: 'Nederlands, Engels, Duits' },
     ],
   },
@@ -100,11 +101,12 @@ const nl: SiteContent = {
         highlights: [
           'Het opstarten van het project teruggebracht van meer dan tien handmatige stappen naar één keer instellen',
           'Greenfield MBOST-project opgezet, voor zowel medewerkers als zakelijke gebruikers',
+          'HOST als lift-and-shift aangepakt, omdat de bedrijfsvoering niet stil mocht vallen. Verbeteringen alleen waar ze niets in de werking omgooiden',
           'API-ontwerpen uitgewerkt en gekoppeld aan de Angular-frontend',
           'Backendprocessen verduidelijkt, waaronder het vullen van de database en de koppelingen tussen modules',
           'Een junior fullstack developer en een junior tester begeleid',
         ],
-        stack: ['Java', 'Spring Boot', 'Angular', 'TypeScript', 'Liquibase', 'Hibernate', 'ActiveMQ', 'Docker', 'Jenkins', 'GitLab'],
+        stack: ['Java', 'Spring Boot', 'Spring Security', 'JUnit', 'Angular', 'TypeScript', 'Liquibase', 'Hibernate', 'ActiveMQ', 'Cucumber', 'Playwright', 'Docker', 'Jenkins', 'GitLab'],
       },
       {
         id: 'duo-frontend',
@@ -132,7 +134,7 @@ const nl: SiteContent = {
         highlights: [
           'Portaal gebouwd dat de oude Aegon-omgeving herkenbaar houdt en tegelijk prettiger werkt',
           'Backend-for-frontend op AWS Lambda, later ECS, voor een veilige koppeling met de Knab-API’s',
-          'Tests geschreven met 80 tot 100 procent dekking in Angular, React en Node',
+          'Tests geschreven met 80 tot 96 procent dekking in Angular, React en Node',
           'Inlogflow in React met OAuth, wachtwoord wijzigen en een OTP-code via sms of e-mail',
         ],
         stack: ['Angular', 'React', 'NgRx', 'TypeScript', 'Node', 'Express', 'AWS Lambda', 'AWS ECS', 'DynamoDB', 'OAuth', 'Jest', 'Cypress'],
@@ -154,16 +156,32 @@ const nl: SiteContent = {
         via: 'Ordina',
         role: 'Lead front-end en UX design',
         location: 'Odijk',
-        period: 'apr. 2021 - nov. 2021',
+        period: 'apr. 2020 - nov. 2021',
         summary:
-          'Meerdere intern gebouwde applicaties (EBO’s) beheerbaar maken, samen met de gebruikers en de oorspronkelijke makers. Daarnaast een ander team geholpen met hun teststrategie.',
+          'EBO’s zijn applicaties die door hele kleine teams zijn gebouwd en daarna uit hun jasje groeiden. Mijn opdracht was ze professioneel op te zetten, samen met de gebruikers en de oorspronkelijke makers.',
         highlights: [
           'Gedeelde packages gemaakt, zodat een update in meerdere apps tegelijk doorkomt',
           'Automatische ESLint-fixes, teststandaarden en CI/CD ingericht',
           'Het team meegenomen naar gebruikerssessies via de fishbowl-werkvorm, zodat iedereen de wensen zelf hoorde',
-          'Workshops gegeven over testen. Het andere team stapte daarna van snapshot tests over op tests die gedrag controleren',
+          'Onder meer Camera in Beeld gebouwd, waarmee agenten snel zien waar camera’s hangen',
         ],
         stack: ['TypeScript', 'StencilJS', 'JavaScript', 'Node', 'Python', 'Cypress', 'Jest', 'Jasmine', 'Docker', 'Cloud Foundry'],
+      },
+      {
+        id: 'politie-webcomponents',
+        company: 'Politie Nederland',
+        via: 'Ordina',
+        role: 'Front-end developer',
+        location: 'Odijk',
+        period: 'jun. 2021 - nov. 2021',
+        summary:
+          'Tijdens de EBO-opdracht liep ik tegen het Blueprint Webcomponents-team aan, dat een componentbibliotheek bouwde voor alle politie-apps. Een groot deel stond er al, maar er zaten fouten in die het onbruikbaar maakten buiten een framework.',
+        highlights: [
+          'De componenten laten werken in kaal HTML. Ze leunden volledig op de shadow DOM, waardoor developers zonder JavaScript-framework er niets mee konden',
+          'Workshops gegeven over testen. Het team stapte daarna van snapshot tests over op tests die gedrag controleren, wat de tests specifieker en beter onderhoudbaar maakte',
+          'Veel gerefactord en tests geschreven voor StencilJS, met dekking op elke use-case. Bij een bibliotheek die tientallen developers gebruiken, komt elke fout ergens anders weer terug',
+        ],
+        stack: ['StencilJS', 'TypeScript', 'JavaScript', 'Node', 'Jasmine', 'Jest', 'ESLint', 'Sass'],
       },
       {
         id: 'politie-pandora',
@@ -246,46 +264,63 @@ const nl: SiteContent = {
   testimonials: {
     heading: 'Wat anderen zeggen',
     intro: 'Aanbevelingen van opdrachtgevers en collega’s, overgenomen van LinkedIn.',
-    items: [
-      {
-        quote:
-          'Aart is a perfectionist and socially involved. As a valued team player and Frontend developer, he has made an important contribution to the development of the online banking environment. Together with his UX and Test knowledge, I would like to recommend Aart wholeheartedly.',
-        name: 'Bart Illy',
-        role: 'Product owner',
-      },
-      {
-        quote:
-          'He was the key developer in defining a new API for an existing application. He was able to properly translate the wishes from key users through ux testing and then specifying those requirements into a detailed API, and providing a frontend UI for that very same API as well, with its own set of automated tests.',
-        name: 'Thijs Knippers',
-        role: 'Collega',
-      },
-      {
-        quote:
-          'He really emphasises the importance of writing comprehensible and well-tested code, and is able to use state of the art techniques to accomplish this. He happily took on the additional role of front-end mentor, and was always happy to explain things to me and help me gain more hands-on experience through pair-programming sessions.',
-        name: 'Ravi Selker',
-        role: 'Collega',
-      },
-      {
-        quote:
-          'Exceptional hard and soft skills of Aart were crucial for the fast development of several frontend applications based on Angular and React, backend using NodeJS, establishing CI/CD and deploying on AWS.',
-        name: 'Anton Zhirkov',
-        role: 'Collega',
-      },
-      {
-        quote:
-          'Aart is een echte verbinder, hij weet wat hij wil en gaat hier voor 110% voor om er een succes van te maken. Hij is een super teamspeler en weet zijn collega’s dan ook te inspireren om samen naar een groter doel te streven.',
-        name: 'Kevin Donkers',
-        role: 'Manager',
-      },
-      {
-        quote:
-          'Aart has demonstrated great ability in dealing with a highly complex technical project in a challenging setting. He was part of a multi-country development team and he played an essential role in having a successful project with a happy customer.',
-        name: 'Raphael Rodriguez',
-        role: 'Managing director',
-      },
-    ],
     moreLabel: 'Alle aanbevelingen op LinkedIn',
     moreHref: 'https://www.linkedin.com/in/aartdenbraber',
+  },
+
+  faq: {
+    heading: 'Veelgestelde vragen',
+    intro: 'De dingen die je waarschijnlijk wilt weten voordat je mailt.',
+    items: [
+      {
+        id: 'beschikbaarheid',
+        question: 'Ben je beschikbaar?',
+        answer:
+          'Op dit moment niet. Ik werk bij DUO aan de statustoekenning voor het hoger en middelbaar beroepsonderwijs.\n\nEen gesprek is wel altijd goed. Dan weet ik wat er bij jou speelt en of ik daar over een tijd bij pas.',
+      },
+      {
+        id: 'werkvorm',
+        question: 'Werk je remote of op locatie?',
+        answer:
+          'Voorkeur voor remote. Bij DUO ga ik ongeveer eens per drie weken naar kantoor en dat bevalt goed: genoeg om de mensen te kennen, weinig genoeg om er niet je week aan kwijt te zijn.\n\nVolledig op locatie doe ik liever niet, tenzij er een reden voor is die ik kan volgen.',
+      },
+      {
+        id: 'achtergrond',
+        question: 'Wat is je achtergrond?',
+        answer:
+          'Ik bouw sinds 2011 websites en applicaties, vanaf 2015 in loondienst en daarna freelance. Angular gebruik ik sinds versie 2, aan de achterkant werk ik met Java en Spring Boot.\n\nDaarnaast ben ik afgestudeerd UX-researcher. Daardoor kan ik een gebruikersvraag zelf doortrekken tot een API-ontwerp in plaats van hem door te geven. Het meeste van mijn werk zit bij de overheid en in de financiële sector: DUO, de Politie, Knab en ING.',
+      },
+      {
+        id: 'servicenow',
+        question: 'Werk je nog met ServiceNow?',
+        answer:
+          'Nee. Ik heb er in 2019 twee certificeringen voor gehaald en aan Service Portals gewerkt, maar sindsdien niet meer. Uit mezelf zou ik het niet voorstellen.\n\nTegelijk wil ik het geen nee noemen. Ik vind het werk in IT breed leuk, dus als er een goede reden is om er weer in te duiken, hoor ik die graag. Zie het als niet mijn eerste keus.',
+      },
+      {
+        id: 'testen',
+        question: 'Hoe kijk je naar testen?',
+        answer:
+          'Blackbox als uitgangspunt. Een test controleert wat een gebruiker of een aanroepende partij merkt, niet hoe het van binnen in elkaar zit. Wil je whitebox testen, dan ga ik daar graag met je over in discussie.\n\nSnapshot tests reken ik niet mee. Die bevestigen alleen wat de code toevallig al doet. Bij de Politie heb ik daar workshops over gegeven; dat team is daarna overgestapt op tests die gedrag controleren.',
+      },
+      {
+        id: 'grenzen',
+        question: 'Waar begin je over als het je niet bevalt?',
+        answer:
+          'Ik heb geen lijst met technieken waar ik niet aan wil. Waar ik wel over begin: als er geen ruimte is om tests te schrijven, of als de code niet overdraagbaar hoeft te zijn omdat het toch tijdelijk is.\n\nBij ING trof ik een flinke technical debt aan. Die heb ik gemeld bij zowel het bureau als de klant in plaats van eromheen te werken. Na hun akkoord is een groot deel van de app gerefactord. Zo doe ik het liever.',
+      },
+      {
+        id: 'route',
+        question: 'Werk je direct of via een bureau?',
+        answer:
+          'Allebei, geen voorkeur. Bij de overheid loopt veel via een broker en daar werk ik prima mee. Rechtstreeks met de opdrachtgever kan net zo goed.',
+      },
+      {
+        id: 'tarief',
+        question: 'Wat kost het?',
+        answer:
+          'Op aanvraag. Het hangt af van de duur van de opdracht, de reistijd en of het via een bureau loopt.',
+      },
+    ],
   },
 
   cv: {

@@ -14,6 +14,7 @@ const en: SiteContent = {
       { href: '#wat-ik-doe', label: 'What I do' },
       { href: '#werkervaring', label: 'Experience' },
       { href: '#aanbevelingen', label: 'Recommendations' },
+      { href: '#vragen', label: 'Questions' },
       { href: '#contact', label: 'Contact' },
     ],
   },
@@ -44,7 +45,7 @@ const en: SiteContent = {
     facts: [
       { label: 'Working since', value: '2011' },
       { label: 'Education', value: 'BSc Communication & Multimedia Design, The Hague University' },
-      { label: 'Certification', value: 'ServiceNow Certified Application Developer' },
+      { label: 'Sectors', value: 'Dutch government and finance' },
       { label: 'Languages', value: 'Dutch, English, German' },
     ],
   },
@@ -100,11 +101,12 @@ const en: SiteContent = {
         highlights: [
           'Cut project start up from more than ten manual steps down to a single configuration',
           'Set up a greenfield MBOST project serving both staff and business users',
+          'Treated HOST as a lift and shift, because the business could not afford disruption. Improvements only where they left behaviour intact',
           'Worked out the API designs and connected them to the Angular frontend',
           'Clarified backend processes, including database population and the links between modules',
           'Mentored a junior full stack developer and a junior tester',
         ],
-        stack: ['Java', 'Spring Boot', 'Angular', 'TypeScript', 'Liquibase', 'Hibernate', 'ActiveMQ', 'Docker', 'Jenkins', 'GitLab'],
+        stack: ['Java', 'Spring Boot', 'Spring Security', 'JUnit', 'Angular', 'TypeScript', 'Liquibase', 'Hibernate', 'ActiveMQ', 'Cucumber', 'Playwright', 'Docker', 'Jenkins', 'GitLab'],
       },
       {
         id: 'duo-frontend',
@@ -132,7 +134,7 @@ const en: SiteContent = {
         highlights: [
           'Built a portal that keeps the old Aegon environment recognisable while working better',
           'Backend for frontend on AWS Lambda, later ECS, for a secure connection to the Knab APIs',
-          'Wrote tests at 80 to 100 percent coverage across Angular, React and Node',
+          'Wrote tests at 80 to 96 percent coverage across Angular, React and Node',
           'Built the React sign in flow with OAuth, password change and an OTP code by SMS or email',
         ],
         stack: ['Angular', 'React', 'NgRx', 'TypeScript', 'Node', 'Express', 'AWS Lambda', 'AWS ECS', 'DynamoDB', 'OAuth', 'Jest', 'Cypress'],
@@ -153,16 +155,32 @@ const en: SiteContent = {
         via: 'Ordina',
         role: 'Lead frontend and UX design',
         location: 'Odijk',
-        period: 'Apr 2021 - Nov 2021',
+        period: 'Apr 2020 - Nov 2021',
         summary:
-          'Making several internally built applications maintainable again, together with their users and original authors. Alongside that, helping another team with their testing strategy.',
+          'EBOs are applications built by very small teams that outgrew their original size. My job was to put them on a professional footing, working with their users and original authors.',
         highlights: [
           'Built shared packages so a single update reaches several apps at once',
           'Set up automatic ESLint fixes, testing standards and CI/CD',
           'Brought the team to user sessions using the fishbowl format, so everyone heard the requirements first hand',
-          'Ran testing workshops. The other team moved from snapshot tests to tests that check behaviour',
+          'Built Camera in Beeld among others, which shows officers where cameras are located',
         ],
         stack: ['TypeScript', 'StencilJS', 'JavaScript', 'Node', 'Python', 'Cypress', 'Jest', 'Jasmine', 'Docker', 'Cloud Foundry'],
+      },
+      {
+        id: 'politie-webcomponents',
+        company: 'Dutch national police',
+        via: 'Ordina',
+        role: 'Frontend developer',
+        location: 'Odijk',
+        period: 'Jun 2021 - Nov 2021',
+        summary:
+          'While working on the EBO engagement I ran into the Blueprint Webcomponents team, building a component library for every Dutch police app. Much of it existed already, but flaws in it made the library unusable outside a framework.',
+        highlights: [
+          'Made the components work in plain HTML. They relied entirely on the shadow DOM, which left developers without a JavaScript framework unable to use them',
+          'Ran testing workshops. The team moved from snapshot tests to tests that check behaviour, making them more specific and easier to maintain',
+          'Refactored heavily and wrote StencilJS tests covering every use case. In a library dozens of developers depend on, any mistake resurfaces somewhere else',
+        ],
+        stack: ['StencilJS', 'TypeScript', 'JavaScript', 'Node', 'Jasmine', 'Jest', 'ESLint', 'Sass'],
       },
       {
         id: 'politie-pandora',
@@ -188,11 +206,12 @@ const en: SiteContent = {
         location: 'Utrecht',
         period: 'Jan 2019 - Apr 2020',
         summary:
-          'Enterprise applications in Angular for ING, Heraeus, Lidl (Schwartz IT) and Finanz Informatik. I dealt with several of those clients directly.',
+          'Lead developer on enterprise applications in Angular for ING, Heraeus, Lidl (Schwarz IT) and Finanz Informatik. For several of those clients I ran the intake and the client contact myself.',
         highlights: [
-          'Mapped significant technical debt at ING and resolved it in consultation',
-          'Refactored for speed, making the application noticeably faster',
-          'Designed and wrote REST APIs for Heraeus, ING and Lidl',
+          'Found substantial technical debt at ING, raised it with both the agency and the client, and refactored a large part of the app once they agreed',
+          'Made that same app faster by replacing pre-rendering with REST APIs, so only the data actually needed loads once the page is up',
+          'Designed and built a portal for Heraeus where staff and managers handle their proposals. Only a rough idea existed, so the design came with it',
+          'Mentored a junior developer at Lidl inside a tight deadline',
           'Ran UX research and produced designs for Finanz Informatik, Heraeus and ING',
         ],
         stack: ['Angular', 'TypeScript', 'JavaScript', 'HTML', 'Sass', 'Git', 'GitLab'],
@@ -245,46 +264,63 @@ const en: SiteContent = {
   testimonials: {
     heading: 'What others say',
     intro: 'Recommendations from clients and colleagues, taken from LinkedIn.',
-    items: [
-      {
-        quote:
-          'Aart is a perfectionist and socially involved. As a valued team player and Frontend developer, he has made an important contribution to the development of the online banking environment. Together with his UX and Test knowledge, I would like to recommend Aart wholeheartedly.',
-        name: 'Bart Illy',
-        role: 'Product owner',
-      },
-      {
-        quote:
-          'He was the key developer in defining a new API for an existing application. He was able to properly translate the wishes from key users through ux testing and then specifying those requirements into a detailed API, and providing a frontend UI for that very same API as well, with its own set of automated tests.',
-        name: 'Thijs Knippers',
-        role: 'Colleague',
-      },
-      {
-        quote:
-          'He really emphasises the importance of writing comprehensible and well-tested code, and is able to use state of the art techniques to accomplish this. He happily took on the additional role of front-end mentor, and was always happy to explain things to me and help me gain more hands-on experience through pair-programming sessions.',
-        name: 'Ravi Selker',
-        role: 'Colleague',
-      },
-      {
-        quote:
-          'Exceptional hard and soft skills of Aart were crucial for the fast development of several frontend applications based on Angular and React, backend using NodeJS, establishing CI/CD and deploying on AWS.',
-        name: 'Anton Zhirkov',
-        role: 'Colleague',
-      },
-      {
-        quote:
-          'Aart is een echte verbinder, hij weet wat hij wil en gaat hier voor 110% voor om er een succes van te maken. Hij is een super teamspeler en weet zijn collega’s dan ook te inspireren om samen naar een groter doel te streven.',
-        name: 'Kevin Donkers',
-        role: 'Manager',
-      },
-      {
-        quote:
-          'Aart has demonstrated great ability in dealing with a highly complex technical project in a challenging setting. He was part of a multi-country development team and he played an essential role in having a successful project with a happy customer.',
-        name: 'Raphael Rodriguez',
-        role: 'Managing director',
-      },
-    ],
     moreLabel: 'All recommendations on LinkedIn',
     moreHref: 'https://www.linkedin.com/in/aartdenbraber',
+  },
+
+  faq: {
+    heading: 'Frequently asked questions',
+    intro: 'The things you probably want to know before you email.',
+    items: [
+      {
+        id: 'beschikbaarheid',
+        question: 'Are you available?',
+        answer:
+          'Not at the moment. I am at DUO, working on status assignment for higher and vocational education.\n\nA conversation is always worth having. Then I know what is going on at your end and whether I fit it a while from now.',
+      },
+      {
+        id: 'werkvorm',
+        question: 'Do you work remotely or on site?',
+        answer:
+          'Remote by preference. At DUO I go into the office roughly every three weeks, which works well: enough to know the people, little enough that it does not eat the week.\n\nFull time on site is not my preference, unless there is a reason for it I can follow.',
+      },
+      {
+        id: 'achtergrond',
+        question: 'What is your background?',
+        answer:
+          'I have been building websites and applications since 2011, employed from 2015 and freelance after that. I have used Angular since version 2, and Java with Spring Boot on the back.\n\nI also graduated as a UX researcher. That lets me carry a user question through to an API design myself rather than handing it off. Most of my work sits in Dutch government and finance: DUO, the national police, Knab and ING.',
+      },
+      {
+        id: 'servicenow',
+        question: 'Do you still work with ServiceNow?',
+        answer:
+          'No. I earned two certifications for it in 2019 and worked on Service Portals, but not since. I would not propose it myself.\n\nI would not call it a no either. I enjoy work across IT, so if there is a good reason to go back in, I want to hear it. Read it as not my first choice.',
+      },
+      {
+        id: 'testen',
+        question: 'How do you think about testing?',
+        answer:
+          'Blackbox as the starting point. A test checks what a user or a calling party notices, not how it works inside. If you want whitebox tests, I am happy to have that argument with you.\n\nSnapshot tests do not count for me. They only confirm whatever the code already happens to do. I ran workshops on this at the national police, and that team moved to tests that check behaviour.',
+      },
+      {
+        id: 'grenzen',
+        question: 'What will you push back on?',
+        answer:
+          'I have no list of technologies I refuse. What I will raise: when there is no room to write tests, or when the code supposedly does not need to be handover ready because it is temporary anyway.\n\nAt ING I found substantial technical debt. I raised it with both the agency and the client instead of working around it, and once they agreed, a large part of the app was refactored. That is how I prefer to do it.',
+      },
+      {
+        id: 'route',
+        question: 'Do you work directly or through an agency?',
+        answer:
+          'Either, no preference. In Dutch government work a lot runs through a broker and that is fine by me. Straight to the client works just as well.',
+      },
+      {
+        id: 'tarief',
+        question: 'What does it cost?',
+        answer:
+          'On request. It depends on the length of the engagement, the travel involved and whether it runs through an agency.',
+      },
+    ],
   },
 
   cv: {

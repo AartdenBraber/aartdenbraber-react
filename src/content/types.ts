@@ -58,9 +58,15 @@ export interface ExperienceContent {
 export interface TestimonialsContent {
   heading: string;
   intro: string;
-  items: { quote: string; name: string; role: string }[];
   moreLabel: string;
   moreHref: string;
+}
+
+export interface FaqContent {
+  heading: string;
+  intro: string;
+  /** Antwoorden mogen meerdere alinea's bevatten, gescheiden door een lege regel. */
+  items: { id: string; question: string; answer: string }[];
 }
 
 export interface CvContent {
@@ -98,6 +104,7 @@ export interface SiteContent {
   services: ServicesContent;
   experience: ExperienceContent;
   testimonials: TestimonialsContent;
+  faq: FaqContent;
   cv: CvContent;
   contact: ContactContent;
 }

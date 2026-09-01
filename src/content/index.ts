@@ -3,6 +3,7 @@ import en from './en';
 import { Language, SiteContent } from './types';
 
 export * from './types';
+export * from './testimonials';
 
 export const LANGUAGES: Language[] = ['nl', 'en'];
 

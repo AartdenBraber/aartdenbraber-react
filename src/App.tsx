@@ -8,6 +8,7 @@ import '@fontsource/roboto-slab/500.css';
 import About from './components/About/About';
 import CvDownload from './components/CvDownload/CvDownload';
 import Experience from './components/Experience/Experience';
+import Faq from './components/Faq/Faq';
 import Hero from './components/Hero/Hero';
 import Services from './components/Services/Services';
 import SiteFooter from './components/SiteFooter/SiteFooter';
@@ -30,6 +31,7 @@ const Page: React.FC = () => {
         <Services />
         <Experience />
         <Testimonials />
+        <Faq />
         <CvDownload />
       </main>
 
