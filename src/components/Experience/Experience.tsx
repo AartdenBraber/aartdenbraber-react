@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import './Experience.scss';
+import { useRevealOnView } from '../../hooks/useRevealOnView';
 import { useLanguage } from '../../i18n/LanguageContext';
 
 /** Haakje dat aangeeft dat een opdracht onder de werkgever erboven hangt. */
@@ -24,6 +25,9 @@ const BranchIcon: React.FC = () => (
 const Experience: React.FC = () => {
   const { t } = useLanguage();
   const { entries, highlightsLabel, stackLabel, currentLabel, viaLabel } = t.experience;
+  const listRef = useRef<HTMLOListElement>(null);
+
+  useRevealOnView(listRef, '.experience__item');
 
   return (
     <section className="section experience" id="werkervaring" aria-labelledby="werkervaring-titel">
@@ -33,7 +37,7 @@ const Experience: React.FC = () => {
           <p>{t.experience.intro}</p>
         </div>
 
-        <ol className="experience__list">
+        <ol className="experience__list" ref={listRef}>
           {entries.map((entry, index) => (
             <li
               key={entry.id}

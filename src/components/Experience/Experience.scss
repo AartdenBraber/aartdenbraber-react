@@ -12,7 +12,20 @@
 // dus de nesting zit in de kaart zelf: het label, het haakje en de tint.
 .experience__item {
   position: sticky;
-  top: calc(var(--header-offset) * 0.4 + var(--index) * 0.6rem);
+  top: calc(var(--header-offset) * 0.4 + var(--index) * 0.75rem);
+}
+
+// De kaarten komen één keer omhoog binnen wanneer ze in beeld scrollen. De
+// pending-staat wordt door useRevealOnView gezet, dus zonder JavaScript staat
+// alles gewoon zichtbaar.
+.experience__item[data-reveal] .experience-card {
+  transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.experience__item[data-reveal='pending'] .experience-card {
+  opacity: 0;
+  transform: translateY(26px);
 }
 
 .experience-card {
