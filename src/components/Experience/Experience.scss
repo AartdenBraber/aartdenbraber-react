@@ -53,11 +53,15 @@
   transform: translateY(calc(var(--stack-depth, 0) * -0.35rem))
     scale(calc(1 - var(--stack-depth, 0) * 0.025));
   transform-origin: 50% 0;
-  // Een bedolven kaart mag nooit onder de kaart ervoor uitsteken; useStackDepth
-  // zet in --stack-clip hoeveel er van de onderkant af moet. De ruime
-  // negatieve insets laten de schaduw rondom met rust, en zonder knijpwerk is
-  // de waarde zelf negatief zodat ook de onderrand vrij blijft.
-  clip-path: inset(-99px -99px calc(var(--stack-clip, -99) * 1px) -99px);
+  // Een bedolven kaart mag nooit onder de kaart ervoor uitsteken, en een
+  // kaart die aan het einde door de lijstonderkant omhoog wordt geduwd niet
+  // boven zijn plek in de stapel. useStackDepth zet in --stack-clip en
+  // --stack-clip-top hoeveel er onder en boven af moet. De ruime negatieve
+  // insets laten de schaduw rondom met rust; zonder knijpwerk zijn de waarden
+  // zelf negatief zodat ook die randen vrij blijven.
+  clip-path: inset(
+    calc(var(--stack-clip-top, -99) * 1px) -99px calc(var(--stack-clip, -99) * 1px) -99px
+  );
 }
 
 // De inhoud vervaagt zodra de volgende kaart eroverheen schuift, en is al
