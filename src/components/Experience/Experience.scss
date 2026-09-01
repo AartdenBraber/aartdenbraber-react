@@ -1,7 +1,6 @@
-// De stapel moet binnen de sectie blijven: aan het einde schuift de volgende
-// sectie als achtergrond over de vastgeplakte kaarten heen, in plaats van dat
-// de lijstonderkant ze een voor een uitduwt (de hoogste het eerst, met kale
-// kaartvlakken boven de stapel uit als gevolg).
+// Vangnet: mocht er ooit toch iets van de stapel buiten de sectie uitsteken,
+// dan snijdt de sectierand het af. Clip maakt, anders dan hidden, geen
+// scrollcontainer van de sectie, dus sticky blijft aan de viewport hangen.
 .experience {
   overflow: clip;
 }
@@ -10,12 +9,10 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-m);
-  // Extra plakruimte zodat geen enkele kaart loskomt zolang de sectie in
-  // beeld is, ook de laatste niet. De negatieve marge geeft de ruimte direct
-  // terug, dus de pagina wordt er niet langer van; de overflow-clip hierboven
-  // snijdt de kaarten af op de sectierand.
-  padding-bottom: 100vh;
-  margin-bottom: -100vh;
+  // De staart van de laatste kaart lekt als enige in de hoogte van de lijst
+  // (die van de rest wordt door de bovenmarge van hun opvolger opgevangen);
+  // deze marge geeft die ruimte terug zodat de pagina op lengte blijft.
+  margin-bottom: calc(var(--stack-runout, 0) * -1px);
 }
 
 // Elke kaart blijft plakken net onder de vorige, zodat ze tijdens het scrollen
@@ -27,6 +24,15 @@
 .experience__item {
   position: sticky;
   top: calc(var(--stack-top) + var(--index) * 0.75rem);
+  // Staart uit useStackDepth die alle plak-onderkanten gelijktrekt: de
+  // browser laat daardoor alle kaarten op hetzelfde moment los en de stapel
+  // vertrekt als één blok, native en zonder per-frame correcties. De klem
+  // rekent met de marge-box, dus de staart moet een echte ondermarge zijn;
+  // de negatieve bovenmarge van de opvolger (--stack-pull, de staart van de
+  // kaart erboven) geeft de ruimte in de flow terug en stoort het pinnen
+  // niet.
+  margin-top: calc(var(--stack-pull, 0) * -1px);
+  margin-bottom: calc(var(--stack-tail, 0) * 1px);
 }
 
 // De kaarten komen één keer omhoog binnen wanneer ze in beeld scrollen. De
@@ -50,13 +56,7 @@
 // De transform staat op een tussenlaag en niet op de li, omdat de li het
 // meetpunt van useStackDepth is: een transform daarop zou de meting vervuilen.
 .experience__motion {
-  // --stack-shift houdt de stapel in formatie: het corrigeert het uitduwen
-  // door de lijstonderkant (dat de hoogste kaarten eerder raakt) en laat aan
-  // het einde alle kaarten exact meescrollen met de vertrekkende laatste
-  // kaart, in plaats van vastgeplakt te blijven hangen.
-  transform: translateY(
-      calc(var(--stack-shift, 0) * 1px + var(--stack-depth, 0) * -0.35rem)
-    )
+  transform: translateY(calc(var(--stack-depth, 0) * -0.35rem))
     scale(calc(1 - var(--stack-depth, 0) * 0.025));
   transform-origin: 50% 0;
   // Een bedolven kaart mag nooit onder de kaart ervoor uitsteken;
@@ -251,22 +251,16 @@
     position: static;
   }
 
-  .experience__list {
-    padding-bottom: 0;
-    margin-bottom: 0;
-  }
-
   .experience-card {
     padding: var(--space-m);
   }
 }
 
 // De vervaging blijft: die repareert de doorschemerende tekst en is aan de
-// scrollpositie gebonden, niet aan tijd. Ook de formatie-correctie blijft,
-// want zonder die schuift een lange kaart boven de stapel uit. Alleen het
-// decoratieve wegzakken vervalt.
+// scrollpositie gebonden, niet aan tijd. Alleen het decoratieve wegzakken
+// vervalt; de stapel zelf gedraagt zich native via sticky en de staartjes.
 @media (prefers-reduced-motion: reduce) {
   .experience__motion {
-    transform: translateY(calc(var(--stack-shift, 0) * 1px));
+    transform: none;
   }
 }

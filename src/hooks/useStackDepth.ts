@@ -28,8 +28,6 @@ export interface StackCardDepth {
   depth: number;
   /** Pixels die van de onderkant af moeten, of NO_CLIP wanneer niets weg hoeft. */
   clip: number;
-  /** Pixels die de kaart visueel moet verschuiven (positief is omlaag). */
-  shift: number;
 }
 
 const clamp01 = (value: number) => Math.min(1, Math.max(0, value));
@@ -49,13 +47,8 @@ const clamp01 = (value: number) => Math.min(1, Math.max(0, value));
  * De kniprand zelf blijft tijdens het overschuiven altijd achter de opvolger
  * verborgen: hij trekt langzamer op dan de kaart die eroverheen schuift.
  *
- * Aan het einde vertrekt de stapel als één geheel. De laatste kaart plakt
- * nooit (zijn onderkant is de onderkant van de lijst) en scrolt gewoon door;
- * zodra hij voorbij zijn plakpositie komt, schuift `shift` alle andere
- * kaarten exact evenveel mee omhoog. Datzelfde getal corrigeert ook het
- * uitduwen door de lijstonderkant, dat de hoogste kaarten eerder raakt dan
- * de rest: `shift` is het verschil tussen wat de browser de kaart al heeft
- * opgeschoven en waar hij in de vertrekkende stapel hoort te liggen.
+ * Het vertrek aan het einde van de sectie staat hier los van: dat regelen de
+ * staartjes van resolveStackTails volledig native in de layout.
  *
  * Los van de DOM gehouden: dit is het enige stuk waar iets te beslissen valt,
  * en zo is het te testen zonder een browser die frames produceert.
@@ -78,11 +71,6 @@ export const resolveStackDepths = (cards: StackCardBounds[]): StackCardDepth[] =
   const depths: StackCardDepth[] = new Array(cards.length);
   let sum = 0;
 
-  // Hoe ver de laatste kaart al voorbij zijn plakpositie is gescrold: de
-  // vertreksnelheid van de hele stapel.
-  const last = cards[cards.length - 1];
-  const departure = last ? Math.max(0, last.stickyTop - last.top) : 0;
-
   for (let index = cards.length - 1; index >= 0; index -= 1) {
     const card = cards[index];
     const next = cards[index + 1];
@@ -99,17 +87,39 @@ export const resolveStackDepths = (cards: StackCardBounds[]): StackCardDepth[] =
     }
 
     const clip = card.height - visible;
-    const pushedUp = next ? Math.max(0, card.stickyTop - card.top) : 0;
 
     depths[index] = {
       covered: covered[index],
       depth: Math.min(MAX_DEPTH, sum),
       clip: clip > 0 ? clip : NO_CLIP,
-      shift: next ? pushedUp - departure : 0,
     };
   }
 
   return depths;
+};
+
+/**
+ * Onzichtbare staart per kaart die alle plak-onderkanten gelijktrekt.
+ *
+ * De browser laat een vastgeplakte kaart los zodra de onderkant van de lijst
+ * zijn onderrand raakt; hoge kaarten dus eerder dan lage, en die schoven dan
+ * boven de stapel uit. Elke poging om dat per scrollframe met JavaScript te
+ * corrigeren, wipt: de browser verschuift sticky-kaarten op de
+ * compositor-thread en de correctie komt een frame later. Met een staart als
+ * ondermarge eindigt elke kaart even diep, laat alles op exact hetzelfde
+ * moment los en vertrekt de stapel als één blok, zonder JavaScript per frame.
+ * De klem rekent met de marge-box (padding met negatieve marge valt er dus
+ * tegen elkaar weg); de flow blijft op maat doordat de opvolger de staart
+ * opvangt met een negatieve bovenmarge, die het pinnen zelf niet raakt.
+ */
+export const resolveStackTails = (
+  cards: Pick<StackCardBounds, 'height' | 'stickyTop'>[],
+): number[] => {
+  if (cards.length === 0) return [];
+
+  const slot = Math.max(...cards.map((card) => card.stickyTop + card.height));
+
+  return cards.map((card) => slot - card.stickyTop - card.height);
 };
 
 /**
@@ -145,8 +155,10 @@ export const useStackDepth = (
         item.style.removeProperty('--stack-covered');
         item.style.removeProperty('--stack-depth');
         item.style.removeProperty('--stack-clip');
-        item.style.removeProperty('--stack-shift');
+        item.style.removeProperty('--stack-tail');
+        item.style.removeProperty('--stack-pull');
       });
+      container.style.removeProperty('--stack-runout');
       written = [];
     };
 
@@ -162,9 +174,23 @@ export const useStackDepth = (
       }
 
       stickyTops = items.map((item) => parseFloat(window.getComputedStyle(item).top) || 0);
-      // offsetHeight in plaats van getBoundingClientRect: die laatste krimpt
-      // mee met de scale van het stapel-effect zelf.
-      heights = items.map((item) => item.offsetHeight);
+      // Hoogte van de kaartlaag, niet van de li: de li krijgt hieronder een
+      // staart aan padding, en offsetHeight in plaats van
+      // getBoundingClientRect omdat die laatste meekrimpt met de scale van
+      // het stapel-effect zelf.
+      heights = items.map((item) => (item.firstElementChild as HTMLElement)?.offsetHeight ?? 0);
+
+      const tails = resolveStackTails(
+        items.map((_, index) => ({ height: heights[index], stickyTop: stickyTops[index] })),
+      );
+
+      tails.forEach((tail, index) => {
+        items[index].style.setProperty('--stack-tail', tail.toFixed(1));
+        // De opvolger vangt de staart in de flow op met zijn bovenmarge.
+        items[index + 1]?.style.setProperty('--stack-pull', tail.toFixed(1));
+      });
+
+      container.style.setProperty('--stack-runout', tails[tails.length - 1].toFixed(1));
     };
 
     const update = () => {
@@ -178,8 +204,8 @@ export const useStackDepth = (
         stickyTop: stickyTops[index],
       }));
 
-      resolveStackDepths(bounds).forEach(({ covered, depth, clip, shift }, index) => {
-        const value = `${covered.toFixed(3)}/${depth.toFixed(3)}/${clip.toFixed(1)}/${shift.toFixed(1)}`;
+      resolveStackDepths(bounds).forEach(({ covered, depth, clip }, index) => {
+        const value = `${covered.toFixed(3)}/${depth.toFixed(3)}/${clip.toFixed(1)}`;
 
         if (written[index] === value) return;
 
@@ -187,7 +213,6 @@ export const useStackDepth = (
         items[index].style.setProperty('--stack-covered', covered.toFixed(3));
         items[index].style.setProperty('--stack-depth', depth.toFixed(3));
         items[index].style.setProperty('--stack-clip', clip.toFixed(1));
-        items[index].style.setProperty('--stack-shift', shift.toFixed(1));
       });
     };
 

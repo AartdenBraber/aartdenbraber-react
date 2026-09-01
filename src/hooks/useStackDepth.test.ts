@@ -1,4 +1,4 @@
-import { NO_CLIP, resolveStackDepths, StackCardBounds } from './useStackDepth';
+import { NO_CLIP, resolveStackDepths, resolveStackTails, StackCardBounds } from './useStackDepth';
 
 // Kaarten van 400px hoog die 12px onder elkaar vastplakken, zoals in de
 // werkervaring-sectie.
@@ -13,9 +13,9 @@ describe('resolveStackDepths', () => {
     const depths = resolveStackDepths([kaart(40, 40), kaart(452, 52), kaart(864, 64)]);
 
     expect(depths).toEqual([
-      { covered: 0, depth: 0, clip: NO_CLIP, shift: 0 },
-      { covered: 0, depth: 0, clip: NO_CLIP, shift: 0 },
-      { covered: 0, depth: 0, clip: NO_CLIP, shift: 0 },
+      { covered: 0, depth: 0, clip: NO_CLIP },
+      { covered: 0, depth: 0, clip: NO_CLIP },
+      { covered: 0, depth: 0, clip: NO_CLIP },
     ]);
   });
 
@@ -59,28 +59,23 @@ describe('resolveStackDepths', () => {
       covered: 0,
       depth: 0,
       clip: NO_CLIP,
-      shift: 0,
     });
   });
 
-  it('schuift een uitgeduwde kaart terug naar zijn plek in de stapel', () => {
-    // Kaart 24px boven zijn plakpositie geduwd terwijl de laatste kaart nog
-    // op zijn plek ligt: precies dat stuk schuift hij visueel terug.
-    expect(resolveStackDepths([kaart(40, 40), kaart(52, 52)])[0].shift).toBe(0);
-    expect(resolveStackDepths([kaart(16, 40), kaart(52, 52)])[0].shift).toBeCloseTo(24);
+  it('trekt met staartjes alle plak-onderkanten gelijk', () => {
+    // De hoogste kaart (plakpositie + hoogte = 740) bepaalt de maat; de rest
+    // krijgt het verschil als staart, zodat alles tegelijk loslaat.
+    const staarten = resolveStackTails([
+      { stickyTop: 40, height: 700 },
+      { stickyTop: 52, height: 600 },
+      { stickyTop: 64, height: 300 },
+    ]);
+
+    expect(staarten).toEqual([0, 88, 376]);
   });
 
-  it('laat de stapel als geheel meescrollen met de vertrekkende laatste kaart', () => {
-    // De laatste kaart is 32px voorbij zijn plakpositie gescrold; de rest
-    // schuift evenveel mee omhoog in plaats van te blijven plakken.
-    expect(resolveStackDepths([kaart(40, 40), kaart(20, 52)])[0].shift).toBeCloseTo(-32);
-
-    // Ook wie zelf al door de lijstonderkant is uitgeduwd (hier 540px), komt
-    // in de vertrekkende formatie terecht: 12px boven de laatste kaart.
-    const [eerste, laatste] = resolveStackDepths([kaart(-500, 40), kaart(-400, 52)]);
-
-    expect(laatste.shift).toBe(0);
-    expect(-500 + eerste.shift).toBeCloseTo(-400 - 12);
+  it('geeft geen staart aan een lege lijst', () => {
+    expect(resolveStackTails([])).toEqual([]);
   });
 
   it('knipt een bedolven kaart terug tot het randje plus de hoekmarge', () => {
