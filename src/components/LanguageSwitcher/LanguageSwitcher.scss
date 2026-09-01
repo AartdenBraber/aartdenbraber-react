@@ -1,0 +1,36 @@
+.language-switcher {
+  display: inline-flex;
+  padding: 3px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: var(--radius-pill);
+  background: rgba(15, 12, 9, 0.35);
+  backdrop-filter: blur(6px);
+}
+
+.language-switcher__option {
+  padding: 0.3rem 0.75rem;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: var(--step--1);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: background-color 0.18s ease, color 0.18s ease;
+
+  abbr {
+    text-decoration: none;
+    border: 0;
+    cursor: inherit;
+  }
+
+  &:hover {
+    color: #fff;
+  }
+
+  &[aria-pressed='true'] {
+    background: #fff;
+    color: var(--color-dark);
+  }
+}

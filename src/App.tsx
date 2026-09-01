@@ -1,26 +1,47 @@
 import React from 'react';
-import './styles/bootstrap.scss';
 
-import './App.scss'
-import Hero from './components/Hero/Hero';
-import Intro from './components/Intro/Intro';
-import '@fontsource/roboto-slab/500.css';
 import '@fontsource/raleway/400.css';
+import '@fontsource/raleway/600.css';
+import '@fontsource/raleway/700.css';
+import '@fontsource/roboto-slab/500.css';
 
-import CVDisplay from './components/CVDisplay/CVDisplay';
+import About from './components/About/About';
+import CvDownload from './components/CvDownload/CvDownload';
+import Experience from './components/Experience/Experience';
+import Hero from './components/Hero/Hero';
+import Services from './components/Services/Services';
+import SiteFooter from './components/SiteFooter/SiteFooter';
+import Testimonials from './components/Testimonials/Testimonials';
+import { LanguageProvider, useLanguage } from './i18n/LanguageContext';
 
-function App() {
+const Page: React.FC = () => {
+  const { t } = useLanguage();
 
   return (
-    <div className="site-content">
-      <Hero />
-      <Intro />
-      <CVDisplay />
+    <>
+      <a className="skip-link" href="#over-mij">
+        {t.nav.skipToContent}
+      </a>
 
-      <main className='container'>
+      <Hero />
+
+      <main id="hoofdinhoud">
+        <About />
+        <Services />
+        <Experience />
+        <Testimonials />
+        <CvDownload />
       </main>
-    </div>
+
+      <SiteFooter />
+    </>
   );
-}
+};
+
+const App: React.FC = () => (
+  <LanguageProvider>
+    <Page />
+  </LanguageProvider>
+);
 
 export default App;

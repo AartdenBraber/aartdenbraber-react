@@ -1,88 +1,75 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import './FocusSpotlight.scss';
 
 interface FocusSpotlightProps {
-    image: string;
+  image: string;
 }
 
+const OFF_SCREEN = -9999;
+
+/**
+ * Legt een scherpe kopie van de achtergrond over een geblurde versie heen en
+ * onthult die alleen rond de cursor. De positie gaat via CSS-variabelen, zodat
+ * React niet bij elke muisbeweging opnieuw hoeft te renderen.
+ */
 const FocusSpotlight: React.FC<FocusSpotlightProps> = ({ image }) => {
-    const hasAnimated = useRef(false);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const spotlightRef = useRef<HTMLDivElement>(null);
 
-    const wrapperRef = useRef<HTMLDivElement>(null);
-    const spotlightRef = useRef<HTMLDivElement>(null);
-    const animationFrame = useRef<number | null>(null);
+  useEffect(() => {
+    const wrapper = wrapperRef.current;
+    const spotlight = spotlightRef.current;
 
-    const updateSpotlight = (x: number, y: number) => {
-        if (!spotlightRef.current) return;
+    if (!wrapper || !spotlight) return;
 
-        if (animationFrame.current !== null) {
-            cancelAnimationFrame(animationFrame.current);
-        }
+    // Op een aanraakscherm is er geen cursor om te volgen.
+    if (window.matchMedia('(hover: none)').matches) return;
 
-        animationFrame.current = requestAnimationFrame(() => {
-            spotlightRef.current!.style.setProperty('--x', `${x}px`);
-            spotlightRef.current!.style.setProperty('--y', `${y}px`);
-        });
+    let frame: number | null = null;
+    let hasAnimated = false;
+
+    const place = (x: number, y: number) => {
+      if (frame !== null) cancelAnimationFrame(frame);
+
+      frame = requestAnimationFrame(() => {
+        spotlight.style.setProperty('--x', `${x}px`);
+        spotlight.style.setProperty('--y', `${y}px`);
+      });
     };
 
-    const handleMove = (e: MouseEvent | TouchEvent) => {
-        let clientX = 0;
-        let clientY = 0;
+    const handleMove = (event: MouseEvent) => {
+      const rect = wrapper.getBoundingClientRect();
+      place(event.clientX - rect.left, event.clientY - rect.top);
 
-        if ('touches' in e && e.touches.length > 0) {
-            clientX = e.touches[0].clientX;
-            clientY = e.touches[0].clientY;
-        } else if ('clientX' in e) {
-            clientX = e.clientX;
-            clientY = e.clientY;
-        }
-
-        const wrapper = wrapperRef.current;
-        if (!wrapper) return;
-
-        const rect = wrapper.getBoundingClientRect();
-        const x = clientX - rect.left;
-        const y = clientY - rect.top;
-
-        updateSpotlight(x, y);
-
-        if (!hasAnimated.current) {
-            hasAnimated.current = true;
-            spotlightRef.current?.classList.add('animate-ring');
-        }
+      if (!hasAnimated) {
+        hasAnimated = true;
+        spotlight.classList.add('animate-ring');
+      }
     };
 
-    const handleMouseLeave = () => {
-        // Zet spotlight ver buiten beeld
-        updateSpotlight(-9999, -9999);
+    const handleLeave = () => place(OFF_SCREEN, OFF_SCREEN);
+
+    window.addEventListener('mousemove', handleMove, { passive: true });
+    document.addEventListener('mouseleave', handleLeave);
+
+    return () => {
+      window.removeEventListener('mousemove', handleMove);
+      document.removeEventListener('mouseleave', handleLeave);
+
+      if (frame !== null) cancelAnimationFrame(frame);
     };
+  }, []);
 
-    useEffect(() => {
-        window.addEventListener('mousemove', handleMove);
-        window.addEventListener('touchmove', handleMove);
-        window.addEventListener('mouseout', handleMouseLeave);
-
-        return () => {
-            window.removeEventListener('mousemove', handleMove);
-            window.removeEventListener('touchmove', handleMove);
-            window.removeEventListener('mouseout', handleMouseLeave);
-
-            if (animationFrame.current !== null) {
-                cancelAnimationFrame(animationFrame.current);
-            }
-        };
-    }, []);
-
-    return (
-        <div className="spotlight-background">
-            <div className="background-wrapper" ref={wrapperRef}>
-                <img src={image} alt="Blurred background" className="background blurred" />
-                <div ref={spotlightRef} className="spotlight">
-                    <img src={image} alt="Focused background" className="background focused" />
-                </div>
-            </div>
+  return (
+    <div className="spotlight-background" aria-hidden="true">
+      <div className="background-wrapper" ref={wrapperRef}>
+        <img src={image} alt="" className="background blurred" />
+        <div ref={spotlightRef} className="spotlight">
+          <img src={image} alt="" className="background focused" />
         </div>
-    );
+      </div>
+    </div>
+  );
 };
 
 export default FocusSpotlight;

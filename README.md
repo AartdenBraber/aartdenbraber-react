@@ -1,54 +1,51 @@
-# Hosting
+# aartdenbraber.nl
 
-https://app.netlify.com/ (inloggen met github account AartdenBraber)
+Portfoliosite van Aart den Braber. React met TypeScript, gebouwd met Create React App.
 
-en cms staat op
-https://app.contentful.com/
-contentful@prosumfrontend.nl
+## Aan de slag
 
-# Getting Started with Create React App
+```bash
+npm install
+npm start
+```
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+De site draait dan op http://localhost:3000.
 
-## Available Scripts
+| Commando        | Wat het doet                                  |
+| --------------- | --------------------------------------------- |
+| `npm start`     | Development server met hot reload              |
+| `npm test`      | Tests in watch mode                            |
+| `npm run build` | Productiebundel in `build/`                    |
 
-In the project directory, you can run:
+## Structuur
 
-### `npm start`
+```
+src/
+  content/      Alle teksten, per taal (nl.ts en en.ts) met gedeelde types
+  i18n/         Taalcontext: keuze onthouden, <html lang> bijwerken
+  components/   Eén map per component, met de bijbehorende .scss ernaast
+  styles/       Tokens en globale stijlen
+```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Teksten aanpassen doe je in `src/content/nl.ts` en `src/content/en.ts`. Beide
+bestanden voldoen aan hetzelfde type, dus TypeScript geeft een fout zodra er in
+één taal iets ontbreekt.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+Kleuren, spacing en typografie staan als CSS-variabelen in
+`src/styles/_tokens.scss`.
 
-### `npm test`
+## Het cv
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+De site linkt naar een pdf in `public/`:
 
-### `npm run build`
+- Development gebruikt `CV-DEV.pdf`, een dummybestand zonder persoonsgegevens.
+- Productie gebruikt `CV-Aart-den-Braber-NL.pdf` en `CV-Aart-den-Braber-EN.pdf`.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Die twee productiebestanden staan bewust niet in de repo, omdat de repo publiek
+is. Ze worden los op de server geplaatst. Zie `src/content/index.ts` voor de
+logica die de juiste bestandsnaam kiest.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Hosting
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+De site staat op Netlify en bouwt automatisch bij een push naar `main`.
+Inloggegevens staan in de wachtwoordmanager, niet in deze repo.

@@ -1,0 +1,189 @@
+.experience__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-m);
+}
+
+// Elke kaart blijft plakken net onder de vorige, zodat ze tijdens het scrollen
+// op elkaar stapelen. Onder de breakpoint staat alles gewoon onder elkaar.
+//
+// Alle kaarten zijn even breed en staan exact boven elkaar. Een geneste
+// opdracht inspringen zou de stapel scheef laten oplopen tijdens het scrollen,
+// dus de nesting zit in de kaart zelf: het label, het haakje en de tint.
+.experience__item {
+  position: sticky;
+  top: calc(var(--header-offset) * 0.4 + var(--index) * 0.6rem);
+}
+
+.experience-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-m);
+  padding: var(--space-l);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-l);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+}
+
+// Een opdracht via een werkgever ligt visueel iets dieper dan de werkgever zelf.
+.experience__item--nested .experience-card {
+  background: var(--color-surface-sunken);
+}
+
+.experience-card__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-s) var(--space-m);
+}
+
+.experience-card__via {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  margin-bottom: var(--space-2xs);
+  color: var(--color-ink-muted);
+  font-size: var(--step--1);
+  font-weight: 600;
+}
+
+.experience-card__branch {
+  flex: none;
+}
+
+.experience-card__company {
+  font-size: var(--step-2);
+}
+
+.experience-card__role {
+  margin-top: var(--space-2xs);
+  color: var(--color-ink-soft);
+  font-size: var(--step-1);
+}
+
+.experience-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-xs);
+  color: var(--color-ink-muted);
+  font-size: var(--step--1);
+}
+
+.experience-card__period,
+.experience-card__location {
+  white-space: nowrap;
+}
+
+.experience-card__location::before {
+  content: '·';
+  margin-right: var(--space-xs);
+}
+
+.experience-card__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 0.15rem 0.6rem;
+  border: 1px solid rgba(31, 157, 85, 0.32);
+  border-radius: var(--radius-pill);
+  background: var(--color-live-soft);
+  color: var(--color-live-ink);
+  font-weight: 600;
+}
+
+.experience-card__pulse {
+  position: relative;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-live);
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: var(--color-live);
+    animation: experience-pulse 2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  }
+}
+
+@keyframes experience-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.65;
+  }
+  100% {
+    transform: scale(2.8);
+    opacity: 0;
+  }
+}
+
+.experience-card__summary {
+  max-width: 42rem;
+  color: var(--color-ink-soft);
+}
+
+.experience-card__block h4 {
+  margin-bottom: var(--space-xs);
+  color: var(--color-ink-muted);
+  font-family: var(--font-body);
+  font-size: var(--step--1);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.experience-card__highlights li {
+  position: relative;
+  max-width: 52rem;
+  padding-left: 1.4rem;
+  color: var(--color-ink-soft);
+
+  & + li {
+    margin-top: var(--space-2xs);
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0.72em;
+    left: 0.25rem;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-accent);
+  }
+}
+
+.experience-card__stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2xs);
+
+  li {
+    padding: 0.15rem 0.6rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-pill);
+    background: var(--color-surface);
+    color: var(--color-ink-soft);
+    font-size: var(--step--1);
+  }
+}
+
+.experience__item--nested .experience-card__stack li {
+  background: var(--color-surface);
+}
+
+@media (max-width: 48rem) {
+  .experience__item {
+    position: static;
+  }
+
+  .experience-card {
+    padding: var(--space-m);
+  }
+}
