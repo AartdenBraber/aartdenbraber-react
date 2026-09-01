@@ -28,8 +28,8 @@ export interface StackCardDepth {
   depth: number;
   /** Pixels die van de onderkant af moeten, of NO_CLIP wanneer niets weg hoeft. */
   clip: number;
-  /** Pixels die de kaart boven zijn plakpositie uit is geduwd. */
-  pushed: number;
+  /** Pixels die de kaart visueel moet verschuiven (positief is omlaag). */
+  shift: number;
 }
 
 const clamp01 = (value: number) => Math.min(1, Math.max(0, value));
@@ -48,17 +48,14 @@ const clamp01 = (value: number) => Math.min(1, Math.max(0, value));
  * plus een klein stuk dat achter de ronde hoeken van de opvolger schuilgaat.
  * De kniprand zelf blijft tijdens het overschuiven altijd achter de opvolger
  * verborgen: hij trekt langzamer op dan de kaart die eroverheen schuift.
- * Daarbovenop komt niets ooit onder de bovenrand van de laatste kaart uit:
- * die plakt niet, en als hij aan het einde wegscrolt zouden de vastgehouden
- * randjes er anders onderuit komen.
  *
- * Aan het einde van de lijst duwt de onderrand vastgeplakte kaarten boven hun
- * plakpositie uit, de hoogste het eerst, en die zou dan boven de stapel
- * uitsteken. `pushed` meet dat stuk; de kaart wordt er visueel exact mee
- * teruggeschoven, zodat zijn ronde bovenrand gewoon op zijn plek in de stapel
- * blijft liggen. De onderkant is dan toch al weggeknipt, dus per saldo wordt
- * de kaart alleen minder hoog. De laatste kaart plakt nooit; boven zijn
- * plakpositie uitkomen is daar gewoon scrollen, dus die blijft ongemoeid.
+ * Aan het einde vertrekt de stapel als één geheel. De laatste kaart plakt
+ * nooit (zijn onderkant is de onderkant van de lijst) en scrolt gewoon door;
+ * zodra hij voorbij zijn plakpositie komt, schuift `shift` alle andere
+ * kaarten exact evenveel mee omhoog. Datzelfde getal corrigeert ook het
+ * uitduwen door de lijstonderkant, dat de hoogste kaarten eerder raakt dan
+ * de rest: `shift` is het verschil tussen wat de browser de kaart al heeft
+ * opgeschoven en waar hij in de vertrekkende stapel hoort te liggen.
  *
  * Los van de DOM gehouden: dit is het enige stuk waar iets te beslissen valt,
  * en zo is het te testen zonder een browser die frames produceert.
@@ -80,7 +77,11 @@ export const resolveStackDepths = (cards: StackCardBounds[]): StackCardDepth[] =
 
   const depths: StackCardDepth[] = new Array(cards.length);
   let sum = 0;
-  const lastTop = cards[cards.length - 1]?.top ?? 0;
+
+  // Hoe ver de laatste kaart al voorbij zijn plakpositie is gescrold: de
+  // vertreksnelheid van de hele stapel.
+  const last = cards[cards.length - 1];
+  const departure = last ? Math.max(0, last.stickyTop - last.top) : 0;
 
   for (let index = cards.length - 1; index >= 0; index -= 1) {
     const card = cards[index];
@@ -95,21 +96,16 @@ export const resolveStackDepths = (cards: StackCardBounds[]): StackCardDepth[] =
       const target = Math.min(card.height, lip + CORNER_OVERLAP);
 
       visible = card.height - covered[index] * (card.height - target);
-
-      // De laatste kaart is het voorste vlak. Zodra die aan het einde
-      // wegscrolt, mag geen enkel vastgehouden randje onder zijn bovenrand
-      // uitkomen; de randjes verdwijnen dan een voor een met hem mee.
-      visible = Math.min(visible, Math.max(0, lastTop + CORNER_OVERLAP - card.stickyTop));
     }
 
     const clip = card.height - visible;
-    const pushedUp = next ? card.stickyTop - card.top : 0;
+    const pushedUp = next ? Math.max(0, card.stickyTop - card.top) : 0;
 
     depths[index] = {
       covered: covered[index],
       depth: Math.min(MAX_DEPTH, sum),
       clip: clip > 0 ? clip : NO_CLIP,
-      pushed: Math.max(0, pushedUp),
+      shift: next ? pushedUp - departure : 0,
     };
   }
 
@@ -149,7 +145,7 @@ export const useStackDepth = (
         item.style.removeProperty('--stack-covered');
         item.style.removeProperty('--stack-depth');
         item.style.removeProperty('--stack-clip');
-        item.style.removeProperty('--stack-pushed');
+        item.style.removeProperty('--stack-shift');
       });
       written = [];
     };
@@ -182,8 +178,8 @@ export const useStackDepth = (
         stickyTop: stickyTops[index],
       }));
 
-      resolveStackDepths(bounds).forEach(({ covered, depth, clip, pushed }, index) => {
-        const value = `${covered.toFixed(3)}/${depth.toFixed(3)}/${clip.toFixed(1)}/${pushed.toFixed(1)}`;
+      resolveStackDepths(bounds).forEach(({ covered, depth, clip, shift }, index) => {
+        const value = `${covered.toFixed(3)}/${depth.toFixed(3)}/${clip.toFixed(1)}/${shift.toFixed(1)}`;
 
         if (written[index] === value) return;
 
@@ -191,7 +187,7 @@ export const useStackDepth = (
         items[index].style.setProperty('--stack-covered', covered.toFixed(3));
         items[index].style.setProperty('--stack-depth', depth.toFixed(3));
         items[index].style.setProperty('--stack-clip', clip.toFixed(1));
-        items[index].style.setProperty('--stack-pushed', pushed.toFixed(1));
+        items[index].style.setProperty('--stack-shift', shift.toFixed(1));
       });
     };
 

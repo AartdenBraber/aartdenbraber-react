@@ -50,12 +50,12 @@
 // De transform staat op een tussenlaag en niet op de li, omdat de li het
 // meetpunt van useStackDepth is: een transform daarop zou de meting vervuilen.
 .experience__motion {
-  // --stack-pushed compenseert het uitduwen door de lijstonderkant: de kaart
-  // schuift visueel terug naar zijn plakpositie, zodat zijn ronde bovenrand
-  // op zijn plek in de stapel blijft liggen. Aan de bovenkant knippen zou een
-  // hoekige rand geven, en die rand is juist het enige dat zichtbaar blijft.
+  // --stack-shift houdt de stapel in formatie: het corrigeert het uitduwen
+  // door de lijstonderkant (dat de hoogste kaarten eerder raakt) en laat aan
+  // het einde alle kaarten exact meescrollen met de vertrekkende laatste
+  // kaart, in plaats van vastgeplakt te blijven hangen.
   transform: translateY(
-      calc(var(--stack-pushed, 0) * 1px + var(--stack-depth, 0) * -0.35rem)
+      calc(var(--stack-shift, 0) * 1px + var(--stack-depth, 0) * -0.35rem)
     )
     scale(calc(1 - var(--stack-depth, 0) * 0.025));
   transform-origin: 50% 0;
@@ -262,11 +262,11 @@
 }
 
 // De vervaging blijft: die repareert de doorschemerende tekst en is aan de
-// scrollpositie gebonden, niet aan tijd. Ook de uitduw-compensatie blijft,
+// scrollpositie gebonden, niet aan tijd. Ook de formatie-correctie blijft,
 // want zonder die schuift een lange kaart boven de stapel uit. Alleen het
 // decoratieve wegzakken vervalt.
 @media (prefers-reduced-motion: reduce) {
   .experience__motion {
-    transform: translateY(calc(var(--stack-pushed, 0) * 1px));
+    transform: translateY(calc(var(--stack-shift, 0) * 1px));
   }
 }

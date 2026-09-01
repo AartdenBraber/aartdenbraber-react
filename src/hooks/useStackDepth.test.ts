@@ -13,9 +13,9 @@ describe('resolveStackDepths', () => {
     const depths = resolveStackDepths([kaart(40, 40), kaart(452, 52), kaart(864, 64)]);
 
     expect(depths).toEqual([
-      { covered: 0, depth: 0, clip: NO_CLIP, pushed: 0 },
-      { covered: 0, depth: 0, clip: NO_CLIP, pushed: 0 },
-      { covered: 0, depth: 0, clip: NO_CLIP, pushed: 0 },
+      { covered: 0, depth: 0, clip: NO_CLIP, shift: 0 },
+      { covered: 0, depth: 0, clip: NO_CLIP, shift: 0 },
+      { covered: 0, depth: 0, clip: NO_CLIP, shift: 0 },
     ]);
   });
 
@@ -59,21 +59,28 @@ describe('resolveStackDepths', () => {
       covered: 0,
       depth: 0,
       clip: NO_CLIP,
-      pushed: 0,
+      shift: 0,
     });
   });
 
-  it('meet hoe ver een kaart boven zijn plakpositie uit is geduwd', () => {
-    // Kaart 24px boven zijn plakpositie: precies dat stuk schuift hij visueel
-    // terug, zodat zijn ronde bovenrand op zijn plek in de stapel blijft.
-    expect(resolveStackDepths([kaart(40, 40), kaart(52, 52)])[0].pushed).toBe(0);
-    expect(resolveStackDepths([kaart(16, 40), kaart(52, 52)])[0].pushed).toBeCloseTo(24);
+  it('schuift een uitgeduwde kaart terug naar zijn plek in de stapel', () => {
+    // Kaart 24px boven zijn plakpositie geduwd terwijl de laatste kaart nog
+    // op zijn plek ligt: precies dat stuk schuift hij visueel terug.
+    expect(resolveStackDepths([kaart(40, 40), kaart(52, 52)])[0].shift).toBe(0);
+    expect(resolveStackDepths([kaart(16, 40), kaart(52, 52)])[0].shift).toBeCloseTo(24);
   });
 
-  it('schuift de laatste kaart nooit terug', () => {
-    // De laatste kaart plakt nooit; boven zijn plakpositie uitkomen is daar
-    // gewoon scrollen.
-    expect(resolveStackDepths([kaart(-500, 40), kaart(-400, 52)])[1].pushed).toBe(0);
+  it('laat de stapel als geheel meescrollen met de vertrekkende laatste kaart', () => {
+    // De laatste kaart is 32px voorbij zijn plakpositie gescrold; de rest
+    // schuift evenveel mee omhoog in plaats van te blijven plakken.
+    expect(resolveStackDepths([kaart(40, 40), kaart(20, 52)])[0].shift).toBeCloseTo(-32);
+
+    // Ook wie zelf al door de lijstonderkant is uitgeduwd (hier 540px), komt
+    // in de vertrekkende formatie terecht: 12px boven de laatste kaart.
+    const [eerste, laatste] = resolveStackDepths([kaart(-500, 40), kaart(-400, 52)]);
+
+    expect(laatste.shift).toBe(0);
+    expect(-500 + eerste.shift).toBeCloseTo(-400 - 12);
   });
 
   it('knipt een bedolven kaart terug tot het randje plus de hoekmarge', () => {
@@ -91,13 +98,6 @@ describe('resolveStackDepths', () => {
     expect(lang.clip).toBeCloseTo(181);
   });
 
-  it('houdt alles boven de bovenrand van de vertrekkende laatste kaart', () => {
-    // De laatste kaart plakt niet en scrolt aan het einde gewoon weg. De
-    // vastgehouden randjes erachter knippen dan mee terug, zodat er niets
-    // onder hem uitkomt: eerst tot een restje, daarna helemaal weg.
-    expect(resolveStackDepths([kaart(40, 40), kaart(20, 52)])[0].clip).toBeCloseTo(394);
-    expect(resolveStackDepths([kaart(40, 40), kaart(-100, 52)])[0].clip).toBeCloseTo(400);
-  });
 
   it('deelt niet door nul bij een kaart korter dan de plak-offset', () => {
     const depths = resolveStackDepths([kaart(40, 40, 8), kaart(52, 52, 8)]);
