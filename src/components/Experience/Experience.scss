@@ -53,6 +53,11 @@
   transform: translateY(calc(var(--stack-depth, 0) * -0.35rem))
     scale(calc(1 - var(--stack-depth, 0) * 0.025));
   transform-origin: 50% 0;
+  // Een bedolven kaart mag nooit onder de kaart ervoor uitsteken; useStackDepth
+  // zet in --stack-clip hoeveel er van de onderkant af moet. De ruime
+  // negatieve insets laten de schaduw rondom met rust, en zonder knijpwerk is
+  // de waarde zelf negatief zodat ook de onderrand vrij blijft.
+  clip-path: inset(-99px -99px calc(var(--stack-clip, -99) * 1px) -99px);
 }
 
 // De inhoud vervaagt zodra de volgende kaart eroverheen schuift, en is al

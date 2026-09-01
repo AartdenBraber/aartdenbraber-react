@@ -1,4 +1,4 @@
-import { resolveStackDepths, StackCardBounds } from './useStackDepth';
+import { NO_CLIP, resolveStackDepths, StackCardBounds } from './useStackDepth';
 
 // Kaarten van 400px hoog die 12px onder elkaar vastplakken, zoals in de
 // werkervaring-sectie.
@@ -13,9 +13,9 @@ describe('resolveStackDepths', () => {
     const depths = resolveStackDepths([kaart(40, 40), kaart(452, 52), kaart(864, 64)]);
 
     expect(depths).toEqual([
-      { covered: 0, depth: 0 },
-      { covered: 0, depth: 0 },
-      { covered: 0, depth: 0 },
+      { covered: 0, depth: 0, clip: NO_CLIP },
+      { covered: 0, depth: 0, clip: NO_CLIP },
+      { covered: 0, depth: 0, clip: NO_CLIP },
     ]);
   });
 
@@ -55,7 +55,44 @@ describe('resolveStackDepths', () => {
   it('laat de laatste kaart altijd vooraan liggen', () => {
     const depths = resolveStackDepths([kaart(40, 40), kaart(52, 52)]);
 
-    expect(depths[depths.length - 1]).toEqual({ covered: 0, depth: 0 });
+    expect(depths[depths.length - 1]).toEqual({ covered: 0, depth: 0, clip: NO_CLIP });
+  });
+
+  it('knipt een lange bedolven kaart af tot boven de onderkant van zijn opvolger', () => {
+    // Kaart van 400 hoog, bedolven onder een kaart van 200: er blijft
+    // 200 + lip (12) - marge (36) = 176 over, dus 224 gaat eraf. De zichtbare
+    // onderkant (40 + 176) eindigt daarmee 36px boven die van de opvolger
+    // (52 + 200).
+    const [lang] = resolveStackDepths([kaart(40, 40), kaart(52, 52, 200)]);
+
+    expect(lang.clip).toBeCloseTo(224);
+  });
+
+  it('knipt evenredig mee terwijl de opvolger eroverheen schuift', () => {
+    const halverwege = 40 + 400 - (400 - 12) / 2;
+    const [lang] = resolveStackDepths([kaart(40, 40), kaart(halverwege, 52, 200)]);
+
+    expect(lang.clip).toBeCloseTo(112);
+  });
+
+  it('knipt niets van een kaart die korter is dan zijn opvolger', () => {
+    const [kort] = resolveStackDepths([kaart(40, 40, 150), kaart(52, 52, 400)]);
+
+    expect(kort.clip).toBe(NO_CLIP);
+  });
+
+  it('duikt weg achter wat er van de opvolger over is, niet achter zijn volle hoogte', () => {
+    // De middelste kaart (600) is zelf al geknepen tot 276 achter de korte
+    // kaart (300). De lange kaart (700) moet daarachter passen, niet achter
+    // de volle 600.
+    const depths = resolveStackDepths([
+      kaart(40, 40, 700),
+      kaart(52, 52, 600),
+      kaart(64, 64, 300),
+    ]);
+
+    expect(depths[1].clip).toBeCloseTo(324);
+    expect(depths[0].clip).toBeCloseTo(448);
   });
 
   it('deelt niet door nul bij een kaart korter dan de plak-offset', () => {
