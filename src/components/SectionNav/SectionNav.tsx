@@ -20,7 +20,11 @@ const SectionNav: React.FC = () => {
       aria-label={t.nav.label}
       // visibility: hidden houdt hem buiten de tabvolgorde zolang hij weg is.
       data-visible={visible ? 'true' : 'false'}
+      data-has-active={activeIndex >= 0 ? 'true' : 'false'}
+      style={{ '--active-index': Math.max(activeIndex, 0) } as React.CSSProperties}
     >
+      <span className="section-nav__pill" aria-hidden="true" />
+
       <ol className="section-nav__list">
         {items.map((item, index) => {
           const state = index < activeIndex ? 'done' : index === activeIndex ? 'active' : 'todo';

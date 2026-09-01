@@ -1,14 +1,24 @@
-// Vaste rail in de linkermarge. De inhoud staat in een kolom van 68rem, dus
-// vanaf 78rem is er ruimte naast zonder dat er iets overheen valt.
+// Zwevend paneel in de linkermarge. Bij smallere vensters is die marge te
+// krap en schuift het paneel over de tekstkolom heen; de doorkijk en de
+// slagschaduw maken duidelijk dat het erboven ligt in plaats van ertegenaan.
 .section-nav {
+  --row-height: 2rem;
+  --inset: 0.4rem;
+
   position: fixed;
   top: 50%;
-  left: max(1.25rem, calc(50vw - var(--content-width) / 2 - 11rem));
+  left: max(1.25rem, calc(50vw - var(--content-width) / 2 - 12rem));
   z-index: 20;
+  padding: var(--inset);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-l);
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: var(--shadow-card);
+  backdrop-filter: blur(14px) saturate(1.1);
   transform: translateY(-50%);
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0.3s;
+  transition: opacity 0.35s ease, visibility 0.35s;
 
   &[data-visible='true'] {
     opacity: 1;
@@ -16,20 +26,41 @@
   }
 }
 
+// Glijdt naar de sectie waar de lezer is. Eén element dat beweegt leest
+// rustiger dan zeven achtergronden die aan- en uitfloepen.
+.section-nav__pill {
+  position: absolute;
+  top: var(--inset);
+  left: var(--inset);
+  right: var(--inset);
+  height: var(--row-height);
+  border-radius: var(--radius-m);
+  background: var(--color-accent-soft);
+  transform: translateY(calc(var(--active-index, 0) * var(--row-height)));
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.section-nav[data-has-active='false'] .section-nav__pill {
+  opacity: 0;
+}
+
 .section-nav__list {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: var(--space-xs);
 }
 
 .section-nav__link {
   display: flex;
   align-items: center;
   gap: var(--space-s);
-  padding-block: 2px;
+  height: var(--row-height);
+  padding-inline: var(--space-s);
   color: var(--color-ink-muted);
   font-size: var(--step--1);
   text-decoration: none;
+  white-space: nowrap;
   transition: color 0.2s ease;
 
   &:hover {
@@ -41,7 +72,7 @@
   position: relative;
   flex: none;
   width: 2px;
-  height: 1.5rem;
+  height: 1.1rem;
   border-radius: var(--radius-pill);
   background: var(--color-border-strong);
   overflow: hidden;
@@ -74,17 +105,25 @@
   font-weight: 700;
 }
 
-// Onder deze breedte is er geen marge meer. Dan wordt het een balk bovenaan
-// die horizontaal te scrollen is, met de streep onder het label.
+// Onder deze breedte is er geen marge meer om zelfs maar half in te staan.
+// Dan wordt het een balk bovenaan die horizontaal te scrollen is, met de
+// streep onder het label.
 @media (max-width: 78rem) {
   .section-nav {
     top: 0;
     left: 0;
     right: 0;
-    transform: none;
+    padding: 0;
+    border: 0;
     border-bottom: 1px solid var(--color-border);
-    background: rgba(255, 255, 255, 0.92);
-    backdrop-filter: blur(8px);
+    border-radius: 0;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: none;
+    transform: none;
+  }
+
+  .section-nav__pill {
+    display: none;
   }
 
   .section-nav__list {
@@ -92,7 +131,6 @@
     gap: var(--space-m);
     width: min(100% - 2.5rem, var(--content-width));
     margin-inline: auto;
-    padding-block: var(--space-xs);
     overflow-x: auto;
     scrollbar-width: none;
 
@@ -105,7 +143,8 @@
     flex-direction: column-reverse;
     align-items: stretch;
     gap: var(--space-2xs);
-    white-space: nowrap;
+    height: auto;
+    padding: var(--space-xs) 0;
   }
 
   .section-nav__track {
@@ -124,5 +163,12 @@
 
   .section-nav__item[data-state='active'] .section-nav__fill {
     transform: scaleX(var(--progress, 0));
+  }
+}
+
+// Zonder doorkijk wordt het paneel dekkend, anders valt de tekst eronder weg.
+@supports not (backdrop-filter: blur(1px)) {
+  .section-nav {
+    background: var(--color-surface);
   }
 }
