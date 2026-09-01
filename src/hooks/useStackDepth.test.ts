@@ -13,9 +13,9 @@ describe('resolveStackDepths', () => {
     const depths = resolveStackDepths([kaart(40, 40), kaart(452, 52), kaart(864, 64)]);
 
     expect(depths).toEqual([
-      { covered: 0, depth: 0 },
-      { covered: 0, depth: 0 },
-      { covered: 0, depth: 0 },
+      { covered: 0, depth: 0, pushed: 0 },
+      { covered: 0, depth: 0, pushed: 0 },
+      { covered: 0, depth: 0, pushed: 0 },
     ]);
   });
 
@@ -55,7 +55,21 @@ describe('resolveStackDepths', () => {
   it('laat de laatste kaart altijd vooraan liggen', () => {
     const depths = resolveStackDepths([kaart(40, 40), kaart(52, 52)]);
 
-    expect(depths[depths.length - 1]).toEqual({ covered: 0, depth: 0 });
+    expect(depths[depths.length - 1]).toEqual({ covered: 0, depth: 0, pushed: 0 });
+  });
+
+  it('vervaagt een kaart naarmate de onderrand hem uitduwt', () => {
+    // De vervaging loopt over 48px. Een kaart 24px boven zijn plakpositie is
+    // dus halverwege.
+    expect(resolveStackDepths([kaart(40, 40), kaart(52, 52)])[0].pushed).toBe(0);
+    expect(resolveStackDepths([kaart(16, 40), kaart(52, 52)])[0].pushed).toBeCloseTo(0.5);
+    expect(resolveStackDepths([kaart(-100, 40), kaart(52, 52)])[0].pushed).toBe(1);
+  });
+
+  it('laat de laatste kaart meescrollen zonder hem uit te vervagen', () => {
+    // De laatste kaart plakt nooit, dus boven zijn plakpositie uitkomen is
+    // daar gewoon scrollen en geen uitduwen.
+    expect(resolveStackDepths([kaart(-500, 40), kaart(-400, 52)])[1].pushed).toBe(0);
   });
 
   it('deelt niet door nul bij een kaart korter dan de plak-offset', () => {
