@@ -3,6 +3,7 @@ import './Hero.scss';
 import logo from '../../assets/images/logo.png';
 import FocusSpotlight from '../FocusSpotlight/FocusSpotlight';
 import LanguageSwitcher from '../LanguageSwitcher/LanguageSwitcher';
+import WordReveal from '../WordReveal/WordReveal';
 import { cvUrl } from '../../content';
 import { useLanguage } from '../../i18n/LanguageContext';
 
@@ -54,7 +55,7 @@ const Hero: React.FC = () => {
       <div className="hero__scrim" aria-hidden="true" />
 
       <div className="hero__inner">
-        <header className="hero__bar">
+        <header className="hero__bar enter-drop">
           <div className="hero__identity">
             <img className="hero__logo" src={logo} alt="" width={44} height={44} />
             <div>
@@ -69,12 +70,23 @@ const Hero: React.FC = () => {
           </div>
         </header>
 
+        {/* De hero komt in stappen binnen: eerst de balk, dan de kop woord voor
+            woord, daarna de ondertitel en de knoppen. --enter-step zet die
+            volgorde, de kop houdt met delay ruimte vrij voor de balk. */}
         <div className="hero__content">
-          <h1 className="hero__title">{t.hero.title}</h1>
+          <WordReveal className="hero__title" text={t.hero.title} delay={250} />
 
-          <p className="hero__subtitle">{t.hero.subtitle}</p>
+          <p
+            className="hero__subtitle enter-rise"
+            style={{ '--enter-step': 7 } as React.CSSProperties}
+          >
+            {t.hero.subtitle}
+          </p>
 
-          <div className="hero__actions">
+          <div
+            className="hero__actions enter-rise"
+            style={{ '--enter-step': 8 } as React.CSSProperties}
+          >
             <a className="button button--primary" href={t.hero.primaryCta.href}>
               {t.hero.primaryCta.label}
             </a>
@@ -89,7 +101,12 @@ const Hero: React.FC = () => {
           </div>
         </div>
 
-        <button type="button" className="hero__scroll" onClick={scrollToNextSection}>
+        <button
+          type="button"
+          className="hero__scroll enter-fade"
+          style={{ '--enter-step': 12 } as React.CSSProperties}
+          onClick={scrollToNextSection}
+        >
           <span className="visually-hidden">{t.hero.scrollLabel}</span>
           <svg
             className="hero__scroll-icon"

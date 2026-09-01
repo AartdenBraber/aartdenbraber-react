@@ -11,7 +11,7 @@ const Cases: React.FC = () => {
   return (
     <section className="section cases" id="cases" aria-labelledby="cases-titel">
       <div className="container">
-        <div className="section-header">
+        <div className="section-header" data-reveal-item="">
           <h2 id="cases-titel">{t.cases.heading}</h2>
           <p>{t.cases.intro}</p>
         </div>
@@ -19,7 +19,9 @@ const Cases: React.FC = () => {
         <div className="cases__list">
           {t.cases.items.map((item) => (
             <article className="case" id={`case-${item.id}`} key={item.id}>
-              <header className="case__head">
+              {/* Een case is hoog, dus de drie blokken komen los binnen: wat je
+                  nog niet ziet hoeft ook nog niet bewogen te hebben. */}
+              <header className="case__head" data-reveal-item="">
                 <p className="case__meta">
                   <span>{item.client}</span>
                   <span className="tabular">{item.period}</span>
@@ -27,7 +29,7 @@ const Cases: React.FC = () => {
                 <h3 className="case__title">{item.title}</h3>
               </header>
 
-              <div className="case__body">
+              <div className="case__body" data-reveal-item="">
                 <div className="case__block">
                   <h4>{t.cases.situationLabel}</h4>
                   {paragraphs(item.situation)}
@@ -43,7 +45,7 @@ const Cases: React.FC = () => {
                 </div>
               </div>
 
-              <div className="case__result">
+              <div className="case__result" data-reveal-item="">
                 <h4>{t.cases.resultLabel}</h4>
                 {paragraphs(item.result)}
               </div>

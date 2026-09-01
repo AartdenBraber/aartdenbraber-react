@@ -44,8 +44,19 @@ class FakeIntersectionObserver {
 const items = (container: HTMLElement) =>
   Array.from(container.querySelectorAll<HTMLElement>('.experience__item'));
 
-const latestObserver = () =>
-  FakeIntersectionObserver.instances[FakeIntersectionObserver.instances.length - 1];
+/**
+ * De pagina zet meer dan één observer op. Pak dus niet de laatste, maar die
+ * waar de kaarten van de werkervaring in zitten.
+ */
+const observerOf = (kaart: Element) => {
+  const observer = FakeIntersectionObserver.instances.find((instance) =>
+    instance.observed.includes(kaart),
+  );
+
+  if (!observer) throw new Error('Geen observer gevonden voor deze kaart');
+
+  return observer;
+};
 
 describe('Werkervaring, binnenkomen in beeld', () => {
   const originalObserver = window.IntersectionObserver;
@@ -67,7 +78,7 @@ describe('Werkervaring, binnenkomen in beeld', () => {
     expect(kaarten.length).toBeGreaterThan(0);
     expect(kaarten.every((kaart) => kaart.dataset.reveal === 'pending')).toBe(true);
 
-    latestObserver().enterView([kaarten[0]]);
+    observerOf(kaarten[0]).enterView([kaarten[0]]);
 
     expect(kaarten[0].dataset.reveal).toBe('shown');
     expect(kaarten[1].dataset.reveal).toBe('pending');
@@ -76,7 +87,7 @@ describe('Werkervaring, binnenkomen in beeld', () => {
   it('stopt met observeren zodra een kaart getoond is', () => {
     const { container } = render(<App />);
     const kaarten = items(container);
-    const observer = latestObserver();
+    const observer = observerOf(kaarten[0]);
 
     expect(observer.observed).toHaveLength(kaarten.length);
 

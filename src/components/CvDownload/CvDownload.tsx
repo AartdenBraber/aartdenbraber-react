@@ -8,7 +8,7 @@ const CvDownload: React.FC = () => {
 
   return (
     <section className="section cv" id="cv" aria-labelledby="cv-titel">
-      <div className="container cv__panel">
+      <div className="container cv__panel" data-reveal-item="">
         <div>
           <h2 id="cv-titel">{t.cv.heading}</h2>
           <p>{t.cv.body}</p>

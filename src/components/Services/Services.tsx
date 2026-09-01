@@ -8,14 +8,21 @@ const Services: React.FC = () => {
   return (
     <section className="section section--sunken" id="wat-ik-doe" aria-labelledby="wat-ik-doe-titel">
       <div className="container">
-        <div className="section-header">
+        <div className="section-header" data-reveal-item="">
           <h2 id="wat-ik-doe-titel">{t.services.heading}</h2>
           <p>{t.services.intro}</p>
         </div>
 
         <dl className="services">
-          {t.services.items.map((item) => (
-            <div className="services__row" key={item.title}>
+          {t.services.items.map((item, index) => (
+            <div
+              className="services__row"
+              key={item.title}
+              data-reveal-item=""
+              // De trap loopt niet door tot achteren: bij een lange lijst zou
+              // de laatste rij anders merkbaar achterblijven.
+              style={{ '--reveal-step': Math.min(index, 4) } as React.CSSProperties}
+            >
               <dt className="services__term">{item.title}</dt>
               <dd className="services__body">
                 {item.body}

@@ -20,14 +20,19 @@ const Testimonials: React.FC = () => {
       aria-labelledby="aanbevelingen-titel"
     >
       <div className="container">
-        <div className="section-header">
+        <div className="section-header" data-reveal-item="">
           <h2 id="aanbevelingen-titel">{t.testimonials.heading}</h2>
           <p>{t.testimonials.intro}</p>
         </div>
 
         <div className="testimonials">
-          {items.map((item) => (
-            <figure className="testimonial" key={item.id}>
+          {items.map((item, index) => (
+            <figure
+              className="testimonial"
+              key={item.id}
+              data-reveal-item=""
+              style={{ '--reveal-step': Math.min(index, 4) } as React.CSSProperties}
+            >
               <blockquote lang={item.language}>
                 {item.quote.split('\n\n').map((paragraph) => (
                   <p key={paragraph.slice(0, 40)}>{paragraph}</p>

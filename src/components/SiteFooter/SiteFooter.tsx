@@ -16,12 +16,16 @@ const SiteFooter: React.FC = () => {
   return (
     <footer className="site-footer" id="contact">
       <div className="container site-footer__inner">
-        <div className="site-footer__intro">
+        <div className="site-footer__intro" data-reveal-item="">
           <h2>{t.contact.heading}</h2>
           <p>{t.contact.body}</p>
         </div>
 
-        <div className="site-footer__links">
+        <div
+          className="site-footer__links"
+          data-reveal-item=""
+          style={{ '--reveal-step': 1 } as React.CSSProperties}
+        >
           <button type="button" className="button button--ghost-light" onClick={openMailClient}>
             {t.contact.emailLabel}
           </button>

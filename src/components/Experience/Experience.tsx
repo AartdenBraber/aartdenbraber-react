@@ -35,7 +35,7 @@ const Experience: React.FC = () => {
   return (
     <section className="section experience" id="werkervaring" aria-labelledby="werkervaring-titel">
       <div className="container">
-        <div className="section-header">
+        <div className="section-header" data-reveal-item="">
           <h2 id="werkervaring-titel">{t.experience.heading}</h2>
           <p>{t.experience.intro}</p>
         </div>

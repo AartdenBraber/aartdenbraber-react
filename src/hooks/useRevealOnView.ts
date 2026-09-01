@@ -5,7 +5,7 @@ const OBSERVER_TIMEOUT_MS = 2000;
 
 /**
  * Laat elementen binnen `containerRef` één keer omhoog binnenkomen zodra ze in
- * beeld scrollen.
+ * beeld scrollen. Geef `null` mee om de hele pagina af te zoeken.
  *
  * De verborgen begintoestand wordt pas door JavaScript gezet, dus zonder
  * JavaScript of IntersectionObserver staat alles gewoon zichtbaar. Bij
@@ -17,11 +17,11 @@ const OBSERVER_TIMEOUT_MS = 2000;
  * hangen. In dat geval laten we de animatie vallen en tonen we alles.
  */
 export const useRevealOnView = (
-  containerRef: RefObject<HTMLElement>,
+  containerRef: RefObject<HTMLElement> | null,
   itemSelector: string,
 ): void => {
   useLayoutEffect(() => {
-    const container = containerRef.current;
+    const container = containerRef ? containerRef.current : document.body;
 
     if (!container) return;
     if (typeof IntersectionObserver === 'undefined') return;

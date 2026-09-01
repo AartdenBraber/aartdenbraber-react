@@ -8,14 +8,19 @@ const Faq: React.FC = () => {
   return (
     <section className="section faq" id="vragen" aria-labelledby="vragen-titel">
       <div className="container">
-        <div className="section-header">
+        <div className="section-header" data-reveal-item="">
           <h2 id="vragen-titel">{t.faq.heading}</h2>
           <p>{t.faq.intro}</p>
         </div>
 
         <div className="faq__list">
-          {t.faq.items.map((item) => (
-            <details className="faq__item" key={item.id}>
+          {t.faq.items.map((item, index) => (
+            <details
+              className="faq__item"
+              key={item.id}
+              data-reveal-item=""
+              style={{ '--reveal-step': Math.min(index, 4) } as React.CSSProperties}
+            >
               <summary className="faq__question">
                 <span>{item.question}</span>
                 <svg

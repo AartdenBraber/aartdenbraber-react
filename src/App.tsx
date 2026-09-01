@@ -15,10 +15,15 @@ import SectionNav from './components/SectionNav/SectionNav';
 import Services from './components/Services/Services';
 import SiteFooter from './components/SiteFooter/SiteFooter';
 import Testimonials from './components/Testimonials/Testimonials';
+import { useRevealOnView } from './hooks/useRevealOnView';
 import { LanguageProvider, useLanguage } from './i18n/LanguageContext';
 
 const Page: React.FC = () => {
   const { t } = useLanguage();
+
+  // Alles met data-reveal-item komt één keer omhoog binnen zodra het in beeld
+  // scrolt. De werkervaring regelt zijn eigen kaarten, want die stapelen.
+  useRevealOnView(null, '[data-reveal-item]');
 
   return (
     <>

@@ -1,0 +1,215 @@
+// Bewegingslaag. Alles wat hier staat is versiering: de structuur van de
+// pagina staat er zonder deze regels precies zo. Wie beweging heeft uitgezet
+// krijgt via de reduce-regel in global.scss overal duur nul, dus de
+// eindtoestand meteen.
+//
+// Deze laag wordt na global.scss geladen (zie index.tsx), zodat rolloverstaten
+// hier de basisknop uit global.scss kunnen overschrijven.
+
+/*--------------------------------------------------------------
+# Entree
+Speelt één keer, bij het laden van de pagina. Alleen voor de hero: de rest van
+de pagina staat onder de vouw en wacht op de scroll-onthulling verderop.
+--------------------------------------------------------------*/
+
+@keyframes enter-rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+}
+
+@keyframes enter-drop {
+  from {
+    opacity: 0;
+    transform: translateY(-14px);
+  }
+}
+
+@keyframes enter-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+// --enter-step zet de volgorde: elke stap is 110ms later dan de vorige.
+.enter-rise {
+  animation: enter-rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--enter-step, 0) * 110ms);
+}
+
+.enter-drop {
+  animation: enter-drop 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.enter-fade {
+  animation: enter-fade 0.8s ease-out both;
+  animation-delay: calc(var(--enter-step, 0) * 110ms);
+}
+
+// De herofoto zet zich met een trage schaal op zijn plek. De wrapper en niet de
+// foto zelf, zodat de scherpe kopie onder de spotlight meebeweegt en de twee
+// lagen uitgelijnd blijven.
+@keyframes hero-settle {
+  from {
+    transform: scale(1.06);
+  }
+}
+
+.hero .background-wrapper {
+  animation: hero-settle 1.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/*--------------------------------------------------------------
+# Kop woord voor woord
+Elk woord staat in een venstertje dat afknipt wat onder de regel uitsteekt (zie
+WordReveal.tsx), en draait daar omhoog uit. De padding onderaan, met
+compenserende marge, houdt staartletters als g en j heel.
+--------------------------------------------------------------*/
+
+.word-mask {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+}
+
+@keyframes word-rise {
+  from {
+    transform: translateY(115%) rotate(4deg);
+  }
+}
+
+.word {
+  display: inline-block;
+  transform-origin: left bottom;
+  animation: word-rise 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+  // --word-base is de aanloop van de hele kop, --word-step de plek van dit
+  // woord in de regel.
+  animation-delay: calc(var(--word-base, 0ms) + var(--word-step, 0) * 45ms);
+}
+
+/*--------------------------------------------------------------
+# Onthullen bij het scrollen
+useRevealOnView zet data-reveal op alles met data-reveal-item: eerst 'pending',
+en 'shown' zodra het in beeld komt. De verborgen begintoestand komt van
+JavaScript, dus zonder JavaScript staat de hele pagina er gewoon.
+--------------------------------------------------------------*/
+
+[data-reveal-item][data-reveal] {
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  // --reveal-step laat kaarten of rijen naast elkaar na elkaar binnenkomen.
+  transition-delay: calc(var(--reveal-step, 0) * 80ms);
+}
+
+[data-reveal-item][data-reveal='pending'] {
+  opacity: 0;
+  transform: translateY(26px);
+}
+
+/*--------------------------------------------------------------
+# Accentstreep onder de sectiekoppen
+Tekent zichzelf van links naar rechts, net nadat de kop er staat.
+--------------------------------------------------------------*/
+
+.section-header h2::after,
+.about__prose h2::after,
+.site-footer__intro h2::after {
+  content: '';
+  display: block;
+  width: 64px;
+  height: 3px;
+  margin-top: var(--space-s);
+  border-radius: var(--radius-pill);
+  background: var(--color-accent);
+  transform-origin: left center;
+  transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: calc(var(--reveal-step, 0) * 80ms + 220ms);
+}
+
+[data-reveal-item][data-reveal='pending'] h2::after {
+  transform: scaleX(0);
+}
+
+/*--------------------------------------------------------------
+# Rollover
+Een dekkende laag schuift van links onder het label door, de knop komt iets van
+de pagina en drukt bij klikken in. De laag ligt op z-index -1 binnen de knop
+(vandaar isolation), zodat het label er zonder extra element overheen blijft
+staan.
+--------------------------------------------------------------*/
+
+.button {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.button::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.button:hover::before,
+.button:focus-visible::before {
+  transform: scaleX(1);
+}
+
+.button:hover,
+.button:focus-visible {
+  transform: translateY(-2px);
+}
+
+// Terug is sneller dan heen: de vlaag mag opkomen, niet nazeuren.
+.button:not(:hover):not(:focus-visible)::before {
+  transition-duration: 0.2s;
+}
+
+.button:active {
+  transform: translateY(0) scale(0.97);
+}
+
+.button--primary::before {
+  background: var(--color-accent-deeper);
+}
+
+.button--ghost-light::before {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+// Verwijzingen naar buiten krijgen bij hover een streep in de merkkleur, naast
+// het pijltje dat al meebeweegt.
+.content-link:hover,
+.content-link:focus-visible {
+  text-decoration: underline;
+  text-decoration-color: var(--color-accent);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+
+/*--------------------------------------------------------------
+# Scroll-uitnodiging
+Komt als laatste binnen en blijft daarna zachtjes deinen, zodat duidelijk is
+dat er onder de hero nog iets staat.
+--------------------------------------------------------------*/
+
+@keyframes scroll-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(6px);
+  }
+}
+
+.hero__scroll-icon {
+  animation: scroll-float 2.4s ease-in-out 2.6s infinite;
+}
