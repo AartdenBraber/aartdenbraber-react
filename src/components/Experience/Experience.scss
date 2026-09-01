@@ -28,6 +28,28 @@
   transform: translateY(26px);
 }
 
+// Bedolven kaarten wijken omhoog en naar achteren, alsof de stapel de diepte
+// in zakt. useStackDepth zet tijdens het scrollen --stack-depth (hoeveel
+// kaarten er cumulatief bovenop liggen) en --stack-covered (hoe ver de
+// volgende kaart er al overheen ligt). Zonder JavaScript blijft alles op 0.
+//
+// De transform staat op een tussenlaag en niet op de li, omdat de li het
+// meetpunt van useStackDepth is: een transform daarop zou de meting vervuilen.
+.experience__motion {
+  transform: translateY(calc(var(--stack-depth, 0) * -0.35rem))
+    scale(calc(1 - var(--stack-depth, 0) * 0.025));
+  transform-origin: 50% 0;
+}
+
+// De inhoud vervaagt zodra de volgende kaart eroverheen schuift. Dat is ook
+// de reparatie voor kaarten van verschillende hoogte: een lange kaart stak
+// eerst onder een korte vastgeplakte kaart uit, met losse regels tekst tussen
+// de kaarten door zichtbaar. Het kaartvlak zelf blijft dekkend staan, zodat
+// de stapel randjes bovenin blijft bestaan.
+.experience-card > * {
+  opacity: calc((1 - var(--stack-covered, 0)) * (1 - var(--stack-covered, 0)));
+}
+
 .experience-card {
   display: flex;
   flex-direction: column;
@@ -203,5 +225,13 @@
 
   .experience-card {
     padding: var(--space-m);
+  }
+}
+
+// De vervaging blijft: die repareert de doorschemerende tekst en is aan de
+// scrollpositie gebonden, niet aan tijd. Alleen het meebewegen vervalt.
+@media (prefers-reduced-motion: reduce) {
+  .experience__motion {
+    transform: none;
   }
 }
