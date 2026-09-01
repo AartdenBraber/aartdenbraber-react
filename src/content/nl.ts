@@ -9,6 +9,7 @@ const nl: SiteContent = {
   },
 
   nav: {
+    label: 'Onderdelen van deze pagina',
     skipToContent: 'Naar de inhoud',
     items: [
       { href: '#over-mij', label: 'Over mij' },

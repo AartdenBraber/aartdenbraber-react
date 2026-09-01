@@ -1,5 +1,11 @@
 @use 'tokens';
 
+@media (max-width: 78rem) {
+  :root {
+    --stack-top: 4rem;
+  }
+}
+
 *,
 *::before,
 *::after {

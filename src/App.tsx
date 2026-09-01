@@ -11,6 +11,7 @@ import CvDownload from './components/CvDownload/CvDownload';
 import Experience from './components/Experience/Experience';
 import Faq from './components/Faq/Faq';
 import Hero from './components/Hero/Hero';
+import SectionNav from './components/SectionNav/SectionNav';
 import Services from './components/Services/Services';
 import SiteFooter from './components/SiteFooter/SiteFooter';
 import Testimonials from './components/Testimonials/Testimonials';
@@ -26,6 +27,8 @@ const Page: React.FC = () => {
       </a>
 
       <Hero />
+
+      <SectionNav />
 
       <main id="hoofdinhoud">
         <About />

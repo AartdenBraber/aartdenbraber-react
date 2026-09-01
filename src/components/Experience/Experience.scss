@@ -12,7 +12,7 @@
 // dus de nesting zit in de kaart zelf: het label, het haakje en de tint.
 .experience__item {
   position: sticky;
-  top: calc(var(--header-offset) * 0.4 + var(--index) * 0.75rem);
+  top: calc(var(--stack-top) + var(--index) * 0.75rem);
 }
 
 // De kaarten komen één keer omhoog binnen wanneer ze in beeld scrollen. De

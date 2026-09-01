@@ -1,6 +1,7 @@
 export type Language = 'nl' | 'en';
 
 export interface NavContent {
+  label: string;
   skipToContent: string;
   items: { href: string; label: string }[];
 }

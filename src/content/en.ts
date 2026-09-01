@@ -9,6 +9,7 @@ const en: SiteContent = {
   },
 
   nav: {
+    label: 'Sections on this page',
     skipToContent: 'Skip to content',
     items: [
       { href: '#over-mij', label: 'About' },

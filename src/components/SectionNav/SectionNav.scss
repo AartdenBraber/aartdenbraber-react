@@ -1,0 +1,128 @@
+// Vaste rail in de linkermarge. De inhoud staat in een kolom van 68rem, dus
+// vanaf 78rem is er ruimte naast zonder dat er iets overheen valt.
+.section-nav {
+  position: fixed;
+  top: 50%;
+  left: max(1.25rem, calc(50vw - var(--content-width) / 2 - 11rem));
+  z-index: 20;
+  transform: translateY(-50%);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s;
+
+  &[data-visible='true'] {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+.section-nav__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.section-nav__link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  padding-block: 2px;
+  color: var(--color-ink-muted);
+  font-size: var(--step--1);
+  text-decoration: none;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: var(--color-ink);
+  }
+}
+
+.section-nav__track {
+  position: relative;
+  flex: none;
+  width: 2px;
+  height: 1.5rem;
+  border-radius: var(--radius-pill);
+  background: var(--color-border-strong);
+  overflow: hidden;
+}
+
+.section-nav__fill {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--color-accent-strong);
+  transform: scaleY(0);
+  transform-origin: top;
+}
+
+// Gelezen secties staan vol, de huidige loopt mee met de scrollpositie.
+.section-nav__item[data-state='done'] .section-nav__fill {
+  transform: scaleY(1);
+}
+
+.section-nav__item[data-state='active'] .section-nav__fill {
+  transform: scaleY(var(--progress, 0));
+}
+
+.section-nav__item[data-state='done'] .section-nav__label {
+  color: var(--color-ink-soft);
+}
+
+.section-nav__item[data-state='active'] .section-nav__label {
+  color: var(--color-ink);
+  font-weight: 700;
+}
+
+// Onder deze breedte is er geen marge meer. Dan wordt het een balk bovenaan
+// die horizontaal te scrollen is, met de streep onder het label.
+@media (max-width: 78rem) {
+  .section-nav {
+    top: 0;
+    left: 0;
+    right: 0;
+    transform: none;
+    border-bottom: 1px solid var(--color-border);
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(8px);
+  }
+
+  .section-nav__list {
+    flex-direction: row;
+    gap: var(--space-m);
+    width: min(100% - 2.5rem, var(--content-width));
+    margin-inline: auto;
+    padding-block: var(--space-xs);
+    overflow-x: auto;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .section-nav__link {
+    flex-direction: column-reverse;
+    align-items: stretch;
+    gap: var(--space-2xs);
+    white-space: nowrap;
+  }
+
+  .section-nav__track {
+    width: auto;
+    height: 2px;
+  }
+
+  .section-nav__fill {
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+
+  .section-nav__item[data-state='done'] .section-nav__fill {
+    transform: scaleX(1);
+  }
+
+  .section-nav__item[data-state='active'] .section-nav__fill {
+    transform: scaleX(var(--progress, 0));
+  }
+}
