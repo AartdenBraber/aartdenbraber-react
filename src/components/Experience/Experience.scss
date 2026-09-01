@@ -1,7 +1,21 @@
+// De stapel moet binnen de sectie blijven: aan het einde schuift de volgende
+// sectie als achtergrond over de vastgeplakte kaarten heen, in plaats van dat
+// de lijstonderkant ze een voor een uitduwt (de hoogste het eerst, met kale
+// kaartvlakken boven de stapel uit als gevolg).
+.experience {
+  overflow: clip;
+}
+
 .experience__list {
   display: flex;
   flex-direction: column;
   gap: var(--space-m);
+  // Extra plakruimte zodat geen enkele kaart loskomt zolang de sectie in
+  // beeld is, ook de laatste niet. De negatieve marge geeft de ruimte direct
+  // terug, dus de pagina wordt er niet langer van; de overflow-clip hierboven
+  // snijdt de kaarten af op de sectierand.
+  padding-bottom: 100vh;
+  margin-bottom: -100vh;
 }
 
 // Elke kaart blijft plakken net onder de vorige, zodat ze tijdens het scrollen
@@ -39,10 +53,6 @@
   transform: translateY(calc(var(--stack-depth, 0) * -0.35rem))
     scale(calc(1 - var(--stack-depth, 0) * 0.025));
   transform-origin: 50% 0;
-  // Aan het einde van de lijst worden vastgeplakte kaarten door de onderrand
-  // uitgeduwd, de hoogste het eerst. Zo'n kaal kaartvlak zou boven de stapel
-  // uitschuiven; in plaats daarvan vervaagt de hele kaart zodra hij loskomt.
-  opacity: calc(1 - var(--stack-pushed, 0));
 }
 
 // De inhoud vervaagt zodra de volgende kaart eroverheen schuift, en is al
@@ -228,6 +238,11 @@
 @media (max-width: 48rem) {
   .experience__item {
     position: static;
+  }
+
+  .experience__list {
+    padding-bottom: 0;
+    margin-bottom: 0;
   }
 
   .experience-card {

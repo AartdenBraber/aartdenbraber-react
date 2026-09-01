@@ -3,9 +3,6 @@ import { RefObject, useEffect } from 'react';
 /** Meer kaarten bovenop dan dit maakt visueel geen verschil meer. */
 const MAX_DEPTH = 3;
 
-/** Over hoeveel pixels een uitgeduwde kaart volledig vervaagt. */
-const PUSH_FADE_DISTANCE = 48;
-
 export interface StackCardBounds {
   /** Bovenkant in de viewport, inclusief de sticky-verschuiving. */
   top: number;
@@ -19,8 +16,6 @@ export interface StackCardDepth {
   covered: number;
   /** Hoeveel kaarten er cumulatief bovenop liggen, afgekapt op MAX_DEPTH. */
   depth: number;
-  /** 0..1: hoe ver de kaart aan het einde van de lijst is uitgeduwd. */
-  pushed: number;
 }
 
 const clamp01 = (value: number) => Math.min(1, Math.max(0, value));
@@ -32,11 +27,6 @@ const clamp01 = (value: number) => Math.min(1, Math.max(0, value));
  * volledig bedekt zodra die volgende kaart op zijn eigen plakpositie ligt. De
  * diepte telt de bedekking van alle kaarten erboven bij elkaar op, zodat elke
  * nieuwe kaart de hele stapel iets verder wegduwt.
- *
- * Aan het einde van de lijst duwt de onderrand vastgeplakte kaarten boven hun
- * plakpositie uit, de hoogste het eerst. Dat is `pushed`: wie uitgeduwd wordt,
- * vervaagt. De laatste kaart plakt nooit (zijn onderkant is de onderkant van
- * de lijst) en scrolt dus gewoon mee; die blijft altijd op 0.
  *
  * Los van de DOM gehouden: dit is het enige stuk waar iets te beslissen valt,
  * en zo is het te testen zonder een browser die frames produceert.
@@ -61,13 +51,7 @@ export const resolveStackDepths = (cards: StackCardBounds[]): StackCardDepth[] =
 
   for (let index = cards.length - 1; index >= 0; index -= 1) {
     sum += covered[index];
-
-    const pushed =
-      index === cards.length - 1
-        ? 0
-        : clamp01((cards[index].stickyTop - cards[index].top) / PUSH_FADE_DISTANCE);
-
-    depths[index] = { covered: covered[index], depth: Math.min(MAX_DEPTH, sum), pushed };
+    depths[index] = { covered: covered[index], depth: Math.min(MAX_DEPTH, sum) };
   }
 
   return depths;
@@ -105,7 +89,6 @@ export const useStackDepth = (
       items.forEach((item) => {
         item.style.removeProperty('--stack-covered');
         item.style.removeProperty('--stack-depth');
-        item.style.removeProperty('--stack-pushed');
       });
       written = [];
     };
@@ -138,15 +121,14 @@ export const useStackDepth = (
         stickyTop: stickyTops[index],
       }));
 
-      resolveStackDepths(bounds).forEach(({ covered, depth, pushed }, index) => {
-        const value = `${covered.toFixed(3)}/${depth.toFixed(3)}/${pushed.toFixed(3)}`;
+      resolveStackDepths(bounds).forEach(({ covered, depth }, index) => {
+        const value = `${covered.toFixed(3)}/${depth.toFixed(3)}`;
 
         if (written[index] === value) return;
 
         written[index] = value;
         items[index].style.setProperty('--stack-covered', covered.toFixed(3));
         items[index].style.setProperty('--stack-depth', depth.toFixed(3));
-        items[index].style.setProperty('--stack-pushed', pushed.toFixed(3));
       });
     };
 
