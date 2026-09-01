@@ -94,7 +94,7 @@ const nl: SiteContent = {
         company: 'DUO',
         role: 'Full stack engineer',
         location: 'Den Haag',
-        period: 'feb. 2024 - heden',
+        period: 'jan. 2024 - heden',
         current: true,
         summary:
           'Aan STATOE, het systeem dat statustoekenningen regelt. Eerst voor het hoger onderwijs (HOST), daarna voor het middelbaar beroepsonderwijs (MBOST). Bij HOST moest de werking vrijwel identiek blijven, bij MBOST was er wel ruimte om het beter te maken.',
@@ -113,7 +113,7 @@ const nl: SiteContent = {
         company: 'DUO',
         role: 'Frontend developer',
         location: 'Den Haag',
-        period: 'mrt. 2023 - feb. 2024',
+        period: 'mrt. 2023 - jan. 2024',
         summary:
           'DUO wilde zaakgericht gaan werken bij het verwerken van documenten. Er stond een MVP, maar die was niet ver genoeg om uit te rollen. Met het team een volledige applicatie gebouwd waarmee medewerkers documenten verwerken en aan een zaak koppelen.',
         highlights: [
@@ -207,11 +207,12 @@ const nl: SiteContent = {
         location: 'Utrecht',
         period: 'jan. 2019 - apr. 2020',
         summary:
-          'Enterprise-applicaties in Angular voor ING, Heraeus, Lidl (Schwartz IT) en Finanz Informatik. Bij een deel van die klanten had ik direct contact.',
+          'Als lead developer enterprise-applicaties in Angular gebouwd voor ING, Heraeus, Lidl (Schwarz IT) en Finanz Informatik. Bij een deel van die klanten deed ik de intake en het klantcontact zelf. Het ING-werk kwam binnen via zusteronderneming Plat4mation, die de expertise voor die app niet in huis had.',
         highlights: [
-          'Grote technical debt bij ING in kaart gebracht en in overleg opgelost',
-          'Op snelheid gerefactord, waardoor de applicatie merkbaar sneller werd',
-          'REST API’s ontworpen en geschreven voor Heraeus, ING en Lidl',
+          'Bij ING een flinke technical debt aangetroffen, dat gemeld bij zowel het bureau als de klant, en na akkoord een groot deel van de app gerefactord',
+          'Diezelfde app versneld door pre-rendering te vervangen door REST-API’s, zodat alleen de benodigde data wordt opgehaald nadat de pagina staat',
+          'Voor Heraeus een portaal ontworpen en gebouwd waar medewerkers en managers hun voorstellen beheren. Er lag alleen een globaal idee, dus het ontwerp kwam er ook bij',
+          'Bij Lidl een junior developer begeleid binnen een korte deadline',
           'UX-onderzoek gedaan en ontwerpen gemaakt voor Finanz Informatik, Heraeus en ING',
         ],
         stack: ['Angular', 'TypeScript', 'JavaScript', 'HTML', 'Sass', 'Git', 'GitLab'],

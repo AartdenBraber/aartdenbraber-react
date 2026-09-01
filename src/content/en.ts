@@ -94,7 +94,7 @@ const en: SiteContent = {
         company: 'DUO',
         role: 'Full stack engineer',
         location: 'The Hague',
-        period: 'Feb 2024 - present',
+        period: 'Jan 2024 - present',
         current: true,
         summary:
           'Working on STATOE, the system that handles status assignment for Dutch students. First for higher education (HOST), then for vocational education (MBOST). HOST had to keep behaving almost exactly as it did, MBOST left room to actually improve things.',
@@ -113,7 +113,7 @@ const en: SiteContent = {
         company: 'DUO',
         role: 'Frontend developer',
         location: 'The Hague',
-        period: 'Mar 2023 - Feb 2024',
+        period: 'Mar 2023 - Jan 2024',
         summary:
           'DUO wanted to move to case based document handling. An MVP existed, but it was not far enough along to roll out. With the team I built a full application for staff to process documents and attach them to a case.',
         highlights: [
@@ -206,7 +206,7 @@ const en: SiteContent = {
         location: 'Utrecht',
         period: 'Jan 2019 - Apr 2020',
         summary:
-          'Lead developer on enterprise applications in Angular for ING, Heraeus, Lidl (Schwarz IT) and Finanz Informatik. For several of those clients I ran the intake and the client contact myself.',
+          'Lead developer on enterprise applications in Angular for ING, Heraeus, Lidl (Schwarz IT) and Finanz Informatik. For several of those clients I ran the intake and the client contact myself. The ING work came in through Plat4mation, App4mation’s sister company, which did not have the expertise that app needed in house.',
         highlights: [
           'Found substantial technical debt at ING, raised it with both the agency and the client, and refactored a large part of the app once they agreed',
           'Made that same app faster by replacing pre-rendering with REST APIs, so only the data actually needed loads once the page is up',
