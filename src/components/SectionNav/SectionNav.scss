@@ -1,33 +1,66 @@
-// Zwevend paneel in de linkermarge. Bij smallere vensters is die marge te
-// krap en schuift het paneel over de tekstkolom heen; de doorkijk en de
-// slagschaduw maken duidelijk dat het erboven ligt in plaats van ertegenaan.
+// De navigatie kent twee standen. Welke het wordt, bepaalt useNavLayout door
+// te meten of de rail naast de tekstkolom past. Een vast breekpunt zou gokken
+// zijn: de labels verschillen per taal en de lettergrootte schaalt mee.
 .section-nav {
   position: fixed;
-  top: 50%;
-  left: max(0.75rem, calc(50vw - var(--content-width) / 2 - 13rem));
-  // Onder de hero. Zo komt hij eronder vandaan in plaats van erover te
-  // verschijnen, en valt hij er nooit overheen.
-  z-index: 1;
-  padding: var(--space-s);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-l);
+  z-index: 1; // Onder de hero, zodat hij daar nooit overheen valt.
   background: rgba(255, 255, 255, 0.82);
-  box-shadow: var(--shadow-card);
   backdrop-filter: blur(14px) saturate(1.1);
-  // Schuift naar links weg naarmate de hero hem verder bedekt.
-  transform: translateY(-50%) translateX(calc((var(--reveal, 0) - 1) * 2rem));
-  opacity: var(--reveal, 0);
   visibility: hidden;
+  opacity: var(--reveal, 0);
 
   &[data-visible='true'] {
     visibility: visible;
   }
 }
 
+// Rail in de linkermarge. --rail-left komt uit de meting, dus hij staat altijd
+// naast de tekst en nooit erop.
+.section-nav[data-layout='rail'] {
+  top: 50%;
+  left: var(--rail-left, 0.75rem);
+  padding: var(--space-s);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-l);
+  box-shadow: var(--shadow-card);
+  // Schuift naar links weg naarmate de hero hem verder bedekt.
+  transform: translateY(-50%) translateX(calc((var(--reveal, 0) - 1) * 2rem));
+}
+
+// Balk bovenaan, voor alles wat te smal is voor de rail.
+.section-nav[data-layout='bar'] {
+  top: 0;
+  left: 0;
+  right: 0;
+  border-bottom: 1px solid var(--color-border);
+  transform: translateY(calc((var(--reveal, 0) - 1) * 100%));
+}
+
 .section-nav__list {
   display: flex;
+}
+
+.section-nav[data-layout='rail'] .section-nav__list {
   flex-direction: column;
   gap: var(--space-xs);
+}
+
+.section-nav[data-layout='bar'] .section-nav__list {
+  gap: var(--space-m);
+  width: min(100% - 2.5rem, var(--content-width));
+  margin-inline: auto;
+  padding-block: var(--space-xs);
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.section-nav__item {
+  flex: none;
 }
 
 .section-nav__link {
@@ -46,14 +79,28 @@
   }
 }
 
+.section-nav[data-layout='bar'] .section-nav__link {
+  flex-direction: column-reverse;
+  align-items: stretch;
+  gap: var(--space-2xs);
+}
+
 .section-nav__track {
   position: relative;
   flex: none;
-  width: 2px;
-  height: 1.5rem;
   border-radius: var(--radius-pill);
   background: var(--color-border-strong);
   overflow: hidden;
+}
+
+.section-nav[data-layout='rail'] .section-nav__track {
+  width: 2px;
+  height: 1.5rem;
+}
+
+.section-nav[data-layout='bar'] .section-nav__track {
+  width: auto;
+  height: 2px;
 }
 
 .section-nav__fill {
@@ -61,17 +108,33 @@
   inset: 0;
   border-radius: inherit;
   background: var(--color-accent-strong);
+}
+
+// Gelezen secties staan vol, de huidige loopt mee met de scrollpositie.
+.section-nav[data-layout='rail'] .section-nav__fill {
   transform: scaleY(0);
   transform-origin: top;
 }
 
-// Gelezen secties staan vol, de huidige loopt mee met de scrollpositie.
-.section-nav__item[data-state='done'] .section-nav__fill {
+.section-nav[data-layout='rail'] .section-nav__item[data-state='done'] .section-nav__fill {
   transform: scaleY(1);
 }
 
-.section-nav__item[data-state='active'] .section-nav__fill {
+.section-nav[data-layout='rail'] .section-nav__item[data-state='active'] .section-nav__fill {
   transform: scaleY(var(--progress, 0));
+}
+
+.section-nav[data-layout='bar'] .section-nav__fill {
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+.section-nav[data-layout='bar'] .section-nav__item[data-state='done'] .section-nav__fill {
+  transform: scaleX(1);
+}
+
+.section-nav[data-layout='bar'] .section-nav__item[data-state='active'] .section-nav__fill {
+  transform: scaleX(var(--progress, 0));
 }
 
 .section-nav__item[data-state='done'] .section-nav__label {
@@ -83,65 +146,15 @@
   font-weight: 700;
 }
 
-// Onder deze breedte is er geen marge meer om zelfs maar half in te staan.
-// Dan wordt het een balk bovenaan die horizontaal te scrollen is, met de
-// streep onder het label.
-@media (max-width: 78rem) {
-  .section-nav {
-    top: 0;
-    left: 0;
-    right: 0;
-    transform: translateY(calc((var(--reveal, 0) - 1) * 100%));
-    padding: 0;
-    border: 0;
-    border-bottom: 1px solid var(--color-border);
-    border-radius: 0;
-    background: rgba(255, 255, 255, 0.9);
-    box-shadow: none;
-  }
-
-  .section-nav__list {
-    flex-direction: row;
-    gap: var(--space-m);
-    width: min(100% - 2.5rem, var(--content-width));
-    margin-inline: auto;
-    padding-block: var(--space-xs);
-    overflow-x: auto;
-    scrollbar-width: none;
-
-    &::-webkit-scrollbar {
-      display: none;
-    }
-  }
-
-  .section-nav__link {
-    flex-direction: column-reverse;
-    align-items: stretch;
-    gap: var(--space-2xs);
-  }
-
-  .section-nav__track {
-    width: auto;
-    height: 2px;
-  }
-
-  .section-nav__fill {
-    transform: scaleX(0);
-    transform-origin: left;
-  }
-
-  .section-nav__item[data-state='done'] .section-nav__fill {
-    transform: scaleX(1);
-  }
-
-  .section-nav__item[data-state='active'] .section-nav__fill {
-    transform: scaleX(var(--progress, 0));
-  }
-}
-
 // Zonder doorkijk wordt het paneel dekkend, anders valt de tekst eronder weg.
 @supports not (backdrop-filter: blur(1px)) {
   .section-nav {
     background: var(--color-surface);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .section-nav[data-layout='bar'] .section-nav__list {
+    scroll-behavior: auto;
   }
 }
