@@ -24,7 +24,8 @@ const BranchIcon: React.FC = () => (
 
 const Experience: React.FC = () => {
   const { t } = useLanguage();
-  const { entries, highlightsLabel, stackLabel, currentLabel, viaLabel } = t.experience;
+  const { entries, highlightsLabel, stackLabel, currentLabel, viaLabel, caseLinkLabel } =
+    t.experience;
   const listRef = useRef<HTMLOListElement>(null);
 
   useRevealOnView(listRef, '.experience__item');
@@ -80,6 +81,12 @@ const Experience: React.FC = () => {
                       ))}
                     </ul>
                   </div>
+                )}
+
+                {entry.caseId && (
+                  <p className="experience-card__case">
+                    <a href={`#case-${entry.caseId}`}>{caseLinkLabel}</a>
+                  </p>
                 )}
 
                 {entry.stack.length > 0 && (

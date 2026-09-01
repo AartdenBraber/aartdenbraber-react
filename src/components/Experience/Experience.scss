@@ -172,6 +172,11 @@
   }
 }
 
+.experience-card__case {
+  font-size: var(--step--1);
+  font-weight: 600;
+}
+
 .experience-card__stack {
   display: flex;
   flex-wrap: wrap;

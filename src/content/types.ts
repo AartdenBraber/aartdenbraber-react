@@ -40,9 +40,31 @@ export interface ExperienceEntry {
   location: string;
   period: string;
   current?: boolean;
+  /** Verwijst naar een case verderop, wanneer die opdracht daar is uitgewerkt. */
+  caseId?: string;
   summary: string;
   highlights: string[];
   stack: string[];
+}
+
+export interface CaseStudy {
+  id: string;
+  client: string;
+  period: string;
+  title: string;
+  /** Mag meerdere alinea's bevatten, gescheiden door een lege regel. */
+  situation: string;
+  actions: string[];
+  result: string;
+}
+
+export interface CasesContent {
+  heading: string;
+  intro: string;
+  situationLabel: string;
+  actionsLabel: string;
+  resultLabel: string;
+  items: CaseStudy[];
 }
 
 export interface ExperienceContent {
@@ -52,6 +74,7 @@ export interface ExperienceContent {
   stackLabel: string;
   currentLabel: string;
   viaLabel: string;
+  caseLinkLabel: string;
   entries: ExperienceEntry[];
 }
 
@@ -102,6 +125,7 @@ export interface SiteContent {
   hero: HeroContent;
   about: AboutContent;
   services: ServicesContent;
+  cases: CasesContent;
   experience: ExperienceContent;
   testimonials: TestimonialsContent;
   faq: FaqContent;

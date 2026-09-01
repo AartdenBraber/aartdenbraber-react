@@ -6,6 +6,7 @@ import '@fontsource/raleway/700.css';
 import '@fontsource/roboto-slab/500.css';
 
 import About from './components/About/About';
+import Cases from './components/Cases/Cases';
 import CvDownload from './components/CvDownload/CvDownload';
 import Experience from './components/Experience/Experience';
 import Faq from './components/Faq/Faq';
@@ -29,6 +30,7 @@ const Page: React.FC = () => {
       <main id="hoofdinhoud">
         <About />
         <Services />
+        <Cases />
         <Experience />
         <Testimonials />
         <Faq />

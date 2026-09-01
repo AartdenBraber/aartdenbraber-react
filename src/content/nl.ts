@@ -1,3 +1,4 @@
+import casesNl from './cases.nl';
 import { SiteContent } from './types';
 
 const nl: SiteContent = {
@@ -12,6 +13,7 @@ const nl: SiteContent = {
     items: [
       { href: '#over-mij', label: 'Over mij' },
       { href: '#wat-ik-doe', label: 'Wat ik doe' },
+      { href: '#cases', label: 'Cases' },
       { href: '#werkervaring', label: 'Werkervaring' },
       { href: '#aanbevelingen', label: 'Aanbevelingen' },
       { href: '#vragen', label: 'Vragen' },
@@ -81,6 +83,8 @@ const nl: SiteContent = {
     ],
   },
 
+  cases: casesNl,
+
   experience: {
     heading: 'Werkervaring',
     intro: 'Van recent naar eerder. Opdrachten die via een werkgever liepen, staan ingesprongen.',
@@ -88,6 +92,7 @@ const nl: SiteContent = {
     stackLabel: 'Stack',
     currentLabel: 'Nu',
     viaLabel: 'via',
+    caseLinkLabel: 'Lees de uitgebreide versie',
     entries: [
       {
         id: 'duo-fullstack',
@@ -125,6 +130,7 @@ const nl: SiteContent = {
       },
       {
         id: 'knab',
+        caseId: 'knab',
         company: 'Knab',
         role: 'Software engineer',
         location: 'Amsterdam',
@@ -169,6 +175,7 @@ const nl: SiteContent = {
       },
       {
         id: 'politie-webcomponents',
+        caseId: 'webcomponents',
         company: 'Politie Nederland',
         via: 'Ordina',
         role: 'Front-end developer',
@@ -185,6 +192,7 @@ const nl: SiteContent = {
       },
       {
         id: 'politie-pandora',
+        caseId: 'pandora',
         company: 'Politie Nederland',
         via: 'Ordina',
         role: 'Lead front-end en UX design',
@@ -202,6 +210,7 @@ const nl: SiteContent = {
       },
       {
         id: 'app4mation',
+        caseId: 'ing',
         company: 'App4mation',
         role: 'Software engineer',
         location: 'Utrecht',

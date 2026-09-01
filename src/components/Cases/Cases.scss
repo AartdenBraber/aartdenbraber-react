@@ -1,0 +1,121 @@
+.cases__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xl);
+}
+
+.case {
+  scroll-margin-top: var(--header-offset);
+}
+
+.case + .case {
+  padding-top: var(--space-2xl);
+  border-top: 1px solid var(--color-border);
+}
+
+.case__head {
+  max-width: 44rem;
+  margin-bottom: var(--space-l);
+}
+
+.case__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-xs);
+  color: var(--color-ink-muted);
+  font-size: var(--step--1);
+
+  span + span::before {
+    content: '·';
+    margin-right: var(--space-xs);
+  }
+}
+
+.case__title {
+  font-size: var(--step-3);
+}
+
+// De situatie leest als lopende tekst, de handelingen als een lijst. Naast
+// elkaar zie je in één oogopslag waar het probleem zat en wat eraan gedaan is.
+.case__body {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-l) var(--space-xl);
+  align-items: start;
+}
+
+.case__block h4,
+.case__result h4 {
+  margin-bottom: var(--space-xs);
+  color: var(--color-ink-muted);
+  font-family: var(--font-body);
+  font-size: var(--step--1);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.case__block p {
+  color: var(--color-ink-soft);
+}
+
+.case__block p + p {
+  margin-top: var(--space-s);
+}
+
+.case__actions li {
+  position: relative;
+  padding-left: 1.4rem;
+  color: var(--color-ink-soft);
+
+  & + li {
+    margin-top: var(--space-xs);
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0.72em;
+    left: 0.25rem;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-accent);
+  }
+}
+
+// Het resultaat is waar de opdrachtgever op afrekent, dus dat krijgt gewicht.
+.case__result {
+  margin-top: var(--space-l);
+  padding: var(--space-l);
+  border-radius: var(--radius-l);
+  background: var(--color-surface-sunken);
+
+  p {
+    max-width: 46rem;
+    font-size: var(--step-1);
+  }
+
+  p + p {
+    margin-top: var(--space-s);
+  }
+}
+
+@media (max-width: 52rem) {
+  .cases__list {
+    gap: var(--space-xl);
+  }
+
+  .case + .case {
+    padding-top: var(--space-xl);
+  }
+
+  .case__body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .case__result {
+    padding: var(--space-m);
+  }
+}

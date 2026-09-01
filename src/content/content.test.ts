@@ -35,6 +35,24 @@ describe('nl en en blijven gelijk opgebouwd', () => {
     });
   });
 
+  it('heeft dezelfde cases met dezelfde opbouw', () => {
+    expect(en.cases.items.map((item) => item.id)).toEqual(nl.cases.items.map((item) => item.id));
+
+    nl.cases.items.forEach((item, index) => {
+      expect(en.cases.items[index].actions).toHaveLength(item.actions.length);
+    });
+  });
+
+  it('verwijst vanuit de werkervaring alleen naar bestaande cases', () => {
+    const caseIds = nl.cases.items.map((item) => item.id);
+
+    nl.experience.entries.forEach((entry) => {
+      if (!entry.caseId) return;
+
+      expect(caseIds).toContain(entry.caseId);
+    });
+  });
+
   it('heeft dezelfde vragen in de faq', () => {
     expect(en.faq.items.map((item) => item.id)).toEqual(nl.faq.items.map((item) => item.id));
   });

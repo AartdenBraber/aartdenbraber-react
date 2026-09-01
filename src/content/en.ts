@@ -1,3 +1,4 @@
+import casesEn from './cases.en';
 import { SiteContent } from './types';
 
 const en: SiteContent = {
@@ -12,6 +13,7 @@ const en: SiteContent = {
     items: [
       { href: '#over-mij', label: 'About' },
       { href: '#wat-ik-doe', label: 'What I do' },
+      { href: '#cases', label: 'Cases' },
       { href: '#werkervaring', label: 'Experience' },
       { href: '#aanbevelingen', label: 'Recommendations' },
       { href: '#vragen', label: 'Questions' },
@@ -81,6 +83,8 @@ const en: SiteContent = {
     ],
   },
 
+  cases: casesEn,
+
   experience: {
     heading: 'Work experience',
     intro: 'Most recent first. Engagements that ran through an employer are shown indented.',
@@ -88,6 +92,7 @@ const en: SiteContent = {
     stackLabel: 'Stack',
     currentLabel: 'Current',
     viaLabel: 'via',
+    caseLinkLabel: 'Read the long version',
     entries: [
       {
         id: 'duo-fullstack',
@@ -125,6 +130,7 @@ const en: SiteContent = {
       },
       {
         id: 'knab',
+        caseId: 'knab',
         company: 'Knab',
         role: 'Software engineer',
         location: 'Amsterdam',
@@ -168,6 +174,7 @@ const en: SiteContent = {
       },
       {
         id: 'politie-webcomponents',
+        caseId: 'webcomponents',
         company: 'Dutch national police',
         via: 'Ordina',
         role: 'Frontend developer',
@@ -184,6 +191,7 @@ const en: SiteContent = {
       },
       {
         id: 'politie-pandora',
+        caseId: 'pandora',
         company: 'Dutch national police',
         via: 'Ordina',
         role: 'Lead frontend and UX design',
@@ -201,6 +209,7 @@ const en: SiteContent = {
       },
       {
         id: 'app4mation',
+        caseId: 'ing',
         company: 'App4mation',
         role: 'Software engineer',
         location: 'Utrecht',
