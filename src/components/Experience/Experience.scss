@@ -50,18 +50,20 @@
 // De transform staat op een tussenlaag en niet op de li, omdat de li het
 // meetpunt van useStackDepth is: een transform daarop zou de meting vervuilen.
 .experience__motion {
-  transform: translateY(calc(var(--stack-depth, 0) * -0.35rem))
+  // --stack-pushed compenseert het uitduwen door de lijstonderkant: de kaart
+  // schuift visueel terug naar zijn plakpositie, zodat zijn ronde bovenrand
+  // op zijn plek in de stapel blijft liggen. Aan de bovenkant knippen zou een
+  // hoekige rand geven, en die rand is juist het enige dat zichtbaar blijft.
+  transform: translateY(
+      calc(var(--stack-pushed, 0) * 1px + var(--stack-depth, 0) * -0.35rem)
+    )
     scale(calc(1 - var(--stack-depth, 0) * 0.025));
   transform-origin: 50% 0;
-  // Een bedolven kaart mag nooit onder de kaart ervoor uitsteken, en een
-  // kaart die aan het einde door de lijstonderkant omhoog wordt geduwd niet
-  // boven zijn plek in de stapel. useStackDepth zet in --stack-clip en
-  // --stack-clip-top hoeveel er onder en boven af moet. De ruime negatieve
-  // insets laten de schaduw rondom met rust; zonder knijpwerk zijn de waarden
-  // zelf negatief zodat ook die randen vrij blijven.
-  clip-path: inset(
-    calc(var(--stack-clip-top, -99) * 1px) -99px calc(var(--stack-clip, -99) * 1px) -99px
-  );
+  // Een bedolven kaart mag nooit onder de kaart ervoor uitsteken;
+  // useStackDepth zet in --stack-clip hoeveel er van de onderkant af moet.
+  // De ruime negatieve insets laten de schaduw rondom met rust; zonder
+  // knijpwerk is de waarde zelf negatief zodat ook de onderrand vrij blijft.
+  clip-path: inset(-99px -99px calc(var(--stack-clip, -99) * 1px) -99px);
 }
 
 // De inhoud vervaagt zodra de volgende kaart eroverheen schuift, en is al
@@ -260,9 +262,11 @@
 }
 
 // De vervaging blijft: die repareert de doorschemerende tekst en is aan de
-// scrollpositie gebonden, niet aan tijd. Alleen het meebewegen vervalt.
+// scrollpositie gebonden, niet aan tijd. Ook de uitduw-compensatie blijft,
+// want zonder die schuift een lange kaart boven de stapel uit. Alleen het
+// decoratieve wegzakken vervalt.
 @media (prefers-reduced-motion: reduce) {
   .experience__motion {
-    transform: none;
+    transform: translateY(calc(var(--stack-pushed, 0) * 1px));
   }
 }

@@ -28,8 +28,8 @@ export interface StackCardDepth {
   depth: number;
   /** Pixels die van de onderkant af moeten, of NO_CLIP wanneer niets weg hoeft. */
   clip: number;
-  /** Pixels die van de bovenkant af moeten, of NO_CLIP wanneer niets weg hoeft. */
-  clipTop: number;
+  /** Pixels die de kaart boven zijn plakpositie uit is geduwd. */
+  pushed: number;
 }
 
 const clamp01 = (value: number) => Math.min(1, Math.max(0, value));
@@ -50,10 +50,11 @@ const clamp01 = (value: number) => Math.min(1, Math.max(0, value));
  *
  * Aan het einde van de lijst duwt de onderrand vastgeplakte kaarten boven hun
  * plakpositie uit, de hoogste het eerst, en die zou dan boven de stapel
- * uitsteken. `clipTop` knipt precies het uitgeduwde stuk van de bovenkant af,
- * zodat het randje visueel gewoon op zijn plek in de stapel blijft staan. De
- * laatste kaart plakt nooit; boven zijn plakpositie uitkomen is daar gewoon
- * scrollen, dus die blijft ongemoeid.
+ * uitsteken. `pushed` meet dat stuk; de kaart wordt er visueel exact mee
+ * teruggeschoven, zodat zijn ronde bovenrand gewoon op zijn plek in de stapel
+ * blijft liggen. De onderkant is dan toch al weggeknipt, dus per saldo wordt
+ * de kaart alleen minder hoog. De laatste kaart plakt nooit; boven zijn
+ * plakpositie uitkomen is daar gewoon scrollen, dus die blijft ongemoeid.
  *
  * Los van de DOM gehouden: dit is het enige stuk waar iets te beslissen valt,
  * en zo is het te testen zonder een browser die frames produceert.
@@ -102,7 +103,7 @@ export const resolveStackDepths = (cards: StackCardBounds[]): StackCardDepth[] =
       covered: covered[index],
       depth: Math.min(MAX_DEPTH, sum),
       clip: clip > 0 ? clip : NO_CLIP,
-      clipTop: pushedUp > 0 ? pushedUp : NO_CLIP,
+      pushed: Math.max(0, pushedUp),
     };
     nextVisible = visible;
   }
@@ -143,7 +144,7 @@ export const useStackDepth = (
         item.style.removeProperty('--stack-covered');
         item.style.removeProperty('--stack-depth');
         item.style.removeProperty('--stack-clip');
-        item.style.removeProperty('--stack-clip-top');
+        item.style.removeProperty('--stack-pushed');
       });
       written = [];
     };
@@ -176,8 +177,8 @@ export const useStackDepth = (
         stickyTop: stickyTops[index],
       }));
 
-      resolveStackDepths(bounds).forEach(({ covered, depth, clip, clipTop }, index) => {
-        const value = `${covered.toFixed(3)}/${depth.toFixed(3)}/${clip.toFixed(1)}/${clipTop.toFixed(1)}`;
+      resolveStackDepths(bounds).forEach(({ covered, depth, clip, pushed }, index) => {
+        const value = `${covered.toFixed(3)}/${depth.toFixed(3)}/${clip.toFixed(1)}/${pushed.toFixed(1)}`;
 
         if (written[index] === value) return;
 
@@ -185,7 +186,7 @@ export const useStackDepth = (
         items[index].style.setProperty('--stack-covered', covered.toFixed(3));
         items[index].style.setProperty('--stack-depth', depth.toFixed(3));
         items[index].style.setProperty('--stack-clip', clip.toFixed(1));
-        items[index].style.setProperty('--stack-clip-top', clipTop.toFixed(1));
+        items[index].style.setProperty('--stack-pushed', pushed.toFixed(1));
       });
     };
 

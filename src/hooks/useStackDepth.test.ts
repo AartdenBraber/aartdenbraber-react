@@ -13,9 +13,9 @@ describe('resolveStackDepths', () => {
     const depths = resolveStackDepths([kaart(40, 40), kaart(452, 52), kaart(864, 64)]);
 
     expect(depths).toEqual([
-      { covered: 0, depth: 0, clip: NO_CLIP, clipTop: NO_CLIP },
-      { covered: 0, depth: 0, clip: NO_CLIP, clipTop: NO_CLIP },
-      { covered: 0, depth: 0, clip: NO_CLIP, clipTop: NO_CLIP },
+      { covered: 0, depth: 0, clip: NO_CLIP, pushed: 0 },
+      { covered: 0, depth: 0, clip: NO_CLIP, pushed: 0 },
+      { covered: 0, depth: 0, clip: NO_CLIP, pushed: 0 },
     ]);
   });
 
@@ -59,21 +59,21 @@ describe('resolveStackDepths', () => {
       covered: 0,
       depth: 0,
       clip: NO_CLIP,
-      clipTop: NO_CLIP,
+      pushed: 0,
     });
   });
 
-  it('knipt het uitgeduwde stuk van de bovenkant af', () => {
-    // Kaart 24px boven zijn plakpositie geduwd: precies dat stuk gaat er aan
-    // de bovenkant af, zodat het randje op zijn plek in de stapel blijft.
-    expect(resolveStackDepths([kaart(40, 40), kaart(52, 52)])[0].clipTop).toBe(NO_CLIP);
-    expect(resolveStackDepths([kaart(16, 40), kaart(52, 52)])[0].clipTop).toBeCloseTo(24);
+  it('meet hoe ver een kaart boven zijn plakpositie uit is geduwd', () => {
+    // Kaart 24px boven zijn plakpositie: precies dat stuk schuift hij visueel
+    // terug, zodat zijn ronde bovenrand op zijn plek in de stapel blijft.
+    expect(resolveStackDepths([kaart(40, 40), kaart(52, 52)])[0].pushed).toBe(0);
+    expect(resolveStackDepths([kaart(16, 40), kaart(52, 52)])[0].pushed).toBeCloseTo(24);
   });
 
-  it('knipt de laatste kaart nooit aan de bovenkant', () => {
+  it('schuift de laatste kaart nooit terug', () => {
     // De laatste kaart plakt nooit; boven zijn plakpositie uitkomen is daar
     // gewoon scrollen.
-    expect(resolveStackDepths([kaart(-500, 40), kaart(-400, 52)])[1].clipTop).toBe(NO_CLIP);
+    expect(resolveStackDepths([kaart(-500, 40), kaart(-400, 52)])[1].pushed).toBe(0);
   });
 
   it('knipt een lange bedolven kaart af tot boven de onderkant van zijn opvolger', () => {
