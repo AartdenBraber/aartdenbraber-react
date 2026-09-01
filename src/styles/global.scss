@@ -186,6 +186,41 @@ button {
   }
 }
 
+// Verwijzing naar een artikel buiten de site. Het pijltje is getekend, niet
+// een teken uit een lettertype, zodat het overal hetzelfde staat.
+.content-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  margin-top: var(--space-xs);
+  font-size: var(--step--1);
+  font-weight: 600;
+  text-decoration: none;
+
+  &::after {
+    content: '';
+    width: 0.7em;
+    height: 0.7em;
+    background: currentColor;
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    clip-path: polygon(
+      14% 0,
+      100% 0,
+      100% 86%,
+      86% 86%,
+      86% 24%,
+      12% 98%,
+      2% 88%,
+      76% 14%,
+      14% 14%
+    );
+  }
+
+  &:hover::after {
+    transform: translate(2px, -2px);
+  }
+}
+
 .button {
   display: inline-flex;
   align-items: center;

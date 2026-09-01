@@ -44,6 +44,7 @@ const nl: SiteContent = {
       'Ik ben Aart den Braber, freelance full stack engineer uit Nederland. Mijn werk zit meestal in bestaande systemen: applicaties die al jaren draaien, waar veel van afhangt, en waar degene die er als laatste iets ingrijpends aan veranderde inmiddels vertrokken is.',
       'Ik ben begonnen als frontender en afgestudeerd als UX-researcher. Daardoor kan ik een gebruikersvraag zelf omzetten in een API-ontwerp, zonder dat daar drie mensen tussen hoeven te zitten. In de praktijk scheelt dat een hoop heen en weer.',
       'Waar ik streng in ben: tests die daadwerkelijk gedrag controleren, code die je zonder toelichting kunt lezen, en documentatie die klopt. Niet omdat het netjes staat, maar omdat een systeem anders niet over te dragen is zonder dat de kwaliteit meezakt.',
+      'Volgens Robert C. Martin besteden we ongeveer tien keer zoveel tijd aan het lezen van code als aan het schrijven ervan. Dat is de hele reden dat ik er zo op hamer: een uur extra aan leesbaarheid verdien je tien keer terug.',
     ],
     facts: [
       { label: 'Actief sinds', value: '2011' },
@@ -60,6 +61,7 @@ const nl: SiteContent = {
       {
         title: 'Frontend in Angular',
         body: 'Angular en TypeScript, van state management met NgRx tot componenten die je over meerdere applicaties hergebruikt. Ik werk met Angular sinds versie 2.',
+        link: { label: 'Over typesafe routes in Angular', href: 'https://www.linkedin.com/pulse/4-steps-typesafe-routes-angular-aart-den-braber-' },
       },
       {
         title: 'Backend in Java en Node',
@@ -68,6 +70,7 @@ const nl: SiteContent = {
       {
         title: 'Testen dat ergens over gaat',
         body: 'Unit, integratie en end-to-end. Ik geef er ook workshops over, want veel teams schrijven tests die alleen bevestigen wat de code toevallig al doet.',
+        link: { label: 'De techniek waar die workshops op leunen', href: 'https://www.linkedin.com/pulse/how-write-clean-testing-code-using-moshs-technique-aart-den-braber-' },
       },
       {
         title: 'UX-onderzoek en flow design',
@@ -76,6 +79,7 @@ const nl: SiteContent = {
       {
         title: 'Onderhoudbaarheid terugbrengen',
         body: 'Technical debt in kaart brengen, opstart- en buildprocessen versimpelen, en het team meenemen zodat het daarna niet terugzakt.',
+        link: { label: 'Ongebruikte CSS uit een componentbibliotheek slopen', href: 'https://www.linkedin.com/pulse/clean-up-unused-css-from-external-component-libraries-den-braber-' },
       },
       {
         title: 'Begeleiding van juniors',
@@ -312,6 +316,7 @@ const nl: SiteContent = {
         question: 'Hoe kijk je naar testen?',
         answer:
           'Blackbox als uitgangspunt. Een test controleert wat een gebruiker of een aanroepende partij merkt, niet hoe het van binnen in elkaar zit. Wil je whitebox testen, dan ga ik daar graag met je over in discussie.\n\nSnapshot tests reken ik niet mee. Die bevestigen alleen wat de code toevallig al doet. Bij de Politie heb ik daar workshops over gegeven; dat team is daarna overgestapt op tests die gedrag controleren.',
+        link: { label: 'De techniek uitgeschreven', href: 'https://www.linkedin.com/pulse/how-write-clean-testing-code-using-moshs-technique-aart-den-braber-' },
       },
       {
         id: 'grenzen',

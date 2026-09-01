@@ -17,7 +17,19 @@ const Services: React.FC = () => {
           {t.services.items.map((item) => (
             <div className="services__row" key={item.title}>
               <dt className="services__term">{item.title}</dt>
-              <dd className="services__body">{item.body}</dd>
+              <dd className="services__body">
+                {item.body}
+                {item.link && (
+                  <a
+                    className="content-link"
+                    href={item.link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {item.link.label}
+                  </a>
+                )}
+              </dd>
             </div>
           ))}
         </dl>

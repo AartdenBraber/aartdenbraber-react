@@ -53,6 +53,15 @@ describe('nl en en blijven gelijk opgebouwd', () => {
     });
   });
 
+  it('linkt in beide talen naar dezelfde artikelen', () => {
+    const links = (taal: typeof nl) => [
+      ...taal.services.items.map((item) => item.link?.href ?? null),
+      ...taal.faq.items.map((item) => item.link?.href ?? null),
+    ];
+
+    expect(links(en)).toEqual(links(nl));
+  });
+
   it('heeft dezelfde vragen in de faq', () => {
     expect(en.faq.items.map((item) => item.id)).toEqual(nl.faq.items.map((item) => item.id));
   });

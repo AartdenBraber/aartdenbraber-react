@@ -38,6 +38,19 @@ const Faq: React.FC = () => {
                 {item.answer.split('\n\n').map((paragraph) => (
                   <p key={paragraph.slice(0, 40)}>{paragraph}</p>
                 ))}
+
+                {item.link && (
+                  <p>
+                    <a
+                      className="content-link"
+                      href={item.link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {item.link.label}
+                    </a>
+                  </p>
+                )}
               </div>
             </details>
           ))}

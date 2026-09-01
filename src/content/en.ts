@@ -44,6 +44,7 @@ const en: SiteContent = {
       'I am Aart den Braber, a freelance full stack engineer based in the Netherlands. Most of my work happens inside existing systems: applications that have been running for years, that a lot depends on, and whose last serious contributor has usually left.',
       'I started out in frontend and graduated as a UX researcher. That means I can turn a user question into an API design myself, without three people in between. In practice it saves a lot of back and forth.',
       'What I am strict about: tests that check actual behaviour, code you can read without a walkthrough, and documentation that is accurate. Not because it looks tidy, but because a system cannot change hands without it.',
+      'According to Robert C. Martin we spend about ten times as long reading code as writing it. That is the whole reason I insist on it: an extra hour spent on readability comes back ten times over.',
     ],
     facts: [
       { label: 'Working since', value: '2011' },
@@ -60,6 +61,7 @@ const en: SiteContent = {
       {
         title: 'Frontend in Angular',
         body: 'Angular and TypeScript, from state management with NgRx to components shared across several applications. I have used Angular since version 2.',
+        link: { label: 'On typesafe routes in Angular', href: 'https://www.linkedin.com/pulse/4-steps-typesafe-routes-angular-aart-den-braber-' },
       },
       {
         title: 'Backend in Java and Node',
@@ -68,6 +70,7 @@ const en: SiteContent = {
       {
         title: 'Testing that means something',
         body: 'Unit, integration and end to end. I run workshops on it too, because a lot of teams write tests that only confirm whatever the code happens to do.',
+        link: { label: 'The technique those workshops lean on', href: 'https://www.linkedin.com/pulse/how-write-clean-testing-code-using-moshs-technique-aart-den-braber-' },
       },
       {
         title: 'UX research and flow design',
@@ -76,6 +79,7 @@ const en: SiteContent = {
       {
         title: 'Making a codebase maintainable again',
         body: 'Mapping technical debt, simplifying start up and build processes, and taking the team along so it does not slide back.',
+        link: { label: 'Stripping unused CSS out of a component library', href: 'https://www.linkedin.com/pulse/clean-up-unused-css-from-external-component-libraries-den-braber-' },
       },
       {
         title: 'Mentoring juniors',
@@ -311,6 +315,7 @@ const en: SiteContent = {
         question: 'How do you think about testing?',
         answer:
           'Blackbox as the starting point. A test checks what a user or a calling party notices, not how it works inside. If you want whitebox tests, I am happy to have that argument with you.\n\nSnapshot tests do not count for me. They only confirm whatever the code already happens to do. I ran workshops on this at the national police, and that team moved to tests that check behaviour.',
+        link: { label: 'The technique written out', href: 'https://www.linkedin.com/pulse/how-write-clean-testing-code-using-moshs-technique-aart-den-braber-' },
       },
       {
         id: 'grenzen',

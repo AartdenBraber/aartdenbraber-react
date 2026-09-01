@@ -1,5 +1,11 @@
 export type Language = 'nl' | 'en';
 
+/** Verwijzing naar iets buiten de site, zoals een artikel op LinkedIn. */
+export interface ContentLink {
+  label: string;
+  href: string;
+}
+
 export interface NavContent {
   label: string;
   skipToContent: string;
@@ -26,7 +32,7 @@ export interface AboutContent {
 export interface ServicesContent {
   heading: string;
   intro: string;
-  items: { title: string; body: string }[];
+  items: { title: string; body: string; link?: ContentLink }[];
 }
 
 /**
@@ -90,7 +96,7 @@ export interface FaqContent {
   heading: string;
   intro: string;
   /** Antwoorden mogen meerdere alinea's bevatten, gescheiden door een lege regel. */
-  items: { id: string; question: string; answer: string }[];
+  items: { id: string; question: string; answer: string; link?: ContentLink }[];
 }
 
 export interface CvContent {
