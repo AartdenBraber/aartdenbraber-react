@@ -4,11 +4,11 @@ import { RefObject, useEffect } from 'react';
 const MAX_DEPTH = 3;
 
 /**
- * Zoveel pixels boven de onderkant van de kaart ervoor eindigt een bedolven
- * kaart. Ruim meer dan de hoekafronding van de kaarten (--radius-l, 22px),
- * anders piept de rechte knijprand door de ronde hoeken van de kaart ervoor.
+ * Zoveel pixels loopt een bedolven kaart door achter de bovenrand van de
+ * kaart ervoor. Ruim meer dan de hoekafronding van de kaarten (--radius-l,
+ * 22px), anders piept de rechte kniprand door die ronde hoeken heen.
  */
-const TUCK = 36;
+const CORNER_OVERLAP = 26;
 
 /** Wegknippen "uit" als negatieve inset, zodat de schaduw met rust wordt gelaten. */
 export const NO_CLIP = -99;
@@ -43,10 +43,14 @@ const clamp01 = (value: number) => Math.min(1, Math.max(0, value));
  * nieuwe kaart de hele stapel iets verder wegduwt.
  *
  * De kaarten verschillen flink in hoogte, dus een lange bedolven kaart zou
- * onder een korte kaart ervoor uitsteken. Daarom krimpt `clip` de onderkant
- * mee met de bedekking, tot net boven de zichtbare onderkant van de kaart
- * ervoor. De knijprand zelf blijft daarbij altijd achter die kaart verborgen:
- * hij trekt langzamer op dan de kaart die eroverheen schuift.
+ * onder een korte kaart ervoor uitsteken. Daarom knipt `clip` de onderkant
+ * mee met de bedekking weg, tot er alleen nog het zichtbare randje over is
+ * plus een klein stuk dat achter de ronde hoeken van de opvolger schuilgaat.
+ * De kniprand zelf blijft tijdens het overschuiven altijd achter de opvolger
+ * verborgen: hij trekt langzamer op dan de kaart die eroverheen schuift.
+ * Daarbovenop komt niets ooit onder de bovenrand van de laatste kaart uit:
+ * die plakt niet, en als hij aan het einde wegscrolt zouden de vastgehouden
+ * randjes er anders onderuit komen.
  *
  * Aan het einde van de lijst duwt de onderrand vastgeplakte kaarten boven hun
  * plakpositie uit, de hoogste het eerst, en die zou dan boven de stapel
@@ -76,10 +80,7 @@ export const resolveStackDepths = (cards: StackCardBounds[]): StackCardDepth[] =
 
   const depths: StackCardDepth[] = new Array(cards.length);
   let sum = 0;
-  // Zichtbare (geknepen) hoogte van de kaart erna; achterstevoren opgebouwd,
-  // zodat een kaart wegduikt achter wat er van zijn opvolger óver is, niet
-  // achter diens volledige hoogte.
-  let nextVisible = 0;
+  const lastTop = cards[cards.length - 1]?.top ?? 0;
 
   for (let index = cards.length - 1; index >= 0; index -= 1) {
     const card = cards[index];
@@ -91,9 +92,14 @@ export const resolveStackDepths = (cards: StackCardBounds[]): StackCardDepth[] =
 
     if (next) {
       const lip = next.stickyTop - card.stickyTop;
-      const target = Math.min(card.height, Math.max(lip, nextVisible + lip - TUCK));
+      const target = Math.min(card.height, lip + CORNER_OVERLAP);
 
       visible = card.height - covered[index] * (card.height - target);
+
+      // De laatste kaart is het voorste vlak. Zodra die aan het einde
+      // wegscrolt, mag geen enkel vastgehouden randje onder zijn bovenrand
+      // uitkomen; de randjes verdwijnen dan een voor een met hem mee.
+      visible = Math.min(visible, Math.max(0, lastTop + CORNER_OVERLAP - card.stickyTop));
     }
 
     const clip = card.height - visible;
@@ -105,7 +111,6 @@ export const resolveStackDepths = (cards: StackCardBounds[]): StackCardDepth[] =
       clip: clip > 0 ? clip : NO_CLIP,
       pushed: Math.max(0, pushedUp),
     };
-    nextVisible = visible;
   }
 
   return depths;

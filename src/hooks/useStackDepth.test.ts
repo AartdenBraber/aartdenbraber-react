@@ -76,41 +76,27 @@ describe('resolveStackDepths', () => {
     expect(resolveStackDepths([kaart(-500, 40), kaart(-400, 52)])[1].pushed).toBe(0);
   });
 
-  it('knipt een lange bedolven kaart af tot boven de onderkant van zijn opvolger', () => {
-    // Kaart van 400 hoog, bedolven onder een kaart van 200: er blijft
-    // 200 + lip (12) - marge (36) = 176 over, dus 224 gaat eraf. De zichtbare
-    // onderkant (40 + 176) eindigt daarmee 36px boven die van de opvolger
-    // (52 + 200).
-    const [lang] = resolveStackDepths([kaart(40, 40), kaart(52, 52, 200)]);
-
-    expect(lang.clip).toBeCloseTo(224);
+  it('knipt een bedolven kaart terug tot het randje plus de hoekmarge', () => {
+    // Van een volledig bedolven kaart blijft het randje (lip, 12) over plus
+    // wat er achter de ronde hoeken van de opvolger schuilgaat (26). Van een
+    // kaart van 400 hoog gaat er dus 362 af, hoe hoog de opvolger ook is.
+    expect(resolveStackDepths([kaart(40, 40), kaart(52, 52, 200)])[0].clip).toBeCloseTo(362);
+    expect(resolveStackDepths([kaart(40, 40), kaart(52, 52, 700)])[0].clip).toBeCloseTo(362);
   });
 
   it('knipt evenredig mee terwijl de opvolger eroverheen schuift', () => {
     const halverwege = 40 + 400 - (400 - 12) / 2;
     const [lang] = resolveStackDepths([kaart(40, 40), kaart(halverwege, 52, 200)]);
 
-    expect(lang.clip).toBeCloseTo(112);
+    expect(lang.clip).toBeCloseTo(181);
   });
 
-  it('knipt niets van een kaart die korter is dan zijn opvolger', () => {
-    const [kort] = resolveStackDepths([kaart(40, 40, 150), kaart(52, 52, 400)]);
-
-    expect(kort.clip).toBe(NO_CLIP);
-  });
-
-  it('duikt weg achter wat er van de opvolger over is, niet achter zijn volle hoogte', () => {
-    // De middelste kaart (600) is zelf al geknepen tot 276 achter de korte
-    // kaart (300). De lange kaart (700) moet daarachter passen, niet achter
-    // de volle 600.
-    const depths = resolveStackDepths([
-      kaart(40, 40, 700),
-      kaart(52, 52, 600),
-      kaart(64, 64, 300),
-    ]);
-
-    expect(depths[1].clip).toBeCloseTo(324);
-    expect(depths[0].clip).toBeCloseTo(448);
+  it('houdt alles boven de bovenrand van de vertrekkende laatste kaart', () => {
+    // De laatste kaart plakt niet en scrolt aan het einde gewoon weg. De
+    // vastgehouden randjes erachter knippen dan mee terug, zodat er niets
+    // onder hem uitkomt: eerst tot een restje, daarna helemaal weg.
+    expect(resolveStackDepths([kaart(40, 40), kaart(20, 52)])[0].clip).toBeCloseTo(394);
+    expect(resolveStackDepths([kaart(40, 40), kaart(-100, 52)])[0].clip).toBeCloseTo(400);
   });
 
   it('deelt niet door nul bij een kaart korter dan de plak-offset', () => {
