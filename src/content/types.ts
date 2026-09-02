@@ -108,15 +108,8 @@ export interface CvContent {
 
 export interface ContactContent {
   heading: string;
+  /** Het e-mailadres staat bewust alleen in het cv, niet op de site. */
   body: string;
-  /**
-   * Het adres staat bewust in twee helften. Zo komt het niet als
-   * `mailto:`-link in de HTML te staan, waar oogstbots het zo weglezen.
-   * Het wordt pas samengevoegd wanneer iemand op de knop klikt.
-   */
-  emailLabel: string;
-  emailUser: string;
-  emailDomain: string;
   linkedIn: string;
   linkedInLabel: string;
 }

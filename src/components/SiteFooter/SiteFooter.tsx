@@ -6,13 +6,6 @@ const SiteFooter: React.FC = () => {
   const { t } = useLanguage();
   const year = new Date().getFullYear();
 
-  // Het adres wordt pas op het moment van klikken samengesteld, zodat het niet
-  // in de HTML of in een mailto-link staat waar bots het uit oogsten.
-  const openMailClient = () => {
-    const { emailUser, emailDomain } = t.contact;
-    window.location.href = `mailto:${emailUser}@${emailDomain}`;
-  };
-
   return (
     <footer className="site-footer" id="contact">
       <div className="container site-footer__inner">
@@ -26,9 +19,6 @@ const SiteFooter: React.FC = () => {
           data-reveal-item=""
           style={{ '--reveal-step': 1 } as React.CSSProperties}
         >
-          <button type="button" className="button button--ghost-light" onClick={openMailClient}>
-            {t.contact.emailLabel}
-          </button>
           <a
             className="button button--ghost-light"
             href={t.contact.linkedIn}

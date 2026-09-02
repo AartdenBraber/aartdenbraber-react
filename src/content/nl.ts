@@ -349,10 +349,7 @@ const nl: SiteContent = {
   contact: {
     heading: 'Contact',
     body:
-      'Zoek je iemand voor een langere opdracht, of wil je eerst sparren over een systeem dat vastloopt? Stuur gerust een mail.',
-    emailLabel: 'Stuur een mail',
-    emailUser: 'cv',
-    emailDomain: 'prosumfrontend.nl',
+      'Zoek je iemand voor een langere opdracht, of wil je eerst sparren over een systeem dat vastloopt? Mijn e-mailadres staat in het cv, dus download die en stuur gerust een mail.',
     linkedIn: 'https://www.linkedin.com/in/aartdenbraber',
     linkedInLabel: 'LinkedIn',
   },

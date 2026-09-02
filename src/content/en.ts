@@ -348,10 +348,7 @@ const en: SiteContent = {
   contact: {
     heading: 'Contact',
     body:
-      'Looking for someone for a longer engagement, or want to talk through a system that has stalled? An email is fine.',
-    emailLabel: 'Send an email',
-    emailUser: 'cv',
-    emailDomain: 'prosumfrontend.nl',
+      'Looking for someone for a longer engagement, or want to talk through a system that has stalled? My email address is in the CV, so download it and drop me a line.',
     linkedIn: 'https://www.linkedin.com/in/aartdenbraber',
     linkedInLabel: 'LinkedIn',
   },
