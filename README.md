@@ -47,5 +47,12 @@ logica die de juiste bestandsnaam kiest.
 
 ## Hosting
 
-De site staat op Netlify en bouwt automatisch bij een push naar `main`.
-Inloggegevens staan in de wachtwoordmanager, niet in deze repo.
+De server meldt zich als Apache. Onbekende paden krijgen daar `index.html`
+terug, waardoor `/en` werkt zonder dat er in deze repo iets voor geregeld is.
+Die configuratie staat op de server, niet hier.
+
+Hoe de build op de server terechtkomt staat nergens vastgelegd. Vul dat hier
+aan zodra je het opnieuw doet.
+
+Twee bestanden staan alleen op de server en niet in de repo: de twee cv-pdf's,
+zie hierboven. Vervang ze niet met een deploy die de hele map overschrijft.
