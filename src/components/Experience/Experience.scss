@@ -66,17 +66,13 @@
   clip-path: inset(-99px -99px calc(var(--stack-clip, -99) * 1px) -99px);
 }
 
-// De inhoud vervaagt zodra de volgende kaart eroverheen schuift, en is al
-// weg ruim voordat die volgende kaart op zijn plek ligt (vandaar de factor
-// en het kwadraat). Dat is ook de reparatie voor kaarten van verschillende
-// hoogte: een lange kaart stak eerst onder een korte vastgeplakte kaart uit,
-// met losse regels tekst tussen de kaarten door zichtbaar. Het kaartvlak
-// zelf blijft dekkend staan, zodat de stapel randjes bovenin blijft bestaan.
-.experience-card > * {
-  --content-fade: clamp(0, calc(1 - var(--stack-covered, 0) * 1.5), 1);
-
-  opacity: calc(var(--content-fade) * var(--content-fade));
-}
+// De inhoud vervaagde hier eerst mee met de bedekking. Dat was de reparatie
+// voor kaarten van verschillende hoogte: een lange kaart stak onder een korte
+// vastgeplakte kaart uit, met losse regels tekst tussen de kaarten door
+// zichtbaar. Sinds --stack-clip de onderkant meetrekt met de bedekking is dat
+// niet meer nodig, en de kniprand blijft daarbij achter de volgende kaart
+// verborgen. De tekst wordt dus afgedekt in plaats van weggevaagd en blijft
+// tot het laatst leesbaar.
 
 .experience-card {
   display: flex;
