@@ -69,11 +69,13 @@ Zolang `SSH_HOST` of `SSH_KEY` ontbreekt bouwt en test de workflow wel, maar
 rolt hij niets uit.
 
 De rsync draait **met** `--delete`, zodat oude gehashte bestanden zich niet
-opstapelen. Twee dingen blijven met rust, want die komen niet uit deze repo:
+opstapelen. Alleen `.well-known/` blijft met rust: daar zet Let's Encrypt zijn
+controlebestanden neer, en die komen niet uit deze repo.
 
-- `.htaccess`, die op de server regelt dat onbekende paden `index.html`
-  krijgen. Zonder dat bestand werkt `/en` niet meer.
-- `.well-known/`, dat Let's Encrypt gebruikt om certificaten te vernieuwen.
+`public/.htaccess` gaat wel mee. Daarin staat de rewrite die `/en` laat
+werken, de doorverwijzing van www naar het kale domein, en hoe lang de
+browser bestanden mag bewaren. Zit daar een fout in, dan geeft de site een
+500; de controlestap aan het eind van de workflow vangt dat op.
 
 `DEPLOY_PATH` moet daarom precies de webroot van deze site zijn en niets
 ruimers: alles daarbinnen wat niet in `build/` zit, verdwijnt.

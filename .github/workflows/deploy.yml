@@ -64,20 +64,22 @@ jobs:
           printf '%s\n' "${{ secrets.SSH_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
 
       # --delete ruimt op de server op wat hier niet meer bestaat, zodat oude
-      # gehashte bestanden zich niet opstapelen. Twee dingen blijven met rust:
+      # gehashte bestanden zich niet opstapelen.
       #
-      #   .htaccess    staat niet in deze repo en regelt op de server dat
-      #                onbekende paden index.html krijgen. Zonder dat bestand
-      #                werkt /en niet meer.
-      #   .well-known  gebruikt Let's Encrypt om certificaten te vernieuwen.
+      # .well-known blijft met rust: Let's Encrypt zet daar zijn controle-
+      # bestanden neer bij het vernieuwen van certificaten, en die komen niet
+      # uit deze repo.
       #
-      # DEPLOY_PATH moet daarom precies de webroot van deze site zijn en niets
+      # .htaccess gaat wel mee. Die staat sinds kort in public/, dus een
+      # wijziging daaraan hoort ook op de server terecht te komen.
+      #
+      # DEPLOY_PATH moet precies de webroot van deze site zijn en niets
       # ruimers: alles daarbinnen wat niet in build/ zit, verdwijnt.
       - name: Uploaden naar de server
         if: steps.gegevens.outputs.compleet == 'ja'
         run: |
           rsync -rlz --delete \
-            --exclude '.htaccess' --exclude '.well-known/' \
+            --exclude '.well-known/' \
             --no-perms --no-owner --no-group --chmod=D755,F644 \
             -e "ssh -i ~/.ssh/deploy -p ${{ secrets.SSH_PORT || '22' }}" \
             build/ "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DEPLOY_PATH }}/"

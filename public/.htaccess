@@ -1,0 +1,40 @@
+# Dit bestand stond alleen op de server en niet in de repo, waardoor niemand
+# kon zien waarom /en werkte. Het gaat nu mee met de build.
+
+RewriteEngine On
+RewriteBase /
+
+# www doorsturen naar het kale domein. Zonder dit staat de site op twee
+# adressen en ziet een zoekmachine dubbele inhoud. Deze regel moet boven de
+# fallback hieronder staan, anders vangt die hem eerder af.
+RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+RewriteRule ^ https://%1%{REQUEST_URI} [R=301,L]
+
+# De kern: alles wat geen bestaand bestand of map is, krijgt index.html terug.
+# Daarom werkt /en zonder dat daar iets voor is ingericht.
+RewriteRule ^index\.html$ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.html [L]
+
+<IfModule mod_headers.c>
+  # Afbeeldingen en de cv's veranderen zonder dat hun naam verandert, dus die
+  # mogen maar een dag bewaard blijven. Anders zie je een nieuw cv pas als de
+  # browser toevallig besluit opnieuw te kijken.
+  <FilesMatch "\.(pdf|jpe?g|png|webp|svg|ico)$">
+    Header set Cache-Control "public, max-age=86400"
+  </FilesMatch>
+
+  # Bestanden met een hash in hun naam zijn onveranderlijk: verandert de
+  # inhoud, dan verandert de naam. Die mogen dus een jaar blijven staan. Deze
+  # regel staat bewust na de vorige, zodat hij daarvan wint.
+  <FilesMatch "\.[0-9a-f]{8,}\.(js|css|woff2?|ttf|eot|png|jpe?g|svg|gif|webp)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+
+  # index.html moet elke keer opnieuw gecontroleerd worden, anders blijft een
+  # bezoeker na een uitrol naar de oude bestandsnamen verwijzen.
+  <FilesMatch "^index\.html$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+</IfModule>
