@@ -30,9 +30,9 @@ const en: SiteContent = {
     },
     name: 'Aart den Braber',
     role: 'Fullstack developer',
-    title: "I'm a fullstack developer with a passion for learning new things and an eye for detail.",
+    title: "I'm a fullstack developer with a passion for learning new things and a focus on detail.",
     subtitle:
-      'Especially regarding TypeScript and testing.',
+      'This almost always results in code that is short and very easy to maintain, yet written in less time.',
     primaryCta: { label: 'See my experience', href: '#werkervaring' },
     secondaryCta: { label: 'Download CV', href: '#cv' },
     scrollLabel: 'Go to the next section',

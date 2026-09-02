@@ -30,7 +30,7 @@ const nl: SiteContent = {
     },
     name: 'Aart den Braber',
     role: 'Fullstack developer',
-    title: 'Ik ben een developer met een passie voor leren en een oog voor detail en optimalisatie.',
+    title: 'Ik ben een developer met een passie voor leren en focus op detail en optimalisatie.',
     subtitle:
       'Dit zorgt vrijwel altijd voor code die kort en zeer goed onderhoudbaar is, maar in minder tijd is geschreven.',
     primaryCta: { label: 'Bekijk mijn werkervaring', href: '#werkervaring' },
