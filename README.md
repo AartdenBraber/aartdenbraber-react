@@ -51,8 +51,28 @@ De server meldt zich als Apache. Onbekende paden krijgen daar `index.html`
 terug, waardoor `/en` werkt zonder dat er in deze repo iets voor geregeld is.
 Die configuratie staat op de server, niet hier.
 
-Hoe de build op de server terechtkomt staat nergens vastgelegd. Vul dat hier
-aan zodra je het opnieuw doet.
+Uitrollen gaat via `.github/workflows/deploy.yml`: bij elke push naar `main`
+bouwt GitHub de site en zet die met rsync over SSH op de server. Handmatig kan
+ook, via de Actions-tab.
+
+Daarvoor moeten deze secrets in de repository staan
+(Settings, Secrets and variables, Actions):
+
+| Secret | Wat erin hoort |
+| --- | --- |
+| `SSH_HOST` | hostnaam of IP van de server |
+| `SSH_USER` | de SSH-gebruikersnaam |
+| `SSH_KEY` | de private helft van een sleutel die alleen voor deze uitrol bestaat |
+| `SSH_KNOWN_HOSTS` | de uitvoer van `ssh-keyscan <host>`, zodat de sleutel van de server vaststaat |
+| `DEPLOY_PATH` | absoluut pad naar de map waar `index.html` hoort |
+| `SSH_PORT` | alleen nodig als het niet 22 is |
+
+Zolang `SSH_HOST` of `SSH_KEY` ontbreekt bouwt en test de workflow wel, maar
+rolt hij niets uit.
+
+De rsync draait bewust **zonder** `--delete`. Op de server staan bestanden die
+niet uit deze repo komen: de twee cv-pdf's en de `.htaccess` die `/en` laat
+werken. Die zouden er anders bij de eerste uitrol af vliegen.
 
 Twee bestanden staan alleen op de server en niet in de repo: de twee cv-pdf's,
 zie hierboven. Vervang ze niet met een deploy die de hele map overschrijft.

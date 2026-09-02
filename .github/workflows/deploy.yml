@@ -1,0 +1,86 @@
+name: Bouwen en uitrollen
+
+# Bij elke push naar main, en met de hand via de Actions-tab.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Twee uitrollen tegelijk zouden elkaars bestanden overschrijven.
+concurrency:
+  group: uitrollen
+  cancel-in-progress: false
+
+jobs:
+  uitrollen:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Afhankelijkheden installeren
+        run: npm ci
+
+      - name: Types controleren
+        run: npx tsc --noEmit
+
+      # CI=true laat Create React App waarschuwingen als fouten behandelen.
+      # Er gaat niets naar de server als de tests of de build struikelen.
+      - name: Tests draaien
+        run: npm test -- --watchAll=false
+        env:
+          CI: true
+
+      - name: Bouwen
+        run: npm run build
+        env:
+          CI: true
+
+      # Zolang de servergegevens ontbreken bouwt en test deze workflow wel,
+      # maar rolt hij niets uit. Zo is hij groen vanaf de eerste push en gaat
+      # hij vanzelf uitrollen zodra de secrets erin staan.
+      - name: Nagaan of de servergegevens er zijn
+        id: gegevens
+        run: |
+          if [ -n "${{ secrets.SSH_HOST }}" ] && [ -n "${{ secrets.SSH_KEY }}" ]; then
+            echo "compleet=ja" >> "$GITHUB_OUTPUT"
+          else
+            echo "compleet=nee" >> "$GITHUB_OUTPUT"
+            echo "::notice::SSH_HOST of SSH_KEY ontbreekt nog, dus de uitrol wordt overgeslagen."
+          fi
+
+      - name: SSH klaarzetten
+        if: steps.gegevens.outputs.compleet == 'ja'
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s\n' "${{ secrets.SSH_KEY }}" > ~/.ssh/deploy
+          chmod 600 ~/.ssh/deploy
+          printf '%s\n' "${{ secrets.SSH_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+
+      # Bewust zonder --delete. Op de server staan bestanden die niet uit deze
+      # repo komen: de twee cv-pdf's en de .htaccess die /en laat werken. Met
+      # --delete zouden die bij de eerste de beste uitrol verdwijnen.
+      #
+      # De keerzijde is dat oude JavaScript- en CSS-bestanden blijven staan.
+      # Die hebben een hash in hun naam, dus ze doen geen kwaad; ruim ze af en
+      # toe met de hand op.
+      - name: Uploaden naar de server
+        if: steps.gegevens.outputs.compleet == 'ja'
+        run: |
+          rsync -rlz --no-perms --no-owner --no-group --chmod=D755,F644 \
+            -e "ssh -i ~/.ssh/deploy -p ${{ secrets.SSH_PORT || '22' }}" \
+            build/ "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DEPLOY_PATH }}/"
+
+      - name: Controleren of de site draait
+        if: steps.gegevens.outputs.compleet == 'ja'
+        run: |
+          echo "Titel op de live site:"
+          curl -sS --fail --max-time 20 https://aartdenbraber.nl/ | grep -o '<title>[^<]*</title>'
+          echo "Status van /en (hoort 200 te zijn):"
+          curl -sS -o /dev/null -w '%{http_code}\n' --max-time 20 https://aartdenbraber.nl/en
