@@ -4,14 +4,15 @@ import userEvent from '@testing-library/user-event';
 import App from './App';
 import { content, Language } from './content';
 
+/** De taal hangt aan het adres: / is Nederlands, /en is Engels. */
 const renderIn = (language: Language) => {
-  window.localStorage.setItem('adb.language', language);
+  window.history.replaceState(null, '', language === 'en' ? '/en' : '/');
   return render(<App />);
 };
 
 describe('App', () => {
   beforeEach(() => {
-    window.localStorage.clear();
+    window.history.replaceState(null, '', '/');
     document.documentElement.lang = '';
   });
 
@@ -49,21 +50,36 @@ describe('App', () => {
     const user = userEvent.setup();
     renderIn('nl');
 
-    await user.click(screen.getByRole('button', { name: /english/i }));
+    await user.click(screen.getByRole('link', { name: /english/i }));
 
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(content.en.hero.title);
     expect(document.documentElement.lang).toBe('en');
   });
 
-  it('onthoudt de taalkeuze', async () => {
+  it('neemt het adres mee bij het wisselen van taal', async () => {
     const user = userEvent.setup();
-    const { unmount } = renderIn('nl');
+    renderIn('nl');
 
-    await user.click(screen.getByRole('button', { name: /english/i }));
-    unmount();
+    await user.click(screen.getByRole('link', { name: /english/i }));
+    expect(window.location.pathname).toBe('/en');
 
-    render(<App />);
+    await user.click(screen.getByRole('link', { name: /nederlands/i }));
+    expect(window.location.pathname).toBe('/');
+  });
+
+  it('start in het Engels wanneer het adres daarom vraagt', () => {
+    renderIn('en');
 
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(content.en.hero.title);
+    expect(document.documentElement.lang).toBe('en');
+  });
+
+  it('biedt de andere taal aan als een volgbare link', () => {
+    renderIn('nl');
+
+    const engels = screen.getByRole('link', { name: /english/i });
+
+    expect(engels).toHaveAttribute('href', '/en');
+    expect(engels).toHaveAttribute('hreflang', 'en');
   });
 });

@@ -144,7 +144,7 @@ const en: SiteContent = {
         highlights: [
           'Built a portal that keeps the old Aegon environment recognisable while working better',
           'Backend for frontend on AWS Lambda, later ECS, for a secure connection to the Knab APIs',
-          'Wrote tests at 80 to 96 percent coverage across Angular, React and Node',
+          'Wrote tests at 80 to 100 percent coverage across Angular, React and Node',
           'Built the React sign in flow with OAuth, password change and an OTP code by SMS or email',
         ],
         stack: ['Angular', 'React', 'NgRx', 'TypeScript', 'Node', 'Express', 'AWS Lambda', 'AWS ECS', 'DynamoDB', 'OAuth', 'Jest', 'Cypress'],

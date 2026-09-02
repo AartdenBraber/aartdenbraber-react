@@ -17,10 +17,11 @@ const getTimeOfDay = (): TimeOfDay => {
   return 'evening';
 };
 
-const backgroundImage =
-  process.env.NODE_ENV === 'production'
-    ? `${process.env.PUBLIC_URL}/images/top-bg.jpg`
-    : `${process.env.PUBLIC_URL}/images/top-bg-DEV.jpg`;
+// De echte foto staat alleen op de server, niet in deze publieke repo.
+// In development draait daarom een neutrale plaatsvervanger.
+const backgroundName = process.env.NODE_ENV === 'production' ? 'top-bg' : 'top-bg-DEV';
+const backgroundImage = `${process.env.PUBLIC_URL}/images/${backgroundName}.jpg`;
+const backgroundWebp = `${process.env.PUBLIC_URL}/images/${backgroundName}.webp`;
 
 const Hero: React.FC = () => {
   const { language, t } = useLanguage();
@@ -51,7 +52,7 @@ const Hero: React.FC = () => {
 
   return (
     <section className="hero">
-      <FocusSpotlight image={backgroundImage} />
+      <FocusSpotlight image={backgroundImage} imageWebp={backgroundWebp} />
       <div className="hero__scrim" aria-hidden="true" />
 
       <div className="hero__inner">

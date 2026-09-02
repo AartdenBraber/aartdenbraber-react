@@ -2,17 +2,44 @@ import React, { useEffect, useRef } from 'react';
 import './FocusSpotlight.scss';
 
 interface FocusSpotlightProps {
+  /** Terugval voor browsers zonder WebP. */
   image: string;
+  imageWebp: string;
 }
 
 const OFF_SCREEN = -9999;
+
+/**
+ * Dezelfde foto staat er twee keer, scherp en geblurd. Een eigen component
+ * scheelt het dubbel uitschrijven van de bronnen.
+ */
+const Background: React.FC<{ image: string; imageWebp: string; className: string }> = ({
+  image,
+  imageWebp,
+  className,
+}) => (
+  <picture>
+    <source srcSet={imageWebp} type="image/webp" />
+    <img
+      src={image}
+      alt=""
+      className={className}
+      width={1200}
+      height={800}
+      decoding="async"
+      // Dit is het grootste element in beeld, dus het mag niet achteraan
+      // in de rij komen te staan.
+      fetchPriority="high"
+    />
+  </picture>
+);
 
 /**
  * Legt een scherpe kopie van de achtergrond over een geblurde versie heen en
  * onthult die alleen rond de cursor. De positie gaat via CSS-variabelen, zodat
  * React niet bij elke muisbeweging opnieuw hoeft te renderen.
  */
-const FocusSpotlight: React.FC<FocusSpotlightProps> = ({ image }) => {
+const FocusSpotlight: React.FC<FocusSpotlightProps> = ({ image, imageWebp }) => {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const spotlightRef = useRef<HTMLDivElement>(null);
 
@@ -63,9 +90,9 @@ const FocusSpotlight: React.FC<FocusSpotlightProps> = ({ image }) => {
   return (
     <div className="spotlight-background" aria-hidden="true">
       <div className="background-wrapper" ref={wrapperRef}>
-        <img src={image} alt="" className="background blurred" />
+        <Background image={image} imageWebp={imageWebp} className="background blurred" />
         <div ref={spotlightRef} className="spotlight">
-          <img src={image} alt="" className="background focused" />
+          <Background image={image} imageWebp={imageWebp} className="background focused" />
         </div>
       </div>
     </div>

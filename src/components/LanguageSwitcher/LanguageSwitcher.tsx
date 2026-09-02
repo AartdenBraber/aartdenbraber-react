@@ -2,6 +2,7 @@ import React from 'react';
 import './LanguageSwitcher.scss';
 import { Language, LANGUAGES } from '../../content';
 import { useLanguage } from '../../i18n/LanguageContext';
+import { pathForLanguage } from '../../i18n/routes';
 
 const LABELS: Record<Language, string> = {
   nl: 'Nederlands',
@@ -14,17 +15,26 @@ const LanguageSwitcher: React.FC = () => {
   return (
     <div className="language-switcher" role="group" aria-label="Taal / Language">
       {LANGUAGES.map((option) => (
-        <button
+        // Echte links, geen knoppen: zo kan een zoekmachine de andere taal
+        // vinden en volgen. De klik wordt onderschept zodat de pagina niet
+        // opnieuw laadt.
+        <a
           key={option}
-          type="button"
           className="language-switcher__option"
+          href={pathForLanguage(option)}
+          hrefLang={option}
           lang={option}
           aria-label={LABELS[option]}
-          aria-pressed={option === language}
-          onClick={() => setLanguage(option)}
+          aria-current={option === language ? 'true' : undefined}
+          onClick={(event) => {
+            if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return;
+
+            event.preventDefault();
+            setLanguage(option);
+          }}
         >
           {option.toUpperCase()}
-        </button>
+        </a>
       ))}
     </div>
   );

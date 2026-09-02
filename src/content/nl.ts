@@ -144,7 +144,7 @@ const nl: SiteContent = {
         highlights: [
           'Portaal gebouwd dat de oude Aegon-omgeving herkenbaar houdt en tegelijk prettiger werkt',
           'Backend-for-frontend op AWS Lambda, later ECS, voor een veilige koppeling met de Knab-API’s',
-          'Tests geschreven met 80 tot 96 procent dekking in Angular, React en Node',
+          'Tests geschreven met 80 tot 100 procent dekking in Angular, React en Node',
           'Inlogflow in React met OAuth, wachtwoord wijzigen en een OTP-code via sms of e-mail',
         ],
         stack: ['Angular', 'React', 'NgRx', 'TypeScript', 'Node', 'Express', 'AWS Lambda', 'AWS ECS', 'DynamoDB', 'OAuth', 'Jest', 'Cypress'],

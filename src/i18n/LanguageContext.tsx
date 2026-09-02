@@ -1,7 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { content, DEFAULT_LANGUAGE, Language, LANGUAGES, SiteContent } from '../content';
-
-const STORAGE_KEY = 'adb.language';
+import { content, Language, SiteContent } from '../content';
+import { canonicalForLanguage, languageFromPath, urlForLanguage } from './routes';
 
 interface LanguageContextValue {
   language: Language;
@@ -11,49 +10,46 @@ interface LanguageContextValue {
 
 const LanguageContext = createContext<LanguageContextValue | null>(null);
 
-const isLanguage = (value: unknown): value is Language =>
-  typeof value === 'string' && (LANGUAGES as string[]).includes(value);
-
-/**
- * Bepaalt de starttaal: eerst een eerdere keuze, daarna de browsertaal.
- * localStorage kan gooien in private mode, vandaar de try.
- */
-const detectLanguage = (): Language => {
-  try {
-    const stored = window.localStorage.getItem(STORAGE_KEY);
-    if (isLanguage(stored)) {
-      return stored;
-    }
-  } catch {
-    // Geen opgeslagen voorkeur beschikbaar, val terug op de browsertaal.
-  }
-
-  return window.navigator.language.toLowerCase().startsWith('nl') ? 'nl' : 'en';
+const setMeta = (selector: string, attribute: string, value: string) => {
+  document.querySelector(selector)?.setAttribute(attribute, value);
 };
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [language, setLanguageState] = useState<Language>(DEFAULT_LANGUAGE);
-
-  useEffect(() => {
-    setLanguageState(detectLanguage());
-  }, []);
+  // Meteen uit het adres, niet pas na de eerste render. Anders flitst er even
+  // de verkeerde taal voorbij.
+  const [language, setLanguageState] = useState<Language>(() =>
+    languageFromPath(window.location.pathname),
+  );
 
   const setLanguage = useCallback((next: Language) => {
     setLanguageState(next);
 
-    try {
-      window.localStorage.setItem(STORAGE_KEY, next);
-    } catch {
-      // Voorkeur niet kunnen opslaan is niet erg genoeg om iets mee te doen.
-    }
+    const { search, hash } = window.location;
+    window.history.pushState(null, '', urlForLanguage(next, search, hash));
+  }, []);
+
+  // De terugknop hoort ook van taal te wisselen.
+  useEffect(() => {
+    const syncWithUrl = () => setLanguageState(languageFromPath(window.location.pathname));
+
+    window.addEventListener('popstate', syncWithUrl);
+
+    return () => window.removeEventListener('popstate', syncWithUrl);
   }, []);
 
   useEffect(() => {
-    document.documentElement.lang = language;
-    document.title = content[language].meta.title;
+    const { meta } = content[language];
+    const canonical = canonicalForLanguage(language);
 
-    const description = document.querySelector('meta[name="description"]');
-    description?.setAttribute('content', content[language].meta.description);
+    document.documentElement.lang = language;
+    document.title = meta.title;
+
+    setMeta('meta[name="description"]', 'content', meta.description);
+    setMeta('link[rel="canonical"]', 'href', canonical);
+    setMeta('meta[property="og:url"]', 'content', canonical);
+    setMeta('meta[property="og:title"]', 'content', meta.title);
+    setMeta('meta[property="og:description"]', 'content', meta.description);
+    setMeta('meta[property="og:locale"]', 'content', language === 'en' ? 'en_GB' : 'nl_NL');
   }, [language]);
 
   const value = useMemo(
