@@ -17,11 +17,10 @@ const getTimeOfDay = (): TimeOfDay => {
   return 'evening';
 };
 
-// De echte foto staat alleen op de server, niet in deze publieke repo.
-// In development draait daarom een neutrale plaatsvervanger.
-const backgroundName = process.env.NODE_ENV === 'production' ? 'top-bg' : 'top-bg-DEV';
-const backgroundImage = `${process.env.PUBLIC_URL}/images/${backgroundName}.jpg`;
-const backgroundWebp = `${process.env.PUBLIC_URL}/images/${backgroundName}.webp`;
+// Dezelfde bestandsnamen in development en productie, zodat het preloadpad in
+// de head klopt met wat er daadwerkelijk geladen wordt.
+const backgroundImage = `${process.env.PUBLIC_URL}/images/top-bg.jpg`;
+const backgroundWebp = `${process.env.PUBLIC_URL}/images/top-bg.webp`;
 
 const Hero: React.FC = () => {
   const { language, t } = useLanguage();
