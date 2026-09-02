@@ -3,9 +3,9 @@ import { SiteContent } from './types';
 
 const nl: SiteContent = {
   meta: {
-    title: 'Aart den Braber · Full stack engineer, Angular en Java',
+    title: 'Aart den Braber · Fullstack developer',
     description:
-      'Freelance full stack engineer. Angular en TypeScript aan de voorkant, Java en Spring aan de achterkant. Werkt aan complexe systemen bij de overheid en in de financiële sector.',
+      'Developer met een passie voor leren en een oog voor detail en optimalisatie. Daarnaast afgestudeerd UX-researcher, dus de focus ligt altijd op de eindgebruiker.',
   },
 
   nav: {
@@ -29,22 +29,21 @@ const nl: SiteContent = {
       evening: 'Goedenavond',
     },
     name: 'Aart den Braber',
-    role: 'Full stack engineer',
-    title: 'Ik schrijf code die de volgende ontwikkelaar zonder uitleg begrijpt.',
+    role: 'Fullstack developer',
+    title: 'Ik ben een developer met een passie voor leren en een oog voor detail en optimalisatie.',
     subtitle:
-      'Full stack engineer sinds 2011. Angular en TypeScript aan de voorkant, Java en Spring aan de achterkant. Meestal bij de overheid en in de financiële sector.',
+      'Dit zorgt vrijwel altijd voor code die kort en zeer goed onderhoudbaar is, maar in minder tijd is geschreven.',
     primaryCta: { label: 'Bekijk mijn werkervaring', href: '#werkervaring' },
     secondaryCta: { label: 'Download cv', href: '#cv' },
     scrollLabel: 'Naar het volgende onderdeel',
   },
 
   about: {
-    heading: 'Wat je aan mij hebt',
+    heading: 'Leuk om kennis te maken!',
     paragraphs: [
-      'Ik ben Aart den Braber, freelance full stack engineer uit Nederland. Mijn werk zit meestal in bestaande systemen: applicaties die al jaren draaien, waar veel van afhangt, en waar degene die er als laatste iets ingrijpends aan veranderde inmiddels vertrokken is.',
-      'Ik ben begonnen als frontender en afgestudeerd als UX-researcher. Daardoor kan ik een gebruikersvraag zelf omzetten in een API-ontwerp, zonder dat daar drie mensen tussen hoeven te zitten. In de praktijk scheelt dat een hoop heen en weer.',
-      'Waar ik streng in ben: tests die daadwerkelijk gedrag controleren, code die je zonder toelichting kunt lezen, en documentatie die klopt. Niet omdat het netjes staat, maar omdat een systeem anders niet over te dragen is zonder dat de kwaliteit meezakt.',
-      'Volgens Robert C. Martin besteden we ongeveer tien keer zoveel tijd aan het lezen van code als aan het schrijven ervan. Dat is de hele reden dat ik er zo op hamer: een uur extra aan leesbaarheid verdien je tien keer terug.',
+      'Daarnaast ben ik afgestudeerd UX-researcher, dus focus ik me altijd op de eindgebruiker. Dit kan ervoor zorgen dat ik met de UX-designer kan sparren en gebruikerstests kan uitvoeren, maar zelfs betekenen dat die uitgespaard kan worden. Maar mijn focus ligt wel op het schrijven van applicaties.',
+      'Het goed (blackbox) testen is daarbij vanzelfsprekend. Als je whitebox wilt testen ga ik graag in discussie.',
+      'Tijdens het tevreden typen van code vind ik het ontzettend belangrijk dat mijn collega’s en junioren begrijpen wat er gebeurt; dus documenteren, typesafety en tests vind ik de basis. We besteden ongeveer 10x zoveel tijd aan het lezen van code dan aan het schrijven ervan (volgens Robert C. Martin); dus dat is erg efficiënt.',
     ],
     facts: [
       { label: 'Actief sinds', value: '2011' },
@@ -56,34 +55,34 @@ const nl: SiteContent = {
 
   services: {
     heading: 'Wat ik doe',
-    intro: 'De dingen waar opdrachtgevers me meestal voor vragen.',
+    intro: 'Waar opdrachtgevers me meestal voor vragen.',
     items: [
       {
         title: 'Frontend in Angular',
-        body: 'Angular en TypeScript, van state management met NgRx tot componenten die je over meerdere applicaties hergebruikt. Ik werk met Angular sinds versie 2.',
+        body: 'Angular sinds versie 2, met TypeScript, NgRx en RxJS. Componenten en packages die je over meerdere apps hergebruikt, dus updaten is ineens erg eenvoudig.',
         link: { label: 'Over typesafe routes in Angular', href: 'https://www.linkedin.com/pulse/4-steps-typesafe-routes-angular-aart-den-braber-' },
       },
       {
         title: 'Backend in Java en Node',
-        body: 'Java met Spring Boot, of Node met NestJS en Express. Inclusief het API-ontwerp zelf, in OpenAPI, voordat er een regel implementatie staat.',
+        body: 'Java met Spring en Spring Boot, of Node met NestJS en Express. Inclusief het ontwerpen van de REST API zelf, in Swagger (OpenAPI 3), voordat er een regel implementatie staat.',
       },
       {
-        title: 'Testen dat ergens over gaat',
-        body: 'Unit, integratie en end-to-end. Ik geef er ook workshops over, want veel teams schrijven tests die alleen bevestigen wat de code toevallig al doet.',
+        title: 'Goed (blackbox) testen',
+        body: 'Unit, integratie en e2e. Ik geef er ook workshops over; veel teams schrijven snapshot tests, en die bevestigen alleen wat de code toevallig al doet.',
         link: { label: 'De techniek waar die workshops op leunen', href: 'https://www.linkedin.com/pulse/how-write-clean-testing-code-using-moshs-technique-aart-den-braber-' },
       },
       {
         title: 'UX-onderzoek en flow design',
-        body: 'Afgestudeerd UX-researcher. Ik doe gebruikerstests en ontwerp flows. Bij kleinere trajecten scheelt dat een aparte designer.',
+        body: 'Afgestudeerd UX-researcher, dus ik kan met de UX-designer sparren en gebruikerstests uitvoeren. Bij kleinere trajecten kan die zelfs uitgespaard worden.',
       },
       {
         title: 'Onderhoudbaarheid terugbrengen',
-        body: 'Technical debt in kaart brengen, opstart- en buildprocessen versimpelen, en het team meenemen zodat het daarna niet terugzakt.',
+        body: 'Grote technical debt detecteren en in overleg oplossen. Daarnaast dingen instellen die het leven van een gewone developer verbeteren: automatische fixes van ESLint, goede teststandaarden, goede CI/CD.',
         link: { label: 'Ongebruikte CSS uit een componentbibliotheek slopen', href: 'https://www.linkedin.com/pulse/clean-up-unused-css-from-external-component-libraries-den-braber-' },
       },
       {
         title: 'Begeleiding van juniors',
-        body: 'Junior developers en testers begeleiden, met de nadruk op code en tests die over een jaar nog leesbaar zijn.',
+        body: 'Junior developers en testers begeleiden in onder andere het ontwikkelen van goede en onderhoudbare code, en het begrijpen van de architectuurkeuzes eromheen.',
       },
     ],
   },
@@ -93,7 +92,7 @@ const nl: SiteContent = {
   experience: {
     heading: 'Werkervaring',
     intro: 'Van recent naar eerder. Opdrachten die via een werkgever liepen, staan ingesprongen.',
-    highlightsLabel: 'Wat het opleverde',
+    highlightsLabel: 'Wat ik heb gedaan',
     stackLabel: 'Stack',
     currentLabel: 'Nu',
     viaLabel: 'via',
@@ -278,7 +277,7 @@ const nl: SiteContent = {
 
   testimonials: {
     heading: 'Wat anderen zeggen',
-    intro: 'Aanbevelingen van opdrachtgevers en collega’s, overgenomen van LinkedIn.',
+    intro: 'Ik kan alles van mezelf zeggen, maar wat anderen zeggen geeft mijns inziens een realistischer beeld. Hieronder een deel van de aanbevelingen op LinkedIn, letterlijk overgenomen.',
     moreLabel: 'Alle aanbevelingen op LinkedIn',
     moreHref: 'https://www.linkedin.com/in/aartdenbraber',
   },

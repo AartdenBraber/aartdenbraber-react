@@ -3,9 +3,9 @@ import { SiteContent } from './types';
 
 const en: SiteContent = {
   meta: {
-    title: 'Aart den Braber · Full stack engineer, Angular and Java',
+    title: 'Aart den Braber · Fullstack developer',
     description:
-      'Freelance full stack engineer. Angular and TypeScript on the front, Java and Spring on the back. Works on complex systems in Dutch government and finance.',
+      'Fullstack developer with a passion for learning new things and an eye for detail, especially regarding TypeScript and testing. Also a certified UX-researcher, so my focus is always on the end-user.',
   },
 
   nav: {
@@ -29,22 +29,21 @@ const en: SiteContent = {
       evening: 'Good evening',
     },
     name: 'Aart den Braber',
-    role: 'Full stack engineer',
-    title: 'I write code the next developer understands without being talked through it.',
+    role: 'Fullstack developer',
+    title: "I'm a fullstack developer with a passion for learning new things and an eye for detail.",
     subtitle:
-      'Full stack engineer since 2011. Angular and TypeScript on the front, Java and Spring on the back. Mostly in Dutch government and finance.',
+      'Especially regarding TypeScript and testing.',
     primaryCta: { label: 'See my experience', href: '#werkervaring' },
     secondaryCta: { label: 'Download CV', href: '#cv' },
     scrollLabel: 'Go to the next section',
   },
 
   about: {
-    heading: 'What you get',
+    heading: 'Nice to meet you!',
     paragraphs: [
-      'I am Aart den Braber, a freelance full stack engineer based in the Netherlands. Most of my work happens inside existing systems: applications that have been running for years, that a lot depends on, and whose last serious contributor has usually left.',
-      'I started out in frontend and graduated as a UX researcher. That means I can turn a user question into an API design myself, without three people in between. In practice it saves a lot of back and forth.',
-      'What I am strict about: tests that check actual behaviour, code you can read without a walkthrough, and documentation that is accurate. Not because it looks tidy, but because a system cannot change hands without it.',
-      'According to Robert C. Martin we spend about ten times as long reading code as writing it. That is the whole reason I insist on it: an extra hour spent on readability comes back ten times over.',
+      "Next to that, I'm a certified UX-researcher, so my focus is always on the end-user. This may mean that I'm able to figure out the best solution together with a UX designer, but might also mean that you can skip hiring a dedicated one. However, my focus is really on creating applications and writing the code to achieve that.",
+      "Good (blackbox) testing comes with that. If you want to test whitebox, I'm happy to have that discussion with you.",
+      "While happily typing code I find it really important that my colleagues and juniors understand what is going on; so documenting, typesafety and tests are the basics for me. We spend about 10x more time reading code than writing it (according to Robert C. Martin); so that is pretty efficient.",
     ],
     facts: [
       { label: 'Working since', value: '2011' },
@@ -56,34 +55,34 @@ const en: SiteContent = {
 
   services: {
     heading: 'What I do',
-    intro: 'The work clients usually come to me for.',
+    intro: 'What clients usually ask me for.',
     items: [
       {
         title: 'Frontend in Angular',
-        body: 'Angular and TypeScript, from state management with NgRx to components shared across several applications. I have used Angular since version 2.',
+        body: 'Angular since version 2, with TypeScript, NgRx and RxJS. Components and packages you reuse across several apps, so updating is suddenly very easy.',
         link: { label: 'On typesafe routes in Angular', href: 'https://www.linkedin.com/pulse/4-steps-typesafe-routes-angular-aart-den-braber-' },
       },
       {
         title: 'Backend in Java and Node',
-        body: 'Java with Spring Boot, or Node with NestJS and Express. Including the API design itself, in OpenAPI, before a line of implementation exists.',
+        body: 'Java with Spring and Spring Boot, or Node with NestJS and Express. Including designing the REST API itself, in Swagger (OpenAPI 3), before a line of implementation exists.',
       },
       {
-        title: 'Testing that means something',
-        body: 'Unit, integration and end to end. I run workshops on it too, because a lot of teams write tests that only confirm whatever the code happens to do.',
+        title: 'Good (blackbox) testing',
+        body: 'Unit, integration and e2e. I give workshops about it too; a lot of teams write snapshot tests, and those only confirm whatever the code happens to do.',
         link: { label: 'The technique those workshops lean on', href: 'https://www.linkedin.com/pulse/how-write-clean-testing-code-using-moshs-technique-aart-den-braber-' },
       },
       {
         title: 'UX research and flow design',
-        body: 'I graduated as a UX researcher. I run user tests and design flows. On smaller projects that can replace a separate designer.',
+        body: "I'm a certified UX-researcher, so I can figure out the best solution together with a UX designer and run user tests. On smaller projects you can skip hiring a dedicated one.",
       },
       {
         title: 'Making a codebase maintainable again',
-        body: 'Mapping technical debt, simplifying start up and build processes, and taking the team along so it does not slide back.',
+        body: 'Detecting big technical debt and solving it in consultation. Next to that, implementing loads of things that make the life of a simple developer better: auto-fix ESLint, good testing standards, good CI/CD.',
         link: { label: 'Stripping unused CSS out of a component library', href: 'https://www.linkedin.com/pulse/clean-up-unused-css-from-external-component-libraries-den-braber-' },
       },
       {
         title: 'Mentoring juniors',
-        body: 'Coaching junior developers and testers, with the emphasis on code and tests that still read well a year later.',
+        body: 'Mentoring junior developers and testers, focusing on writing maintainable, testable code and understanding the architectural decisions around it.',
       },
     ],
   },
@@ -93,7 +92,7 @@ const en: SiteContent = {
   experience: {
     heading: 'Work experience',
     intro: 'Most recent first. Engagements that ran through an employer are shown indented.',
-    highlightsLabel: 'What it produced',
+    highlightsLabel: 'What I did',
     stackLabel: 'Stack',
     currentLabel: 'Current',
     viaLabel: 'via',
@@ -277,7 +276,7 @@ const en: SiteContent = {
 
   testimonials: {
     heading: 'What others say',
-    intro: 'Recommendations from clients and colleagues, taken from LinkedIn.',
+    intro: 'I can say anything I like, but maybe my previous colleagues and managers can do a better job of saying what kind of person and developer I am. Some of their recommendations from LinkedIn, word for word.',
     moreLabel: 'All recommendations on LinkedIn',
     moreHref: 'https://www.linkedin.com/in/aartdenbraber',
   },
