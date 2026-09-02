@@ -36,14 +36,12 @@ Kleuren, spacing en typografie staan als CSS-variabelen in
 
 ## Het cv
 
-De site linkt naar een pdf in `public/`:
+`CV-Aart-den-Braber-NL.pdf` en `CV-Aart-den-Braber-EN.pdf` staan in `public/`
+en gaan met de build mee. Ze zijn sowieso al openbaar te downloaden vanaf de
+site, dus ze staan ook in deze publieke repo.
 
-- Development gebruikt `CV-DEV.pdf`, een dummybestand zonder persoonsgegevens.
-- Productie gebruikt `CV-Aart-den-Braber-NL.pdf` en `CV-Aart-den-Braber-EN.pdf`.
-
-Die twee productiebestanden staan bewust niet in de repo, omdat de repo publiek
-is. Ze worden los op de server geplaatst. Zie `src/content/index.ts` voor de
-logica die de juiste bestandsnaam kiest.
+Welke van de twee de downloadknop gebruikt hangt af van de taal; zie `cvUrl`
+in `src/content/index.ts`.
 
 ## Hosting
 
@@ -70,9 +68,15 @@ Daarvoor moeten deze secrets in de repository staan
 Zolang `SSH_HOST` of `SSH_KEY` ontbreekt bouwt en test de workflow wel, maar
 rolt hij niets uit.
 
-De rsync draait bewust **zonder** `--delete`. Op de server staan bestanden die
-niet uit deze repo komen: de twee cv-pdf's en de `.htaccess` die `/en` laat
-werken. Die zouden er anders bij de eerste uitrol af vliegen.
+De rsync draait **met** `--delete`, zodat oude gehashte bestanden zich niet
+opstapelen. Twee dingen blijven met rust, want die komen niet uit deze repo:
+
+- `.htaccess`, die op de server regelt dat onbekende paden `index.html`
+  krijgen. Zonder dat bestand werkt `/en` niet meer.
+- `.well-known/`, dat Let's Encrypt gebruikt om certificaten te vernieuwen.
+
+`DEPLOY_PATH` moet daarom precies de webroot van deze site zijn en niets
+ruimers: alles daarbinnen wat niet in `build/` zit, verdwijnt.
 
 Twee bestanden staan alleen op de server en niet in de repo: de twee cv-pdf's,
 zie hierboven. Vervang ze niet met een deploy die de hele map overschrijft.

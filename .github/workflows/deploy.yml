@@ -63,17 +63,22 @@ jobs:
           chmod 600 ~/.ssh/deploy
           printf '%s\n' "${{ secrets.SSH_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
 
-      # Bewust zonder --delete. Op de server staan bestanden die niet uit deze
-      # repo komen: de twee cv-pdf's en de .htaccess die /en laat werken. Met
-      # --delete zouden die bij de eerste de beste uitrol verdwijnen.
+      # --delete ruimt op de server op wat hier niet meer bestaat, zodat oude
+      # gehashte bestanden zich niet opstapelen. Twee dingen blijven met rust:
       #
-      # De keerzijde is dat oude JavaScript- en CSS-bestanden blijven staan.
-      # Die hebben een hash in hun naam, dus ze doen geen kwaad; ruim ze af en
-      # toe met de hand op.
+      #   .htaccess    staat niet in deze repo en regelt op de server dat
+      #                onbekende paden index.html krijgen. Zonder dat bestand
+      #                werkt /en niet meer.
+      #   .well-known  gebruikt Let's Encrypt om certificaten te vernieuwen.
+      #
+      # DEPLOY_PATH moet daarom precies de webroot van deze site zijn en niets
+      # ruimers: alles daarbinnen wat niet in build/ zit, verdwijnt.
       - name: Uploaden naar de server
         if: steps.gegevens.outputs.compleet == 'ja'
         run: |
-          rsync -rlz --no-perms --no-owner --no-group --chmod=D755,F644 \
+          rsync -rlz --delete \
+            --exclude '.htaccess' --exclude '.well-known/' \
+            --no-perms --no-owner --no-group --chmod=D755,F644 \
             -e "ssh -i ~/.ssh/deploy -p ${{ secrets.SSH_PORT || '22' }}" \
             build/ "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DEPLOY_PATH }}/"
 
@@ -84,3 +89,5 @@ jobs:
           curl -sS --fail --max-time 20 https://aartdenbraber.nl/ | grep -o '<title>[^<]*</title>'
           echo "Status van /en (hoort 200 te zijn):"
           curl -sS -o /dev/null -w '%{http_code}\n' --max-time 20 https://aartdenbraber.nl/en
+          echo "Status van het cv (hoort 200 te zijn):"
+          curl -sS -o /dev/null -w '%{http_code}\n' --max-time 20 https://aartdenbraber.nl/CV-Aart-den-Braber-NL.pdf
