@@ -42,7 +42,7 @@ const en: SiteContent = {
     heading: 'Nice to meet you!',
     paragraphs: [
       "Good (blackbox) testing comes with that. If you want to test whitebox, I'm happy to have that discussion with you.",
-      "Next to that, I'm a certified UX-researcher, so my focus is always on the end-user. This may mean that I'm able to figure out the best solution together with a UX designer, but might also mean that you can skip hiring a dedicated one. However, my focus is really on creating applications and writing the code to achieve that.",
+      "Next to being a developer, I'm a certified UX-researcher, so my focus is always on the end-user. This may mean that I'm able to figure out the best solution together with a UX designer, but might also mean that you can skip hiring a dedicated one. However, my focus is really on creating applications and writing the code to achieve that.",
       "While happily typing code I find it really important that my colleagues and juniors understand what is going on; so documenting, typesafety and tests are the basics for me. We spend about 10x more time reading code than writing it (according to Robert C. Martin); so that is pretty efficient.",
     ],
     facts: [

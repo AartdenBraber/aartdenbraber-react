@@ -42,7 +42,7 @@ const nl: SiteContent = {
     heading: 'Leuk om kennis te maken!',
     paragraphs: [
       'Het goed (blackbox) testen is daarbij vanzelfsprekend. Als je whitebox wilt testen ga ik graag in discussie.',
-      'Daarnaast ben ik afgestudeerd UX-researcher, dus focus ik me altijd op de eindgebruiker. Dit kan ervoor zorgen dat ik met de UX-designer kan sparren en gebruikerstests kan uitvoeren, maar zelfs betekenen dat die uitgespaard kan worden. Maar mijn focus ligt wel op het schrijven van applicaties.',
+      'Naast developer ben ik afgestudeerd UX-researcher, dus focus ik me altijd op de eindgebruiker. Dit kan ervoor zorgen dat ik met de UX-designer kan sparren en gebruikerstests kan uitvoeren, maar zelfs betekenen dat die uitgespaard kan worden. Maar mijn focus ligt wel op het schrijven van applicaties.',
       'Tijdens het tevreden typen van code vind ik het ontzettend belangrijk dat mijn collega’s en junioren begrijpen wat er gebeurt; dus documenteren, typesafety en tests vind ik de basis. We besteden ongeveer 10x zoveel tijd aan het lezen van code dan aan het schrijven ervan (volgens Robert C. Martin); dus dat is erg efficiënt.',
     ],
     facts: [
