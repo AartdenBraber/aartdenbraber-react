@@ -123,16 +123,28 @@ jobs:
             exit 1
           fi
 
-      # mirror spiegelt build/ naar de webroot. --delete ruimt op de server op
-      # wat hier niet meer bestaat, zodat oude gehashte bestanden zich niet
-      # opstapelen.
+      # De uitrol gaat in drie fasen, zodat de site nooit naar bestanden wijst
+      # die er nog niet staan.
       #
-      # .well-known blijft met rust: Let's Encrypt zet daar zijn
+      # 1. Alles behalve index.html en .htaccess gaat omhoog, zonder --delete.
+      #    De nieuwe bundels komen naast de oude te staan en de site draait
+      #    ondertussen door op de oude index.html.
+      # 2. index.html en .htaccess gaan omhoog onder een tijdelijke naam en
+      #    worden daarna hernoemd. Hernoemen binnen een map is een enkele
+      #    handeling op het bestandssysteem, dus niemand krijgt een half
+      #    geschreven bestand te zien. Hier klapt de site om.
+      # 3. Pas daarna ruimt --delete de oude bundels op.
+      #
+      # Struikelt fase 1 of 2, dan staat de oude site er nog compleet bij en is
+      # er niets verwijderd, want cmd:fail-exit stopt voor fase 3.
+      #
+      # index.html en .htaccess zijn in fase 1 en 3 uitgesloten. In fase 1
+      # omdat ze pas als laatste mogen omklappen, in fase 3 zodat mirror ze
+      # niet alsnog opnieuw uploadt en de wissel ongedaan maakt.
+      #
+      # .well-known blijft in alle fasen met rust: Let's Encrypt zet daar zijn
       # controlebestanden neer bij het vernieuwen van certificaten, en die
       # komen niet uit deze repo.
-      #
-      # .htaccess gaat wel mee. Die staat sinds kort in public/, dus een
-      # wijziging daaraan hoort ook op de server terecht te komen.
       #
       # --no-perms laat de rechten met rust; die zetten over FTP hoeft hier
       # niet en levert anders alleen foutmeldingen op.
@@ -148,14 +160,42 @@ jobs:
           DEPLOY_PATH: ${{ vars.DEPLOY_PATH }}
           PROEFRIT: ${{ inputs.proefrit }}
         run: |
-          PROEF=""
+          for bestand in build/index.html build/.htaccess; do
+            if [ ! -f "$bestand" ]; then
+              echo "::error::$bestand ontbreekt in de build, dus de wissel kan niet. Uitrol gestopt."
+              exit 1
+            fi
+          done
+
+          DRY=""
+          PUT_HTACCESS="put build/.htaccess -o .htaccess.nieuw"
+          PUT_INDEX="put build/index.html -o index.html.nieuw"
+          MV_HTACCESS="mv .htaccess.nieuw .htaccess"
+          MV_INDEX="mv index.html.nieuw index.html"
           if [ "$PROEFRIT" = "true" ]; then
-            PROEF="--dry-run"
+            DRY="--dry-run"
+            PUT_HTACCESS=""
+            PUT_INDEX=""
+            MV_HTACCESS=""
+            MV_INDEX=""
             echo "::notice::Proefrit, er wordt niets geüpload of verwijderd."
+            echo "Let op bij het lezen van dit log:"
+            echo "- Het omwisselen van index.html en .htaccess staat er niet in. Dat gaat met put en mv, en die kennen geen proefrit."
+            echo "- Fase 3 herhaalt de uploads van fase 1, omdat fase 1 nu niet echt gedraaid heeft. In een echte uitrol laat fase 3 alleen nog verwijderingen zien."
           fi
+
           cat > "$HOME/uitrollen.lftp" <<EOF
           open --env-password -u "$FTP_USER" "ftp://$FTP_HOST"
-          mirror --reverse --delete --no-perms --verbose $PROEF --exclude-glob '.well-known/' --exclude-glob '.well-known' build/ "$DEPLOY_PATH"
+          echo "== fase 1: alles behalve index.html en .htaccess =="
+          mirror --reverse --no-perms --verbose $DRY --exclude-glob '.well-known/' --exclude-glob '.well-known' --exclude-glob 'index.html' --exclude-glob '.htaccess' build/ "$DEPLOY_PATH"
+          cd "$DEPLOY_PATH"
+          echo "== fase 2: index.html en .htaccess omwisselen =="
+          $PUT_HTACCESS
+          $PUT_INDEX
+          $MV_HTACCESS
+          $MV_INDEX
+          echo "== fase 3: oude bestanden opruimen =="
+          mirror --reverse --delete --no-perms --verbose $DRY --exclude-glob '.well-known/' --exclude-glob '.well-known' --exclude-glob 'index.html' --exclude-glob '.htaccess' build/ "$DEPLOY_PATH"
           bye
           EOF
           lftp -f "$HOME/uitrollen.lftp"

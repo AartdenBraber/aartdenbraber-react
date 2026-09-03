@@ -103,6 +103,29 @@ verbinding wel versleuteld zijn, maar zou je niet weten met wie je praat. Die
 CA loopt tot april 2034; het certificaat van de server zelf mag ondertussen
 vernieuwd worden zonder dat hier iets hoeft te veranderen.
 
+### De uitrol in drie fasen
+
+De site mag nooit naar bestanden wijzen die er nog niet staan, dus de uitrol
+gaat gefaseerd.
+
+1. Alles behalve `index.html` en `.htaccess` gaat omhoog, zonder `--delete`.
+   De nieuwe bundels komen naast de oude te staan en de site draait
+   ondertussen door op de oude `index.html`.
+2. `index.html` en `.htaccess` gaan omhoog onder een tijdelijke naam en worden
+   daarna hernoemd. Hernoemen binnen een map is een enkele handeling op het
+   bestandssysteem, dus niemand krijgt een half geschreven bestand te zien.
+   Hier klapt de site om.
+3. Pas daarna ruimt `--delete` de oude bundels op.
+
+Struikelt fase 1 of 2, dan staat de oude site er nog compleet bij en is er
+niets verwijderd. `cmd:fail-exit` stopt het script voor fase 3.
+
+Echt blauw-groen is het niet. Wie de pagina vlak voor de omschakeling laadde
+en daarna pas een lui geladen chunk opvraagt, kan die net opgeruimd zien zijn.
+En terugrollen gaat niet met een schakelaar, maar door de vorige commit
+opnieuw uit te rollen. Wat je wel hebt: op geen enkel moment wijst de live
+`index.html` naar bundels die er niet zijn.
+
 ### Wat de spiegeling wel en niet aanraakt
 
 `mirror` draait **met** `--delete`, zodat oude gehashte bestanden zich niet
