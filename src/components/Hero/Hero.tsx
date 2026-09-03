@@ -3,130 +3,94 @@ import './Hero.scss';
 import logo from '../../assets/images/logo.png';
 import FocusSpotlight from '../FocusSpotlight/FocusSpotlight';
 import LanguageSwitcher from '../LanguageSwitcher/LanguageSwitcher';
-import WordReveal from '../WordReveal/WordReveal';
-import { cvUrl } from '../../content';
 import { useLanguage } from '../../i18n/LanguageContext';
+import { SiteContent } from '../../content';
 
-type TimeOfDay = 'morning' | 'afternoon' | 'evening';
+const topBg = '/images/top-bg.jpg';
 
-const getTimeOfDay = (): TimeOfDay => {
-  const hour = new Date().getHours();
-
-  if (hour <= 11) return 'morning';
-  if (hour <= 17) return 'afternoon';
-  return 'evening';
+const getGreeting = (greetings: SiteContent['hero']['greetings']) => {
+    const hour = new Date().getHours();
+    if (hour <= 11) return greetings.morning;
+    if (hour <= 17) return greetings.afternoon;
+    return greetings.evening;
 };
 
-// Dezelfde bestandsnamen in development en productie, zodat het preloadpad in
-// de head klopt met wat er daadwerkelijk geladen wordt.
-const backgroundImage = `${process.env.PUBLIC_URL}/images/top-bg.jpg`;
-const backgroundWebp = `${process.env.PUBLIC_URL}/images/top-bg.webp`;
-
 const Hero: React.FC = () => {
-  const { language, t } = useLanguage();
-  const [timeOfDay, setTimeOfDay] = useState<TimeOfDay>(getTimeOfDay);
+    const { t } = useLanguage();
+    const [hour, setHour] = useState(() => new Date().getHours());
 
-  // De begroeting kan op het hele uur wisselen. Eerst uitlijnen op de volgende
-  // hele minuut, daarna elke minuut opnieuw kijken.
-  useEffect(() => {
-    let interval: ReturnType<typeof setInterval>;
+    // De groet verandert met de klok mee. We houden het uur bij in plaats van
+    // de tekst, zodat een taalwissel meteen de juiste groet oplevert zonder
+    // dat we op de volgende minuut hoeven te wachten.
+    useEffect(() => {
+        const updateHour = () => setHour(new Date().getHours());
 
-    const now = new Date();
-    const msToNextMinute = (60 - now.getSeconds()) * 1000 - now.getMilliseconds();
+        const now = new Date();
+        const msToNextMinute = (60 - now.getSeconds()) * 1000 - now.getMilliseconds();
 
-    const timeout = setTimeout(() => {
-      setTimeOfDay(getTimeOfDay());
-      interval = setInterval(() => setTimeOfDay(getTimeOfDay()), 60_000);
-    }, msToNextMinute);
+        let interval: ReturnType<typeof setInterval> | undefined;
 
-    return () => {
-      clearTimeout(timeout);
-      clearInterval(interval);
-    };
-  }, []);
+        const timeout = setTimeout(() => {
+            updateHour();
+            interval = setInterval(updateHour, 60000);
+        }, msToNextMinute);
 
-  const scrollToNextSection = () => {
-    document.getElementById('over-mij')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
+        return () => {
+            clearTimeout(timeout);
+            if (interval) clearInterval(interval);
+        };
+    }, []);
 
-  return (
-    <section className="hero">
-      <FocusSpotlight image={backgroundImage} imageWebp={backgroundWebp} />
-      <div className="hero__scrim" aria-hidden="true" />
+    const greeting = getGreeting(t.hero.greetings);
 
-      <div className="hero__inner">
-        <header className="hero__bar enter-drop">
-          <div className="hero__identity">
-            <img className="hero__logo" src={logo} alt="" width={44} height={44} />
-            <div>
-              <p className="hero__name">{t.hero.name}</p>
-              <p className="hero__role">{t.hero.role}</p>
+    return (
+        <section className="top-hero js-top-hero clearfix" data-hour={hour}>
+            <FocusSpotlight image={topBg} />
+
+            <div className="hero-content">
+                <header className="site-header">
+                    <a className="site-branding">
+                        <div className="logo-container">
+                            <img className="logo" src={logo} alt="Logo" />
+                        </div>
+                        <div className="site-title-container">
+                            <h1 className="site-title">Aart den Braber</h1>
+                            <p className="site-description">{t.header.siteDescription}</p>
+                        </div>
+                        <LanguageSwitcher />
+                    </a>
+                </header>
+
+                <main className="hero-title-container">
+                    <div className="hero-title-wrapper">
+                        <div className="hero-title-inside">
+                            <p id="hero-greeting" className="hero-greeting">{greeting}!</p>
+                            <h1 className="hero-title">{t.hero.title}</h1>
+                        </div>
+                    </div>
+                </main>
+
+                <footer className="scroll-to-next-section-container">
+                    <a
+                        tabIndex={0}
+                        role="button"
+                        aria-label={t.hero.scrollLabel}
+                        onClick={() => {
+                            window.scrollBy({ top: window.innerHeight, behavior: 'smooth' });
+                        }}
+                        onKeyDown={(event) => {
+                            if (event.key === 'Enter' || event.key === ' ') {
+                                event.preventDefault();
+                                window.scrollBy({ top: window.innerHeight, behavior: 'smooth' });
+                            }
+                        }}
+                        className="scroll-to-next-section">
+                        <span className="scroll-icon"></span>
+                    </a>
+                </footer>
             </div>
-          </div>
-
-          <div className="hero__bar-end">
-            <p className="hero__greeting">{t.hero.greetings[timeOfDay]}</p>
-            <LanguageSwitcher />
-          </div>
-        </header>
-
-        {/* De hero komt in stappen binnen: eerst de balk, dan de kop woord voor
-            woord, daarna de ondertitel en de knoppen. --enter-step zet die
-            volgorde, de kop houdt met delay ruimte vrij voor de balk. */}
-        <div className="hero__content">
-          <WordReveal className="hero__title" text={t.hero.title} delay={250} />
-
-          <p
-            className="hero__subtitle enter-rise"
-            style={{ '--enter-step': 7 } as React.CSSProperties}
-          >
-            {t.hero.subtitle}
-          </p>
-
-          <div
-            className="hero__actions enter-rise"
-            style={{ '--enter-step': 8 } as React.CSSProperties}
-          >
-            <a className="button button--primary" href={t.hero.primaryCta.href}>
-              {t.hero.primaryCta.label}
-            </a>
-            <a
-              className="button button--ghost-light"
-              href={cvUrl(language)}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {t.hero.secondaryCta.label}
-            </a>
-          </div>
-        </div>
-
-        <button
-          type="button"
-          className="hero__scroll enter-fade"
-          style={{ '--enter-step': 12 } as React.CSSProperties}
-          onClick={scrollToNextSection}
-        >
-          <span className="visually-hidden">{t.hero.scrollLabel}</span>
-          <svg
-            className="hero__scroll-icon"
-            viewBox="0 0 24 24"
-            width="26"
-            height="26"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M12 4v15" />
-            <path d="M5.5 12.5 12 19l6.5-6.5" />
-          </svg>
-        </button>
-      </div>
-    </section>
-  );
+        </section>
+    );
 };
 
 export default Hero;

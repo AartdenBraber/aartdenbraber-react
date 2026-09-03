@@ -25,3 +25,6 @@ yarn-error.log*
 # lokale tooling
 /.claude
 /.impeccable
+
+# wordt voor start en build uit node_modules gekopieerd
+/public/pdf.worker.min.js

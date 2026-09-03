@@ -1,20 +1,13 @@
 {
   "short_name": "Aart den Braber",
-  "name": "Aart den Braber, full stack engineer",
-  "icons": [
-    {
-      "src": "/images/favicon/android-chrome-192x192.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "/images/favicon/android-chrome-512x512.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
-  ],
-  "start_url": "/",
+  "name": "Aart den Braber - developer",
+  "icons": [{
+    "src": "/images/favicon/android-chrome-512x512.png",
+    "sizes": "512x512",
+    "type": "image/png"
+  }],
+  "start_url": ".",
   "display": "standalone",
-  "theme_color": "#0f0c09",
+  "theme_color": "#000000",
   "background_color": "#ffffff"
 }

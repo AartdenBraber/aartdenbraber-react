@@ -10,7 +10,7 @@ interface LanguageContextValue {
 
 const LanguageContext = createContext<LanguageContextValue | null>(null);
 
-const setMeta = (selector: string, attribute: string, value: string) => {
+const setAttribute = (selector: string, attribute: string, value: string) => {
   document.querySelector(selector)?.setAttribute(attribute, value);
 };
 
@@ -39,17 +39,12 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   useEffect(() => {
     const { meta } = content[language];
-    const canonical = canonicalForLanguage(language);
 
     document.documentElement.lang = language;
     document.title = meta.title;
 
-    setMeta('meta[name="description"]', 'content', meta.description);
-    setMeta('link[rel="canonical"]', 'href', canonical);
-    setMeta('meta[property="og:url"]', 'content', canonical);
-    setMeta('meta[property="og:title"]', 'content', meta.title);
-    setMeta('meta[property="og:description"]', 'content', meta.description);
-    setMeta('meta[property="og:locale"]', 'content', language === 'en' ? 'en_GB' : 'nl_NL');
+    setAttribute('meta[name="description"]', 'content', meta.description);
+    setAttribute('link[rel="canonical"]', 'href', canonicalForLanguage(language));
   }, [language]);
 
   const value = useMemo(

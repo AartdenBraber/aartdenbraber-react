@@ -1,41 +1,35 @@
 import React from 'react';
 import './LanguageSwitcher.scss';
-import { Language, LANGUAGES } from '../../content';
 import { useLanguage } from '../../i18n/LanguageContext';
-import { pathForLanguage } from '../../i18n/routes';
+import { Language } from '../../content';
 
-const LABELS: Record<Language, string> = {
-  nl: 'Nederlands',
-  en: 'English',
-};
-
+/**
+ * De knoppen stonden op de oude site zonder tekst in de opmaak. Dat leverde
+ * knoppen op zonder naam, waar een schermlezer niets mee kan, dus staat het
+ * kortje er nu zichtbaar in met een volledig label eronder.
+ */
 const LanguageSwitcher: React.FC = () => {
-  const { language, setLanguage } = useLanguage();
+  const { language, setLanguage, t } = useLanguage();
+
+  const knop = (code: Language, kort: string, naam: string) => (
+    <button
+      type="button"
+      className={code === language ? 'active' : ''}
+      data-lang={code}
+      aria-label={naam}
+      aria-pressed={code === language}
+      onClick={() => setLanguage(code)}
+    >
+      {kort}
+    </button>
+  );
 
   return (
-    <div className="language-switcher" role="group" aria-label="Taal / Language">
-      {LANGUAGES.map((option) => (
-        // Echte links, geen knoppen: zo kan een zoekmachine de andere taal
-        // vinden en volgen. De klik wordt onderschept zodat de pagina niet
-        // opnieuw laadt.
-        <a
-          key={option}
-          className="language-switcher__option"
-          href={pathForLanguage(option)}
-          hrefLang={option}
-          lang={option}
-          aria-label={LABELS[option]}
-          aria-current={option === language ? 'true' : undefined}
-          onClick={(event) => {
-            if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return;
-
-            event.preventDefault();
-            setLanguage(option);
-          }}
-        >
-          {option.toUpperCase()}
-        </a>
-      ))}
+    <div className="language-switcher-container">
+      <div className="language-switcher" role="group" aria-label={t.languageSwitcher.label}>
+        {knop('en', 'EN', t.languageSwitcher.en)}
+        {knop('nl', 'NL', t.languageSwitcher.nl)}
+      </div>
     </div>
   );
 };

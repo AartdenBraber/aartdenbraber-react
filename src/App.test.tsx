@@ -1,85 +1,55 @@
 import React from 'react';
-import { render, screen, within } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import App from './App';
-import { content, Language } from './content';
 
-/** De taal hangt aan het adres: / is Nederlands, /en is Engels. */
-const renderIn = (language: Language) => {
-  window.history.replaceState(null, '', language === 'en' ? '/en' : '/');
-  return render(<App />);
-};
+// Het cv wordt met pdfjs op een canvas getekend. Dat kan jsdom niet en het
+// hoort ook niet bij wat deze test nagaat, dus zetten we er een lege pdf voor
+// in de plaats.
+jest.mock('pdfjs-dist', () => ({
+  GlobalWorkerOptions: { workerSrc: '' },
+  getDocument: () => ({ promise: Promise.resolve({ numPages: 0, getPage: jest.fn() }) }),
+}));
 
-describe('App', () => {
-  beforeEach(() => {
-    window.history.replaceState(null, '', '/');
-    document.documentElement.lang = '';
-  });
+const ga = (pad: string) => window.history.pushState({}, '', pad);
 
-  it('toont één h1, met de hero-titel van de gekozen taal', () => {
-    renderIn('nl');
+describe('de taal volgt het adres', () => {
+  beforeEach(() => ga('/'));
 
-    const headings = screen.getAllByRole('heading', { level: 1 });
+  it('toont Nederlands op de hoofdpagina', async () => {
+    render(<App />);
 
-    expect(headings).toHaveLength(1);
-    expect(headings[0]).toHaveTextContent(content.nl.hero.title);
-  });
-
-  it('rendert elke werkervaring uit de content', () => {
-    renderIn('nl');
-
-    const experience = screen.getByRole('region', { name: content.nl.experience.heading });
-    const { entries } = content.nl.experience;
-
-    expect(within(experience).getAllByRole('listitem')).toHaveLength(
-      entries.length + entries.flatMap((entry) => [...entry.highlights, ...entry.stack]).length,
-    );
-
-    entries.forEach((entry) => {
-      expect(within(experience).getByText(entry.summary)).toBeInTheDocument();
-    });
-  });
-
-  it('zet het lang-attribuut op de gekozen taal', () => {
-    renderIn('nl');
-
+    expect(await screen.findByText(/Mijn focus ligt op het bouwen/)).toBeInTheDocument();
+    expect(screen.getByText('Ontwikkeling begint bij visie.')).toBeInTheDocument();
     expect(document.documentElement.lang).toBe('nl');
   });
 
-  it('schakelt de hele pagina om naar Engels', async () => {
-    const user = userEvent.setup();
-    renderIn('nl');
+  it('toont Engels op /en', async () => {
+    ga('/en');
+    render(<App />);
 
-    await user.click(screen.getByRole('link', { name: /english/i }));
-
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(content.en.hero.title);
+    expect(await screen.findByText(/I focus on crafting sustainable applications/)).toBeInTheDocument();
+    expect(screen.getByText('From vision to value.')).toBeInTheDocument();
     expect(document.documentElement.lang).toBe('en');
   });
 
-  it('neemt het adres mee bij het wisselen van taal', async () => {
-    const user = userEvent.setup();
-    renderIn('nl');
+  it('wisselt van taal en past het adres aan', async () => {
+    render(<App />);
 
-    await user.click(screen.getByRole('link', { name: /english/i }));
-    expect(window.location.pathname).toBe('/en');
+    fireEvent.click(screen.getByRole('button', { name: 'Engels' }));
 
-    await user.click(screen.getByRole('link', { name: /nederlands/i }));
-    expect(window.location.pathname).toBe('/');
+    expect(await screen.findByText(/I focus on crafting sustainable applications/)).toBeInTheDocument();
+    await waitFor(() => expect(window.location.pathname).toBe('/en'));
   });
 
-  it('start in het Engels wanneer het adres daarom vraagt', () => {
-    renderIn('en');
+  it('wijst het cv naar het pdf in de juiste taal', async () => {
+    render(<App />);
 
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(content.en.hero.title);
-    expect(document.documentElement.lang).toBe('en');
-  });
+    const nederlands = await screen.findByRole('link', { name: /Download CV als PDF/ });
+    expect(nederlands).toHaveAttribute('href', '/CV-Aart-den-Braber-NL.pdf');
 
-  it('biedt de andere taal aan als een volgbare link', () => {
-    renderIn('nl');
+    fireEvent.click(screen.getByRole('button', { name: 'Engels' }));
 
-    const engels = screen.getByRole('link', { name: /english/i });
-
-    expect(engels).toHaveAttribute('href', '/en');
-    expect(engels).toHaveAttribute('hreflang', 'en');
+    const engels = await screen.findByRole('link', { name: /Download CV as PDF/ });
+    expect(engels).toHaveAttribute('href', '/CV-Aart-den-Braber-EN.pdf');
   });
 });

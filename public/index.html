@@ -3,77 +3,30 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#0f0c09" />
+    <meta name="theme-color" content="#263238" />
 
-    <title>Aart den Braber · Fullstack developer</title>
-    <meta
-      name="description"
-      content="Developer met een passie voor leren en een oog voor detail en optimalisatie. Daarnaast afgestudeerd UX-researcher, dus de focus ligt altijd op de eindgebruiker."
-    />
+    <title>Aart den Braber - developer</title>
+    <meta name="description" content="Freelance developer uit Nederland. Backend, frontend, test en UX." />
+
+    <!-- De taal hangt aan het adres: / is Nederlands, /en is Engels. Deze twee
+         regels vertellen een zoekmachine welke twee dat zijn. De canonical
+         wordt door de taalcontext bijgewerkt zodra er gewisseld wordt. -->
     <link rel="canonical" href="https://aartdenbraber.nl/" />
-
-    <!-- Elke taal heeft een eigen adres: / is Nederlands, /en is Engels.
-         Zonder deze regels indexeert een zoekmachine er maar een van. De
-         canonical hierboven wordt door de app bijgewerkt per taal. -->
     <link rel="alternate" hreflang="nl" href="https://aartdenbraber.nl/" />
     <link rel="alternate" hreflang="en" href="https://aartdenbraber.nl/en" />
     <link rel="alternate" hreflang="x-default" href="https://aartdenbraber.nl/" />
-
-    <meta property="og:type" content="profile" />
-    <meta property="og:site_name" content="Aart den Braber" />
-    <meta property="og:url" content="https://aartdenbraber.nl/" />
-    <meta property="og:locale" content="nl_NL" />
-    <meta property="og:locale:alternate" content="en_GB" />
-    <meta property="og:title" content="Aart den Braber · Fullstack developer" />
-    <meta
-      property="og:description"
-      content="Developer met een passie voor leren en een oog voor detail en optimalisatie. Daarnaast afgestudeerd UX-researcher, dus de focus ligt altijd op de eindgebruiker."
-    />
-    <meta property="og:image" content="https://aartdenbraber.nl/images/top-bg.jpg" />
-    <meta name="twitter:card" content="summary_large_image" />
 
     <link rel="apple-touch-icon" sizes="180x180" href="%PUBLIC_URL%/images/favicon/apple-touch-icon.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="%PUBLIC_URL%/images/favicon/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="%PUBLIC_URL%/images/favicon/favicon-16x16.png" />
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
 
-    <!-- De herofoto is het grootste element in beeld. Hij zit in een
-         component, dus de browser ontdekt hem pas nadat het JavaScript
-         gedraaid heeft. Deze regel laat hem meteen beginnen. -->
-    <link
-      rel="preload"
-      as="image"
-      href="%PUBLIC_URL%/images/top-bg.webp"
-      type="image/webp"
-      fetchpriority="high"
-    />
-
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "Person",
-        "name": "Aart den Braber",
-        "url": "https://aartdenbraber.nl/",
-        "jobTitle": "Fullstack developer",
-        "sameAs": ["https://www.linkedin.com/in/aartdenbraber"],
-        "knowsLanguage": ["nl", "en", "de"],
-        "knowsAbout": [
-          "Angular",
-          "TypeScript",
-          "Java",
-          "Spring Boot",
-          "Node.js",
-          "REST API design",
-          "Testautomatisering",
-          "UX research",
-          "Toegankelijkheid"
-        ],
-        "address": { "@type": "PostalAddress", "addressCountry": "NL" }
-      }
-    </script>
+    <!-- De achtergrond van de hero is het eerste wat je ziet, dus die halen we
+         vooruit in plaats van te wachten tot het javascript geladen is. -->
+    <link rel="preload" as="image" href="%PUBLIC_URL%/images/top-bg.jpg" />
   </head>
   <body>
-    <noscript>Zet JavaScript aan om deze site te bekijken. Het cv is ook te downloaden via /CV-Aart-den-Braber-NL.pdf</noscript>
+    <noscript>Je hebt JavaScript nodig om deze site te bekijken.</noscript>
     <div id="root"></div>
   </body>
 </html>

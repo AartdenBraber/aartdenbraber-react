@@ -17,37 +17,53 @@ De site draait dan op http://localhost:3000.
 | `npm test`      | Tests in watch mode                            |
 | `npm run build` | Productiebundel in `build/`                    |
 
+De site is één pagina: een hero met zoeklichteffect, een korte introductie en
+daaronder het cv, pagina voor pagina getekend met pdf.js.
+
 ## Structuur
 
 ```
 src/
-  content/      Alle teksten, per taal (nl.ts en en.ts) met gedeelde types
-  i18n/         Taalcontext: keuze onthouden, <html lang> bijwerken
+  content/      Alle teksten, per taal (nl.tsx en en.tsx) met gedeelde types
+  i18n/         Taal uit het adres halen, <html lang>, titel en canonical bijwerken
   components/   Eén map per component, met de bijbehorende .scss ernaast
-  styles/       Tokens en globale stijlen
+  utils/        PdfWithTextLayer tekent het cv op canvassen
+  App.scss      De opmaak van de hele site, overgenomen uit het oude thema
 ```
 
-Teksten aanpassen doe je in `src/content/nl.ts` en `src/content/en.ts`. Beide
+Teksten aanpassen doe je in `src/content/nl.tsx` en `src/content/en.tsx`. Beide
 bestanden voldoen aan hetzelfde type, dus TypeScript geeft een fout zodra er in
-één taal iets ontbreekt.
+één taal iets ontbreekt. De alinea's staan als JSX in die bestanden, omdat er
+vetgedrukte stukken middenin de zinnen zitten.
 
-Kleuren, spacing en typografie staan als CSS-variabelen in
-`src/styles/_tokens.scss`.
+## Taal aan het adres
+
+`/` is Nederlands en `/en` is Engels. De taal wordt uit het pad gelezen, niet
+uit een voorkeur in de browser, zodat elke taal een eigen adres heeft dat een
+zoekmachine kan indexeren en een gedeelde link laat zien wat de deler zag.
 
 ## Het cv
 
 `CV-Aart-den-Braber-NL.pdf` en `CV-Aart-den-Braber-EN.pdf` staan in `public/`
 en gaan met de build mee. Ze zijn sowieso al openbaar te downloaden vanaf de
-site, dus ze staan ook in deze publieke repo.
+site, dus ze staan ook in deze publieke repo. Welke van de twee getoond wordt
+hangt af van de taal; zie `cv` in `src/content/nl.tsx` en `en.tsx`.
 
-Welke van de twee de downloadknop gebruikt hangt af van de taal; zie `cvUrl`
-in `src/content/index.ts`.
+pdf.js heeft een losse worker nodig. Die stond eerst op een cdn, wat betekende
+dat een storing daar een lege pagina opleverde op de plek waar het cv hoort.
+`scripts/copy-pdf-worker.js` zet hem nu voor elke start en build vanuit
+`node_modules` in `public/`, zodat hij van ons eigen domein komt en altijd bij
+de gebruikte versie past. Het gekopieerde bestand staat in `.gitignore`.
+
+Tekenen gebeurt met `requestAnimationFrame`. Een browser laat dat niet lopen in
+een tabblad op de achtergrond, dus in een verborgen tab blijft het cv leeg tot
+je het tabblad naar voren haalt. Dat is geen fout in de site.
 
 ## Hosting
 
 De server meldt zich als Apache. Onbekende paden krijgen daar `index.html`
-terug, waardoor `/en` werkt zonder dat er in deze repo iets voor geregeld is.
-Die configuratie staat op de server, niet hier.
+terug, waardoor `/en` werkt. De rewrite die dat regelt staat in
+`public/.htaccess` en gaat met de build mee.
 
 Uitrollen gaat via `.github/workflows/deploy.yml`: bij elke push naar `main`
 bouwt en test GitHub de site en spiegelt die met `lftp` over FTPS naar de

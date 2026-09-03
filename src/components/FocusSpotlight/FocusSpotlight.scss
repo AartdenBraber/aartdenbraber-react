@@ -39,7 +39,6 @@
   --spot-inner: 50%;
   --spot-middle: 90%;
   --spot-outer: 100%;
-  --spot-brightness: 1.6;
 
   position: absolute;
   top: 0;
@@ -133,8 +132,5 @@
 
 .focused {
   z-index: 2;
-  // De scherpe foto in de cirkel is wat lichter dan de geblurde versie
-  // eromheen, zodat de spot ook echt als een lichtbundel leest.
-  filter: brightness(var(--spot-brightness));
   will-change: transform, opacity;
 }

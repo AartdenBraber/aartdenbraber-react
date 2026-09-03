@@ -1,31 +1,46 @@
-.language-switcher {
-  display: inline-flex;
-  padding: 3px;
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  border-radius: var(--radius-pill);
-  background: rgba(15, 12, 9, 0.35);
-  backdrop-filter: blur(6px);
+/* De header is een tabel-layout: .site-branding is een table en zijn kinderen
+   zijn cellen. De wisselaar hangt daar als extra cel naast de titel. */
+.language-switcher-container {
+  display: table-cell;
+  vertical-align: middle;
+  padding-left: 1.5em;
 }
 
-// Dit zijn echte links naar / en /en, zodat een zoekmachine de andere taal kan
-// volgen. Ze horen alleen niet als lopende-tekstlink te ogen.
-.language-switcher__option {
-  padding: 0.3rem 0.75rem;
-  border-radius: var(--radius-pill);
-  color: rgba(255, 255, 255, 0.7);
-  font-size: var(--step--1);
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-decoration: none;
-  cursor: pointer;
-  transition: background-color 0.18s ease, color 0.18s ease;
+.language-switcher {
+  display: inline-flex;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 999px;
 
-  &:hover {
+  button {
+    margin: 0;
+    padding: 0.25em 0.7em;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
     color: #fff;
-  }
+    font: inherit;
+    font-size: 0.75em;
+    letter-spacing: 0.05em;
+    line-height: 1.4;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
 
-  &[aria-current='true'] {
-    background: #fff;
-    color: var(--color-dark);
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* De toetsenbordring moet zichtbaar blijven op de donkere header. */
+    &:focus-visible {
+      outline: 2px solid #fff;
+      outline-offset: 2px;
+    }
+
+    &.active {
+      background: #fff;
+      color: #263238;
+      cursor: default;
+    }
   }
 }

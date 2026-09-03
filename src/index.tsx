@@ -1,8 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './styles/global.scss';
-// Na global.scss, zodat de rolloverstaten hierin de basisknop overschrijven.
-import './styles/motion.scss';
+import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
