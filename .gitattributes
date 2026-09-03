@@ -1,0 +1,5 @@
+# De uitrolworkflow schrijft lftp-scripts met heredocs. Met CRLF matcht de
+# afsluitende EOF-regel niet meer en breekt de uitrol op de runner.
+*.yml text eol=lf
+*.yaml text eol=lf
+*.pem text eol=lf
