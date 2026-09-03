@@ -98,9 +98,8 @@ jobs:
           set dns:order inet
           EOF
 
-      # Laatste zekerheid voor een spiegeling met --delete: ligt er een
-      # index.html in DEPLOY_PATH? Zo niet, dan wijst die variabele ergens
-      # anders naar en stopt de uitrol voordat er iets verdwijnt.
+      # Ligt er een index.html in DEPLOY_PATH? Zo niet, dan wijst die variabele
+      # ergens anders naar en stopt de uitrol voordat er iets geschreven wordt.
       #
       # Dit vangt ook het geval waarin DEPLOY_PATH op / staat terwijl het
       # FTP-account niet in de webroot begint maar hoger in de boom.
@@ -123,34 +122,26 @@ jobs:
             exit 1
           fi
 
-      # De uitrol gaat in drie fasen, zodat de site nooit naar bestanden wijst
-      # die er nog niet staan.
+      # De uitrol raakt alleen aan wat de build zelf maakt.
       #
-      # 1. Alles behalve index.html en .htaccess gaat omhoog, zonder --delete.
-      #    De nieuwe bundels komen naast de oude te staan en de site draait
-      #    ondertussen door op de oude index.html.
+      # 1. Alles behalve index.html en .htaccess gaat omhoog, zonder iets te
+      #    verwijderen. De nieuwe bundels komen naast de oude te staan en de
+      #    site draait ondertussen door op de oude index.html.
       # 2. index.html en .htaccess gaan omhoog onder een tijdelijke naam en
       #    worden daarna hernoemd. Hernoemen binnen een map is een enkele
       #    handeling op het bestandssysteem, dus niemand krijgt een half
       #    geschreven bestand te zien. Hier klapt de site om.
-      # 3. Pas daarna ruimt --delete de oude bundels op.
+      # 3. Opruimen gebeurt alleen in static/. Daar staat uitsluitend wat de
+      #    build genereert, met een hash in elke bestandsnaam, dus daar mag
+      #    weg wat niet meer in build/ voorkomt.
+      #
+      # Buiten static/ wordt nooit iets verwijderd. Wat daar staat en niet uit
+      # deze repo komt, blijft dus staan. Dat is met opzet: op 3 september 2026
+      # ruimde een spiegeling met --delete op de hele webroot alles op wat niet
+      # in build/ zat, en dat bleek een stuk meer te zijn dan bedoeld.
       #
       # Struikelt fase 1 of 2, dan staat de oude site er nog compleet bij en is
       # er niets verwijderd, want cmd:fail-exit stopt voor fase 3.
-      #
-      # index.html en .htaccess zijn in fase 1 en 3 uitgesloten. In fase 1
-      # omdat ze pas als laatste mogen omklappen, in fase 3 zodat mirror ze
-      # niet alsnog opnieuw uploadt en de wissel ongedaan maakt.
-      #
-      # .well-known blijft in alle fasen met rust: Let's Encrypt zet daar zijn
-      # controlebestanden neer bij het vernieuwen van certificaten, en die
-      # komen niet uit deze repo.
-      #
-      # --no-perms laat de rechten met rust; die zetten over FTP hoeft hier
-      # niet en levert anders alleen foutmeldingen op.
-      #
-      # DEPLOY_PATH moet precies de webroot van deze site zijn en niets
-      # ruimers: alles daarbinnen wat niet in build/ zit, verdwijnt.
       - name: Uploaden naar de server
         if: steps.gegevens.outputs.compleet == 'ja'
         env:
@@ -186,26 +177,40 @@ jobs:
 
           cat > "$HOME/uitrollen.lftp" <<EOF
           open --env-password -u "$FTP_USER" "ftp://$FTP_HOST"
-          echo "== fase 1: alles behalve index.html en .htaccess =="
-          mirror --reverse --no-perms --verbose $DRY --exclude-glob '.well-known/' --exclude-glob '.well-known' --exclude-glob 'index.html' --exclude-glob '.htaccess' build/ "$DEPLOY_PATH"
+          echo "== fase 1: alles behalve index.html en .htaccess, zonder opruimen =="
+          mirror --reverse --no-perms --verbose $DRY --exclude-glob 'index.html' --exclude-glob '.htaccess' build/ "$DEPLOY_PATH"
           cd "$DEPLOY_PATH"
           echo "== fase 2: index.html en .htaccess omwisselen =="
           $PUT_HTACCESS
           $PUT_INDEX
           $MV_HTACCESS
           $MV_INDEX
-          echo "== fase 3: oude bestanden opruimen =="
-          mirror --reverse --delete --no-perms --verbose $DRY --exclude-glob '.well-known/' --exclude-glob '.well-known' --exclude-glob 'index.html' --exclude-glob '.htaccess' build/ "$DEPLOY_PATH"
+          echo "== fase 3: opruimen, uitsluitend binnen static/ =="
+          mirror --reverse --delete --no-perms --verbose $DRY build/static "$DEPLOY_PATH/static"
           bye
           EOF
           lftp -f "$HOME/uitrollen.lftp"
 
+      # De rewrite in .htaccess geeft voor elk onbekend pad index.html terug met
+      # status 200. Een statuscode zegt hier dus niets over of een bestand nog
+      # bestaat; daarom kijken we naar het inhoudstype. Zonder dat zou deze stap
+      # ook groen blijven als het cv van de server verdwenen was.
       - name: Controleren of de site draait
         if: steps.gegevens.outputs.compleet == 'ja' && !inputs.proefrit
         run: |
           echo "Titel op de live site:"
           curl -sS --fail --max-time 20 https://aartdenbraber.nl/ | grep -o '<title>[^<]*</title>'
-          echo "Status van /en (hoort 200 te zijn):"
-          curl -sS -o /dev/null -w '%{http_code}\n' --max-time 20 https://aartdenbraber.nl/en
-          echo "Status van het cv (hoort 200 te zijn):"
-          curl -sS -o /dev/null -w '%{http_code}\n' --max-time 20 https://aartdenbraber.nl/CV-Aart-den-Braber-NL.pdf
+
+          echo "Engelse versie:"
+          curl -sS --fail --max-time 20 https://aartdenbraber.nl/en | grep -o '<title>[^<]*</title>'
+
+          for bestand in /CV-Aart-den-Braber-NL.pdf /CV-Aart-den-Braber-EN.pdf /pdf.worker.min.js; do
+            soort=$(curl -sS -o /dev/null -w '%{content_type}' --max-time 20 "https://aartdenbraber.nl$bestand")
+            echo "$bestand -> $soort"
+            case "$soort" in
+              text/html*)
+                echo "::error::$bestand komt terug als HTML. Dat is de fallback, dus het bestand staat niet meer op de server."
+                exit 1
+                ;;
+            esac
+          done

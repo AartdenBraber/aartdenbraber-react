@@ -121,17 +121,17 @@ vernieuwd worden zonder dat hier iets hoeft te veranderen.
 
 ### De uitrol in drie fasen
 
-De site mag nooit naar bestanden wijzen die er nog niet staan, dus de uitrol
-gaat gefaseerd.
+De site mag nooit naar bestanden wijzen die er nog niet staan, en de uitrol mag
+niets weggooien dat niet uit deze repo komt. Vandaar drie fasen.
 
-1. Alles behalve `index.html` en `.htaccess` gaat omhoog, zonder `--delete`.
-   De nieuwe bundels komen naast de oude te staan en de site draait
-   ondertussen door op de oude `index.html`.
+1. Alles behalve `index.html` en `.htaccess` gaat omhoog, zonder iets te
+   verwijderen. De nieuwe bundels komen naast de oude te staan en de site
+   draait ondertussen door op de oude `index.html`.
 2. `index.html` en `.htaccess` gaan omhoog onder een tijdelijke naam en worden
    daarna hernoemd. Hernoemen binnen een map is een enkele handeling op het
    bestandssysteem, dus niemand krijgt een half geschreven bestand te zien.
    Hier klapt de site om.
-3. Pas daarna ruimt `--delete` de oude bundels op.
+3. Opruimen gebeurt **alleen in `static/`**.
 
 Struikelt fase 1 of 2, dan staat de oude site er nog compleet bij en is er
 niets verwijderd. `cmd:fail-exit` stopt het script voor fase 3.
@@ -142,26 +142,40 @@ En terugrollen gaat niet met een schakelaar, maar door de vorige commit
 opnieuw uit te rollen. Wat je wel hebt: op geen enkel moment wijst de live
 `index.html` naar bundels die er niet zijn.
 
-### Wat de spiegeling wel en niet aanraakt
+### Waarom er alleen in static/ wordt opgeruimd
 
-`mirror` draait **met** `--delete`, zodat oude gehashte bestanden zich niet
-opstapelen. Alleen `.well-known/` blijft met rust: daar zet Let's Encrypt zijn
-controlebestanden neer, en die komen niet uit deze repo.
+In `static/` staat uitsluitend wat de build genereert, en elke bestandsnaam
+bevat een hash van de inhoud. Wat daar staat en niet meer in `build/`
+voorkomt, is dus met zekerheid een bundel van een vorige uitrol. Daar mag
+`--delete` zijn werk doen, anders stapelen die zich eindeloos op.
 
-`public/.htaccess` gaat wel mee. Daarin staat de rewrite die `/en` laat
-werken, de doorverwijzing van www naar het kale domein, en hoe lang de
-browser bestanden mag bewaren. Zit daar een fout in, dan geeft de site een
-500; de controlestap aan het eind van de workflow vangt dat op.
+Buiten `static/` gebeurt dat niet. In de root en in `images/` worden alleen
+bestanden overschreven die de build zelf maakt. Wat daar verder staat, blijft
+staan.
 
-`DEPLOY_PATH` moet daarom precies de webroot van deze site zijn en niets
-ruimers: alles daarbinnen wat niet in `build/` zit, verdwijnt. De workflow
-kijkt eerst of er een `index.html` in die map ligt en stopt als dat niet zo
-is, zodat een typefout in die variabele geen andere map leegruimt.
+Dat is met opzet zo, en het heeft een aanleiding. Op 3 september 2026 draaide
+`mirror --delete` op de hele webroot en verdween alles wat niet in `build/`
+zat. Dat bleek een stuk meer dan de oude bundels alleen.
 
-Staat er in de webroot nog iets dat niet uit deze repo komt, dan verdwijnt
-het bij de eerste uitrol. Start de workflow daarom de eerste keer met de hand
-en zet **Proefrit** aan. Dan laat `lftp` in het log zien wat hij zou uploaden
-en verwijderen zonder het te doen. Kijk in dat log twee dingen na: staat
-`.well-known` niet in de lijst met te verwijderen bestanden, en staat er niets
-anders bij dat je wilt houden. Klopt het, dan start je hem daarna zonder
-proefrit.
+Bij het onderzoeken daarvan ging het nog een keer mis, op een manier die het
+onthouden waard is. De rewrite in `.htaccess` geeft voor elk onbekend pad
+`index.html` terug met status 200. Een statuscode zegt hier dus niets over of
+een bestand nog bestaat. Wie met `curl -o /dev/null -w '%{http_code}'`
+controleert of iets er nog staat, krijgt altijd 200 en concludeert ten
+onrechte dat er niets verwijderd is. Kijk naar het inhoudstype of naar de
+eerste bytes. De controlestap aan het eind van de workflow doet dat nu ook,
+anders zou die groen blijven terwijl het cv van de server verdwenen was.
+
+### Wat de uitrol wel en niet aanraakt
+
+`public/.htaccess` gaat mee. Daarin staat de rewrite die `/en` laat werken, de
+doorverwijzing van www naar het kale domein, en hoe lang de browser bestanden
+mag bewaren. Zit daar een fout in, dan geeft de site een 500; de controlestap
+aan het eind van de workflow vangt dat op.
+
+`DEPLOY_PATH` moet precies de webroot van deze site zijn. De workflow kijkt
+eerst of er een `index.html` in die map ligt en stopt als dat niet zo is,
+zodat een typefout in die variabele niet in een andere map gaat schrijven.
+
+Wil je vooraf zien wat er gaat gebeuren, start de workflow dan met de hand en
+zet **Proefrit** aan.
