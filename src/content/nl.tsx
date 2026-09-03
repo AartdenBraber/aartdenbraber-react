@@ -30,7 +30,7 @@ export const nl: SiteContent = {
         </p>
 
         <p>
-          Hoewel ik ook ervaring heb met PHP en Python, richt ik me vooral op
+          Hoewel ik ook ervaring heb met PHP en Python, richt ik me vooral op{' '}
           <strong>JavaScript-gebaseerde en Java-backendomgevingen</strong>. Ik haal de meeste energie
           uit projecten die vragen om <strong>creatief denkwerk</strong> en{' '}
           <strong>doordachte architectuur</strong> - bij voorkeur in langdurige, remote opdrachten
