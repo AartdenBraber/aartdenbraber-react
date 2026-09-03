@@ -18,7 +18,7 @@ describe('de taal volgt het adres', () => {
   it('toont Nederlands op de hoofdpagina', async () => {
     render(<App />);
 
-    expect(await screen.findByText(/Mijn focus ligt op het bouwen/)).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: /Mijn focus ligt op het bouwen/ })).toBeInTheDocument();
     expect(screen.getByText('Ontwikkeling begint bij visie.')).toBeInTheDocument();
     expect(document.documentElement.lang).toBe('nl');
   });
@@ -27,7 +27,9 @@ describe('de taal volgt het adres', () => {
     ga('/en');
     render(<App />);
 
-    expect(await screen.findByText(/I focus on crafting sustainable applications/)).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { name: /I focus on crafting sustainable applications/ }),
+    ).toBeInTheDocument();
     expect(screen.getByText('From vision to value.')).toBeInTheDocument();
     expect(document.documentElement.lang).toBe('en');
   });
@@ -37,7 +39,9 @@ describe('de taal volgt het adres', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'English' }));
 
-    expect(await screen.findByText(/I focus on crafting sustainable applications/)).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { name: /I focus on crafting sustainable applications/ }),
+    ).toBeInTheDocument();
     await waitFor(() => expect(window.location.pathname).toBe('/en'));
   });
 

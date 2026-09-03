@@ -3,6 +3,7 @@ import './Hero.scss';
 import logo from '../../assets/images/logo.png';
 import FocusSpotlight from '../FocusSpotlight/FocusSpotlight';
 import LanguageSwitcher from '../LanguageSwitcher/LanguageSwitcher';
+import WordReveal from '../WordReveal/WordReveal';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { SiteContent } from '../../content';
 
@@ -65,7 +66,9 @@ const Hero: React.FC = () => {
                     <div className="hero-title-wrapper">
                         <div className="hero-title-inside">
                             <p id="hero-greeting" className="hero-greeting">{greeting}!</p>
-                            <h1 className="hero-title">{t.hero.title}</h1>
+                            {/* De kop valt woord voor woord binnen. De aanloop
+                                geeft de groet erboven even de tijd. */}
+                            <WordReveal className="hero-title" text={t.hero.title} delay={150} />
                         </div>
                     </div>
                 </main>

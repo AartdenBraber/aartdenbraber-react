@@ -1,0 +1,33 @@
+/* Elk woord zit in een eigen venstertje en draait daar omhoog uit. De padding
+   onderaan, met compenserende marge, houdt staartletters als g en j heel. */
+.word-mask {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+}
+
+@keyframes word-rise {
+  from {
+    transform: translateY(115%) rotate(4deg);
+  }
+}
+
+.word {
+  display: inline-block;
+  transform-origin: left bottom;
+  animation: word-rise 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+
+  /* --word-base is de aanloop van de hele kop, --word-step de plek van dit
+     woord in de regel. */
+  animation-delay: calc(var(--word-base, 0ms) + var(--word-step, 0) * 45ms);
+}
+
+/* Wie om minder beweging vraagt krijgt de kop meteen te zien, zonder dat de
+   woorden onder hun venstertje blijven hangen. */
+@media (prefers-reduced-motion: reduce) {
+  .word {
+    animation: none;
+  }
+}
