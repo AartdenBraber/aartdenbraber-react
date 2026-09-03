@@ -2,6 +2,7 @@ import React from 'react';
 import './styles/bootstrap.scss';
 
 import './App.scss'
+import './styles/motion.scss'
 import Hero from './components/Hero/Hero';
 import Intro from './components/Intro/Intro';
 // Literata via de opsz-as, zodat een kop van 67px en een kaarttitel van 20px

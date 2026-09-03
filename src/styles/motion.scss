@@ -1,0 +1,30 @@
+/*--------------------------------------------------------------
+# Onthullen bij het scrollen
+useRevealOnView zet data-reveal op de elementen die het aanwijst: eerst
+'pending', en 'shown' zodra ze in beeld komen. De verborgen begintoestand komt
+uit javascript, dus zonder javascript staat de hele pagina er gewoon.
+--------------------------------------------------------------*/
+
+[data-reveal] {
+  transition:
+    opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* --reveal-step laat de regels na elkaar binnenkomen in plaats van als blok. */
+  transition-delay: calc(var(--reveal-step, 0) * 80ms);
+}
+
+[data-reveal='pending'] {
+  opacity: 0;
+  transform: translateY(26px);
+}
+
+/* De hook zet het effect al uit bij deze voorkeur; dit vangt het geval af dat
+   de voorkeur verandert terwijl er nog iets verborgen staat. */
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

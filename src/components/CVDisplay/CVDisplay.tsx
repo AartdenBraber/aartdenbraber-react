@@ -1,13 +1,19 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import './CVDisplay.scss';
 import PdfWithTextLayer from '../../utils/PdfWithTextLayer';
 import { useLanguage } from '../../i18n/LanguageContext';
+import { useRevealOnView } from '../../hooks/useRevealOnView';
 
 const CVDisplay: React.FC = () => {
     const { t } = useLanguage();
 
+    const sectieRef = useRef<HTMLElement>(null);
+
+    // De downloadknop komt binnen zodra het cv in beeld komt.
+    useRevealOnView(sectieRef, '.big-bad-button');
+
     return (
-        <section className="page-content showcase" id="portfolio">
+        <section ref={sectieRef} className="page-content showcase" id="portfolio">
             <div className="js-pdf-cv pdf-cv">
                 <div className="big-bad-button hide-outside-pdf-viewer">
                     <span className="pdf-download-button-container js-pdf-download-button-container">
