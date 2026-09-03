@@ -7,7 +7,16 @@
   --palette-color-4: #0056ff;
   --palette-color-5: #e06666;
 
-  --font-family-headings: Special, Georgia, Times, "Times New Roman", serif;
+  /* Literata houdt de stevige, licht slab-achtige schreef van de oude koppen
+     vast, maar heeft een optische-maat-as: een kop van 67px en een kleine kop
+     krijgen dus niet dezelfde tekening opgeblazen. */
+  --font-heading: 'Literata Variable', Georgia, 'Times New Roman', serif;
+  --font-body: Raleway, Calibri, Arial, sans-serif;
+
+  /* Voor de plekken die de kopletter gebruiken zonder een kop te zijn. */
+  --weight-heading-inline: 500;
+
+  --font-family-headings: var(--font-heading);
 }
 .special-font-family {
   font-family: var(--font-family-headings);

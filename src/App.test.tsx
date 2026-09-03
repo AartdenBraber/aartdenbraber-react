@@ -35,7 +35,7 @@ describe('de taal volgt het adres', () => {
   it('wisselt van taal en past het adres aan', async () => {
     render(<App />);
 
-    fireEvent.click(screen.getByRole('button', { name: 'Engels' }));
+    fireEvent.click(screen.getByRole('button', { name: 'English' }));
 
     expect(await screen.findByText(/I focus on crafting sustainable applications/)).toBeInTheDocument();
     await waitFor(() => expect(window.location.pathname).toBe('/en'));
@@ -47,7 +47,7 @@ describe('de taal volgt het adres', () => {
     const nederlands = await screen.findByRole('link', { name: /Download CV als PDF/ });
     expect(nederlands).toHaveAttribute('href', '/CV-Aart-den-Braber-NL.pdf');
 
-    fireEvent.click(screen.getByRole('button', { name: 'Engels' }));
+    fireEvent.click(screen.getByRole('button', { name: 'English' }));
 
     const engels = await screen.findByRole('link', { name: /Download CV as PDF/ });
     expect(engels).toHaveAttribute('href', '/CV-Aart-den-Braber-EN.pdf');

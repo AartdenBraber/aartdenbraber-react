@@ -24,8 +24,7 @@ export interface SiteContent {
   };
   intro: {
     pageTitle: string;
-    /** De leeftijd staat in de lopende tekst en wordt uitgerekend, niet ingetypt. */
-    body: (age: number) => ReactNode;
+    body: ReactNode;
   };
   cv: {
     url: string;

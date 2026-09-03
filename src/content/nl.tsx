@@ -21,12 +21,12 @@ export const nl: SiteContent = {
   },
   intro: {
     pageTitle: 'Ontwikkeling begint bij visie.',
-    body: (age) => (
+    body: (
       <>
         <p>
-          Mijn naam is <strong>Aart den Braber</strong>, een {age}-jarige freelance developer uit
-          Nederland. Ik ben gespecialiseerd in <strong>frontend development</strong> (Angular,
-          TypeScript, UX) en<strong> backend development</strong> met <strong>Node.js en Java</strong>.
+          Mijn naam is <strong>Aart den Braber</strong>, freelance developer uit Nederland. Ik ben
+          gespecialiseerd in <strong>frontend development</strong> (Angular, TypeScript, UX) en
+          <strong> backend development</strong> met <strong>Node.js en Java</strong>.
         </p>
 
         <p>

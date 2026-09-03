@@ -1,46 +1,68 @@
-/* De header is een tabel-layout: .site-branding is een table en zijn kinderen
-   zijn cellen. De wisselaar hangt daar als extra cel naast de titel. */
+/* Overgenomen uit de stylesheet van de site zoals die live stond. */
+
 .language-switcher-container {
-  display: table-cell;
-  vertical-align: middle;
-  padding-left: 1.5em;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  justify-content: flex-end;
+  z-index: 10;
 }
 
 .language-switcher {
-  display: inline-flex;
-  gap: 2px;
-  padding: 2px;
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  display: flex;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.05);
+  font-family: inherit;
 
   button {
-    margin: 0;
-    padding: 0.25em 0.7em;
-    border: 0;
-    border-radius: 999px;
+    padding: 0.5rem;
+    border: none;
+    border-radius: 0;
     background: transparent;
     color: #fff;
-    font: inherit;
-    font-size: 0.75em;
-    letter-spacing: 0.05em;
-    line-height: 1.4;
+    opacity: 0.7;
     cursor: pointer;
-    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+    transition: all 0.3s ease;
 
-    &:hover {
-      background: rgba(255, 255, 255, 0.2);
+    /* Het label komt uit de opmaak, niet uit de knop zelf. Smal scherm: de
+       code in hoofdletters. Vanaf 616px is er ruimte voor de volle naam. */
+    &::after {
+      content: attr(data-lang);
+      text-transform: uppercase;
     }
 
-    /* De toetsenbordring moet zichtbaar blijven op de donkere header. */
-    &:focus-visible {
-      outline: 2px solid #fff;
-      outline-offset: 2px;
+    &:hover,
+    &:focus {
+      background: rgba(255, 255, 255, 0.2) !important;
+      opacity: 1;
+      outline: none;
     }
 
     &.active {
-      background: #fff;
-      color: #263238;
-      cursor: default;
+      background: rgba(255, 255, 255, 0.1);
+      opacity: 1;
+      font-weight: 600;
+    }
+  }
+}
+
+@media (min-width: 616px) {
+  .language-switcher button {
+    &::after {
+      text-transform: none;
+    }
+
+    &[data-lang='en']::after {
+      content: 'English';
+    }
+
+    &[data-lang='nl']::after {
+      content: 'Nederlands';
     }
   }
 }

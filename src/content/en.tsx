@@ -21,12 +21,12 @@ export const en: SiteContent = {
   },
   intro: {
     pageTitle: 'From vision to value.',
-    body: (age) => (
+    body: (
       <>
         <p>
-          My name is <strong>Aart den Braber</strong>, a {age}-year-old freelance developer from the
-          Netherlands. I specialize in <strong>frontend development</strong> (Angular, TypeScript,
-          UX) and<strong> backend development</strong> using <strong>Node.js and Java</strong>.
+          My name is <strong>Aart den Braber</strong>, a freelance developer from the Netherlands. I
+          specialize in <strong>frontend development</strong> (Angular, TypeScript, UX) and
+          <strong> backend development</strong> using <strong>Node.js and Java</strong>.
         </p>
 
         <p>

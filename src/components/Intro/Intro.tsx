@@ -1,33 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React, { useRef } from 'react';
 import { useLanguage } from '../../i18n/LanguageContext';
-
-const BIRTH_DATE = new Date('1992-05-10');
-
-const berekenLeeftijd = (vandaag: Date) => {
-    let leeftijd = vandaag.getFullYear() - BIRTH_DATE.getFullYear();
-
-    const alJarigGeweest =
-        vandaag.getMonth() > BIRTH_DATE.getMonth() ||
-        (vandaag.getMonth() === BIRTH_DATE.getMonth() && vandaag.getDate() >= BIRTH_DATE.getDate());
-
-    if (!alJarigGeweest) {
-        leeftijd--;
-    }
-
-    return leeftijd;
-};
+import { useParallax } from '../../utils/useParallax';
 
 const Intro: React.FC = () => {
     const { t } = useLanguage();
-    const [age, setAge] = useState<number>();
 
-    useEffect(() => {
-        setAge(berekenLeeftijd(new Date()));
-    }, []);
+    const sectieRef = useRef<HTMLElement>(null);
+    const achtergrondRef = useRef<HTMLDivElement>(null);
+
+    useParallax(sectieRef, achtergrondRef);
 
     return (
-        <section className="page-content homepage-intro parallax clearfix">
-            <div className="parallax-bg background-cover"></div>
+        <section ref={sectieRef} className="page-content homepage-intro parallax clearfix">
+            <div ref={achtergrondRef} className="parallax-bg background-cover"></div>
 
             <div className="entry-content content parallax-content">
                 <div className="entry-content-page">
@@ -35,7 +20,7 @@ const Intro: React.FC = () => {
                         <h2 className="page-title">{t.intro.pageTitle}</h2>
                     </header>
 
-                    {age !== undefined && t.intro.body(age)}
+                    {t.intro.body}
                 </div>
             </div>
         </section>
