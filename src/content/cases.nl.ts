@@ -35,7 +35,7 @@ const casesNl: CasesContent = {
       id: 'ing',
       client: 'ING, via App4mation',
       period: 'sep. 2019 - dec. 2019',
-      title: 'Een snellere app, en een technical debt waar niemand naar had gevraagd',
+      title: 'Een snellere app voor ING',
       situation:
         'Plat4mation, de zusteronderneming van App4mation, had grote problemen met een app die voor ING was gemaakt. Managers van ING konden daarmee hun medewerkers beheren: bekijken, een promotie geven of hun budget aanpassen.\n\nING wilde meer functionaliteit en een snellere app, maar Plat4mation had de daarvoor benodigde expertise niet in huis.',
       actions: [
@@ -58,7 +58,7 @@ const casesNl: CasesContent = {
       actions: [
         'Een applicatie gemaakt om klanten die van Aegon naar Knab overgaan (vooral beleggings- en pensioensrekeningen) te laten landen in een omgeving die zoveel mogelijk lijkt op hun vorige omgeving, maar qua UX een stuk beter is (o.a. Angular, PrimeNg, Inbenta)',
         'Via AWS Lambda (later geswitcht naar AWS ECS) een backend-for-frontend gemaakt om een veilige verbinding met de Knab API’s te kunnen maken (o.a. NodeTS, Express, DynamoDB, OAuth, jest)',
-        'Veel tests geschreven (80-100% cov.) in React, Angular en Node om ervoor te zorgen dat de kwaliteit gewaarborgd is (o.a. jest, Jasmine, Spectator, Wallaby, Mosh’s technique). Daarnaast gewerkt met NewRelic om de applicatie in de gaten te kunnen houden',
+        'Veel tests geschreven (80-96% cov.) in React, Angular en Node om ervoor te zorgen dat de kwaliteit gewaarborgd is (o.a. jest, Jasmine, Spectator, Wallaby, Mosh’s technique). Daarnaast gewerkt met NewRelic om de applicatie in de gaten te kunnen houden',
         'In React een frontend geschreven om in te loggen via OAuth, maar ook om een wachtwoord te wijzigen of een OTP-code via SMS of email te ontvangen (o.a. React, jest, OAuth)',
         'We hebben een MVP opgeleverd, dus ook veel samenwerking gehad met verschillende teams om dat te bereiken',
       ],

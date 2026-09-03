@@ -35,7 +35,7 @@ const casesEn: CasesContent = {
       id: 'ing',
       client: 'ING, via App4mation',
       period: 'Sep 2019 - Dec 2019',
-      title: 'A faster app, and a technical debt nobody had asked about',
+      title: 'A faster app for ING',
       situation:
         "Plat4mation, App4mation's sister-company, had great trouble with an app that had been created for ING. With this app, ING's managers could manage their employees. For example, they could view them and give a promotion or change their budgets.\n\nHowever, ING required more functionality and a faster app, but Plat4mation didn't have the expertise required.",
       actions: [
@@ -58,7 +58,7 @@ const casesEn: CasesContent = {
       actions: [
         'Create an Angular application to make for a smooth landing of the customers that have either investments or retirement accounts (using a.o. Angular, PrimeNg, Inbenta)',
         "Using AWS Lambda (later we switched to AWS ECS) we created a backend-for-frontend to work safely with the very sensitive data we retrieved from the Knab API's (using a.o. NodeTS, Express, DynamoDB, OAuth, jest)",
-        "Wrote loads of tests (80-100% cov.) in React, Angular and Node to make sure the quality is assured (using a.o. jest, Jasmine, Spectator, Wallaby, Mosh's technique). Next to that we implemented NewRelic to keep an automated eye on the apps",
+        "Wrote loads of tests (80-96% cov.) in React, Angular and Node to make sure the quality is assured (using a.o. jest, Jasmine, Spectator, Wallaby, Mosh's technique). Next to that we implemented NewRelic to keep an automated eye on the apps",
         'Used React to create a frontend which is used to login using OAuth, but also allows for changing a password, creating an account, sending/receiving an OTP-code using SMS or email and such',
         'Worked towards an MVP, so we had loads of collaboration with different teams to achieve all kinds of integrations',
       ],
