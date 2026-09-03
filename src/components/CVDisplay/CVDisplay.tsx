@@ -1,19 +1,18 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import './CVDisplay.scss';
 import PdfWithTextLayer from '../../utils/PdfWithTextLayer';
 import { useLanguage } from '../../i18n/LanguageContext';
-import { useRevealOnView } from '../../hooks/useRevealOnView';
 
+/**
+ * De downloadknop doet met opzet niet mee aan het onthullen bij het scrollen.
+ * Hij staat vast onderin beeld boven het cv, dus daar hoort geen moment bij
+ * waarop hij er nog niet is; hij moet altijd zichtbaar zijn.
+ */
 const CVDisplay: React.FC = () => {
     const { t } = useLanguage();
 
-    const sectieRef = useRef<HTMLElement>(null);
-
-    // De downloadknop komt binnen zodra het cv in beeld komt.
-    useRevealOnView(sectieRef, '.big-bad-button');
-
     return (
-        <section ref={sectieRef} className="page-content showcase" id="portfolio">
+        <section className="page-content showcase" id="portfolio">
             <div className="js-pdf-cv pdf-cv">
                 <div className="big-bad-button hide-outside-pdf-viewer">
                     <span className="pdf-download-button-container js-pdf-download-button-container">
