@@ -22,6 +22,11 @@ jobs:
   uitrollen:
     runs-on: ubuntu-latest
 
+    # De servergegevens staan in de environment "public": FTP_PASSWORD als
+    # secret, de rest als variables. Zonder deze regel ziet de job er niets
+    # van en wordt de uitrol stil overgeslagen.
+    environment: public
+
     steps:
       - uses: actions/checkout@v4
 
@@ -50,11 +55,11 @@ jobs:
 
       # Zolang de servergegevens ontbreken bouwt en test deze workflow wel,
       # maar rolt hij niets uit. Zo is hij groen vanaf de eerste push en gaat
-      # hij vanzelf uitrollen zodra de secrets erin staan.
+      # hij vanzelf uitrollen zodra ze in de environment staan.
       - name: Nagaan of de servergegevens er zijn
         id: gegevens
         run: |
-          if [ -n "${{ secrets.FTP_HOST }}" ] && [ -n "${{ secrets.FTP_PASSWORD }}" ]; then
+          if [ -n "${{ vars.FTP_HOST }}" ] && [ -n "${{ secrets.FTP_PASSWORD }}" ]; then
             echo "compleet=ja" >> "$GITHUB_OUTPUT"
           else
             echo "compleet=nee" >> "$GITHUB_OUTPUT"
@@ -94,15 +99,18 @@ jobs:
           EOF
 
       # Laatste zekerheid voor een spiegeling met --delete: ligt er een
-      # index.html in DEPLOY_PATH? Zo niet, dan wijst dat secret ergens anders
-      # naar en stopt de uitrol voordat er iets verdwijnt.
+      # index.html in DEPLOY_PATH? Zo niet, dan wijst die variabele ergens
+      # anders naar en stopt de uitrol voordat er iets verdwijnt.
+      #
+      # Dit vangt ook het geval waarin DEPLOY_PATH op / staat terwijl het
+      # FTP-account niet in de webroot begint maar hoger in de boom.
       - name: Nagaan of DEPLOY_PATH de webroot is
         if: steps.gegevens.outputs.compleet == 'ja'
         env:
           LFTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
-          FTP_HOST: ${{ secrets.FTP_HOST }}
-          FTP_USER: ${{ secrets.FTP_USER }}
-          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+          FTP_HOST: ${{ vars.FTP_HOST }}
+          FTP_USER: ${{ vars.FTP_USER }}
+          DEPLOY_PATH: ${{ vars.DEPLOY_PATH }}
         run: |
           cat > "$HOME/controle.lftp" <<EOF
           open --env-password -u "$FTP_USER" "ftp://$FTP_HOST"
@@ -111,7 +119,7 @@ jobs:
           bye
           EOF
           if ! lftp -f "$HOME/controle.lftp"; then
-            echo "::error::Geen index.html gevonden in DEPLOY_PATH. Controleer dat secret. De uitrol is gestopt voordat er iets verwijderd werd."
+            echo "::error::Geen index.html gevonden in DEPLOY_PATH. Controleer die variabele. De uitrol is gestopt voordat er iets verwijderd werd."
             exit 1
           fi
 
@@ -135,9 +143,9 @@ jobs:
         if: steps.gegevens.outputs.compleet == 'ja'
         env:
           LFTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
-          FTP_HOST: ${{ secrets.FTP_HOST }}
-          FTP_USER: ${{ secrets.FTP_USER }}
-          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+          FTP_HOST: ${{ vars.FTP_HOST }}
+          FTP_USER: ${{ vars.FTP_USER }}
+          DEPLOY_PATH: ${{ vars.DEPLOY_PATH }}
           PROEFRIT: ${{ inputs.proefrit }}
         run: |
           PROEF=""

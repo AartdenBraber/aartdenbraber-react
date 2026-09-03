@@ -53,18 +53,22 @@ Uitrollen gaat via `.github/workflows/deploy.yml`: bij elke push naar `main`
 bouwt en test GitHub de site en spiegelt die met `lftp` over FTPS naar de
 webroot. Handmatig kan ook, via de Actions-tab.
 
-Daarvoor moeten deze secrets in de repository staan
-(Settings, Secrets and variables, Actions):
+De servergegevens staan in de environment `public`
+(Settings, Environments). Alleen het wachtwoord is een secret; de rest zijn
+variables, want daar zit niets geheims in en zo kun je ze in de interface
+teruglezen.
 
-| Secret | Wat erin hoort |
-| --- | --- |
-| `FTP_HOST` | hostnaam van de server, `vserver99.axc.eu` |
-| `FTP_USER` | de FTP-gebruikersnaam, inclusief het domein erachter |
-| `FTP_PASSWORD` | het wachtwoord van dat FTP-account |
-| `DEPLOY_PATH` | pad naar de webroot zoals dit FTP-account het ziet |
+| Naam | Soort | Wat erin hoort |
+| --- | --- | --- |
+| `FTP_PASSWORD` | secret | het wachtwoord van het FTP-account |
+| `FTP_HOST` | variable | hostnaam van de server, `vserver99.axc.eu` |
+| `FTP_USER` | variable | de FTP-gebruikersnaam, inclusief het domein erachter |
+| `DEPLOY_PATH` | variable | pad naar de webroot zoals dit FTP-account het ziet |
 
-Zolang `FTP_HOST` of `FTP_PASSWORD` ontbreekt bouwt en test de workflow wel,
-maar rolt hij niets uit.
+De job declareert die environment met `environment: public`. Laat je die regel
+weg, dan ziet de workflow geen van deze waarden en slaat hij de uitrol stil
+over. Zolang `FTP_HOST` of `FTP_PASSWORD` ontbreekt bouwt en test de workflow
+wel, maar rolt hij niets uit.
 
 DirectAdmin noemt een FTP-account voor een domein `iets@aartdenbraber.nl`. Die
 hele naam hoort in `FTP_USER`, met het domein erachter, anders komt de login
@@ -75,6 +79,10 @@ hoofdaccount. Zet de beginmap op de webroot, dan is `DEPLOY_PATH` gewoon `/`
 en kan een uitgelekt wachtwoord verder niets bereiken. Log je toch in met het
 hoofdaccount, dan is het pad
 `/domains/aartdenbraber.nl/public_html`.
+
+Staat `DEPLOY_PATH` op `/` terwijl het account hoger in de boom begint, dan
+zou de spiegeling de verkeerde map leegruimen. De controlestap vangt dat op:
+die eist een `index.html` op die plek en stopt anders.
 
 ### Waarom FTPS en niet rsync over SSH
 
@@ -109,7 +117,7 @@ browser bestanden mag bewaren. Zit daar een fout in, dan geeft de site een
 `DEPLOY_PATH` moet daarom precies de webroot van deze site zijn en niets
 ruimers: alles daarbinnen wat niet in `build/` zit, verdwijnt. De workflow
 kijkt eerst of er een `index.html` in die map ligt en stopt als dat niet zo
-is, zodat een typefout in het secret geen andere map leegruimt.
+is, zodat een typefout in die variabele geen andere map leegruimt.
 
 Staat er in de webroot nog iets dat niet uit deze repo komt, dan verdwijnt
 het bij de eerste uitrol. Start de workflow daarom de eerste keer met de hand
