@@ -1,9 +1,10 @@
 import React from 'react';
 
-import '@fontsource/raleway/400.css';
-import '@fontsource/raleway/600.css';
-import '@fontsource/raleway/700.css';
-import '@fontsource/roboto-slab/500.css';
+// Literata via /opsz.css, niet kaal. Het kale pakket levert alleen de
+// gewichtsas; de optische maat zit in dit aparte bestand. Zonder dit pad doet
+// font-optical-sizing stilletjes niets.
+import '@fontsource-variable/literata/opsz.css';
+import '@fontsource-variable/source-sans-3';
 
 import About from './components/About/About';
 import Cases from './components/Cases/Cases';

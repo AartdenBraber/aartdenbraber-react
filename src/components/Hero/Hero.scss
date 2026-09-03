@@ -52,6 +52,7 @@
 
 .hero__name {
   font-family: var(--font-heading);
+  font-weight: var(--weight-heading-inline);
   font-size: var(--step-1);
   line-height: 1.2;
 }
@@ -82,7 +83,10 @@
   max-width: 52rem;
 }
 
+// Wit op bijna zwart maakt letters optisch dikker, dus de herokop staat een
+// stap lichter dan de koppen op de witte secties.
 .hero__title {
+  font-weight: 500;
   font-size: var(--step-4);
 }
 

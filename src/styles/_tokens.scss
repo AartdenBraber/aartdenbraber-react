@@ -39,8 +39,15 @@
     rgba(15, 12, 9, 0.2) 100%
   );
 
-  --font-heading: 'Roboto Slab', Georgia, 'Times New Roman', serif;
-  --font-body: 'Raleway', Calibri, Arial, sans-serif;
+  --font-heading: 'Literata Variable', Georgia, 'Times New Roman', serif;
+  --font-body: 'Source Sans 3 Variable', Calibri, Arial, sans-serif;
+
+  // Beide letters zijn variabel, dus een gevraagd gewicht komt er ook echt uit.
+  // De oude opzet laadde alleen Roboto Slab 500, waardoor elke vraag om 400 op
+  // 500 uitkwam. Wat de kopletter gebruikt maar geen kop is (de naam in de
+  // hero, de vragen in de FAQ, de termen bij de diensten) vraagt daarom
+  // expliciet om dit gewicht.
+  --weight-heading-inline: 500;
 
   --step--1: clamp(0.82rem, 0.79rem + 0.15vw, 0.9rem);
   --step-0: clamp(1rem, 0.96rem + 0.2vw, 1.12rem);
