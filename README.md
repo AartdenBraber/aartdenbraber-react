@@ -59,12 +59,16 @@ Daarvoor moeten deze secrets in de repository staan
 | Secret | Wat erin hoort |
 | --- | --- |
 | `FTP_HOST` | hostnaam van de server, `vserver99.axc.eu` |
-| `FTP_USER` | de FTP-gebruikersnaam |
+| `FTP_USER` | de FTP-gebruikersnaam, inclusief het domein erachter |
 | `FTP_PASSWORD` | het wachtwoord van dat FTP-account |
 | `DEPLOY_PATH` | pad naar de webroot zoals dit FTP-account het ziet |
 
 Zolang `FTP_HOST` of `FTP_PASSWORD` ontbreekt bouwt en test de workflow wel,
 maar rolt hij niets uit.
+
+DirectAdmin noemt een FTP-account voor een domein `iets@aartdenbraber.nl`. Die
+hele naam hoort in `FTP_USER`, met het domein erachter, anders komt de login
+niet door.
 
 Maak in DirectAdmin een eigen FTP-account voor deze uitrol en gebruik niet het
 hoofdaccount. Zet de beginmap op de webroot, dan is `DEPLOY_PATH` gewoon `/`
