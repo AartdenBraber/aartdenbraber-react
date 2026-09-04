@@ -1,6 +1,7 @@
 import React from 'react';
 import './CVDisplay.scss';
 import PdfWithTextLayer from '../../utils/PdfWithTextLayer';
+import PinchZoom from '../PinchZoom/PinchZoom';
 import { useLanguage } from '../../i18n/LanguageContext';
 
 /**
@@ -27,7 +28,12 @@ const CVDisplay: React.FC = () => {
                 </div>
             </div>
 
-            <PdfWithTextLayer url={t.cv.url} />
+            {/* Op een telefoon staat het cv op ongeveer veertig procent van zijn
+                eigen maat. Met twee vingers is het te vergroten zonder dat de
+                rest van de pagina meegroeit. */}
+            <PinchZoom>
+                <PdfWithTextLayer url={t.cv.url} />
+            </PinchZoom>
         </section>
     );
 };

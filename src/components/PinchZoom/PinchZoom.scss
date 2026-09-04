@@ -1,0 +1,19 @@
+.pinch-zoom {
+  /* Opzij schuiven gebeurt hier, omlaag met de pagina zelf: de inhoud wordt
+     hoger als hij breder wordt, dus verticaal valt er hier niets te schuiven. */
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  /* pinch-zoom staat er met opzet niet bij. Zo laat de browser het knijpen aan
+     ons over en zoomt hij niet de hele pagina mee. Gewoon scrollen met een
+     vinger blijft wel van de browser. */
+  touch-action: pan-x pan-y;
+
+  /* Aan het eind van het zijwaarts schuiven niet de pagina meesleuren. */
+  overscroll-behavior-x: contain;
+}
+
+.pinch-zoom__inhoud {
+  /* De breedte komt uit de component; 100% is de stand zonder zoom. */
+  width: 100%;
+}
