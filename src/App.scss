@@ -1743,11 +1743,15 @@ section.showcase {
   padding: 50px;
   color: #556f7c;
 
-  /* Loopt vloeiend mee met de schermbreedte: 18px op een telefoon, 24px vanaf
+  /* Loopt vloeiend mee met de schermbreedte: 20px op een telefoon, 24px vanaf
      ongeveer 1200px. Daarvoor stond hier 24px met een harde terugval naar 16px
      onder 900px, en dat las op mobiel te klein. */
-  font-size: clamp(1.125rem, 0.955rem + 0.727vw, 1.5rem);
+  font-size: clamp(1.25rem, 1.136rem + 0.485vw, 1.5rem);
   line-height: 1.6;
+
+  /* De 1px die op de body staat is bij een kop prima, maar rekt lopende tekst
+     uit en maakt hem juist lastiger te lezen. */
+  letter-spacing: 0.02em;
 }
 
 .entry-content p {
@@ -1792,6 +1796,9 @@ section.showcase {
   border: 2px solid #ed5253;
   color: #ed5253;
   text-decoration: none;
+
+  /* Stond op de 16px van de body en dat viel weg naast de lopende tekst. */
+  font-size: 1.125rem;
   padding: 20px 50px;
   transition: all 0.5s;
 }
@@ -2538,4 +2545,9 @@ footer {
   left: 50%;
   transform: translateX(-50%);
   backdrop-filter: blur(5px);
+
+  /* De doos begint op 50% en werd daardoor nooit breder dan de helft van het
+     scherm. Op een telefoon brak het label daardoor over twee regels. */
+  width: max-content;
+  max-width: calc(100vw - 2rem);
 }
