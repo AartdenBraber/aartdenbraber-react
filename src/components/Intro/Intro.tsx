@@ -1,4 +1,5 @@
 import React, { useRef } from 'react';
+import './Intro.scss';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { useParallax } from '../../utils/useParallax';
 import { useRevealOnView } from '../../hooks/useRevealOnView';

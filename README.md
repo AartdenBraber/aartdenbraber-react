@@ -27,14 +27,25 @@ src/
   content/      Alle teksten, per taal (nl.tsx en en.tsx) met gedeelde types
   i18n/         Taal uit het adres halen, <html lang>, titel en canonical bijwerken
   components/   Eén map per component, met de bijbehorende .scss ernaast
-  utils/        PdfWithTextLayer tekent het cv op canvassen
-  App.scss      De opmaak van de hele site, overgenomen uit het oude thema
+  hooks/        useRevealOnView, met de opmaak van het onthullen ernaast
+  utils/        PdfWithTextLayer tekent het cv op canvassen, useParallax schuift de achtergrond
+  styles/       Wat voor de hele site geldt: bootstrap.scss en global.scss
 ```
 
 Teksten aanpassen doe je in `src/content/nl.tsx` en `src/content/en.tsx`. Beide
 bestanden voldoen aan hetzelfde type, dus TypeScript geeft een fout zodra er in
 één taal iets ontbreekt. De alinea's staan als JSX in die bestanden, omdat er
 vetgedrukte stukken middenin de zinnen zitten.
+
+## Opmaak
+
+Alles is SCSS. Elke component importeert zijn eigen bestand, dus wie de hero
+wil aanpassen zit in `src/components/Hero/Hero.scss` en nergens anders. In
+`src/styles/global.scss` staat alleen wat voor de hele pagina geldt: de
+variabelen, de reset en de regels op kale elementen zoals `body`, `img` en `a`.
+`src/styles/bootstrap.scss` laadt Bootstrap met een paar overrides. Het oude
+WordPress-thema waar de opmaak uit kwam is verder opgeruimd; wat daar nog van
+over is, is de reset en een handvol elementregels.
 
 ## Taal aan het adres
 

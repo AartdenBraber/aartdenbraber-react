@@ -1,4 +1,5 @@
 import { RefObject, useLayoutEffect } from 'react';
+import './useRevealOnView.scss';
 
 /** Hoe lang we wachten op het eerste bericht van de waarnemer voor we opgeven. */
 const WAARNEMER_TIMEOUT_MS = 2000;
@@ -11,7 +12,7 @@ const minderBewegingGevraagd = (): boolean =>
 /**
  * Laat de elementen die `selector` aanwijst een keer omhoog binnenkomen zodra
  * ze in beeld scrollen. Ze krijgen `data-reveal="pending"` en daarna "shown";
- * de bijbehorende opmaak staat in styles/motion.scss.
+ * de bijbehorende opmaak staat in useRevealOnView.scss hiernaast.
  *
  * De verborgen begintoestand wordt pas door javascript gezet, dus zonder
  * javascript of zonder IntersectionObserver staat alles er gewoon. Wie om

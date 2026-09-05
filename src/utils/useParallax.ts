@@ -32,7 +32,7 @@ const minderBewegingGevraagd = (): MediaQueryList | null =>
 /**
  * Verschuift een achtergrondlaag langzamer dan de pagina zelf, zodat de sectie
  * diepte krijgt. De laag moet hoger zijn dan zijn sectie, anders komt bij het
- * schuiven de rand in beeld; zie `.homepage-intro .parallax-bg` in App.scss.
+ * schuiven de rand in beeld; zie `.homepage-intro .parallax-bg` in components/Intro/Intro.scss.
  *
  * Het rekenwerk hangt aan requestAnimationFrame, zodat een scrollstroom van
  * tientallen gebeurtenissen hooguit een keer per frame iets doet. Wie in zijn

@@ -1,0 +1,325 @@
+/*--------------------------------------------------------------
+# Hero: de foto met het zoeklicht, de kop en het pijltje naar beneden
+--------------------------------------------------------------*/
+
+/*--------------------------------------------------------------
+## Header (logo, naam en taalwisselaar)
+--------------------------------------------------------------*/
+.site-header {
+  position: absolute;
+  z-index: 100;
+  box-sizing: border-box;
+  display: table;
+  padding: 20px;
+  width: 100%;
+  transition: all 0.5s ease-in-out, top 0s;
+}
+
+.site-branding {
+  display: table;
+  text-decoration: none;
+  color: #fff;
+  white-space: nowrap;
+
+  /* De taalwisselaar hangt hier absoluut in, rechts en verticaal gecentreerd. */
+  position: relative;
+}
+
+.logo-container {
+  display: table-cell;
+  vertical-align: middle;
+  padding-right: 1em;
+  transition: padding-right 0.5s ease-in-out;
+}
+.logo {
+  vertical-align: middle;
+  height: 4em;
+  width: 4em;
+  max-width: 4em;
+  transition: width 0.5s ease-in-out, height 0.5s ease-in-out;
+}
+
+.site-title-container {
+  display: table-cell;
+  vertical-align: middle;
+  width: 100%;
+  color: #fff;
+}
+
+.site-title {
+  margin: 0;
+  padding: 0;
+  font-size: 2em;
+  line-height: 1em;
+  font-weight: normal;
+  font-family: var(--font-heading);
+  transition: font-size 0.5s ease-in-out;
+}
+.site-description {
+  display: block;
+  font-size: 0.9em;
+  padding-top: 5px;
+  margin: 0;
+  font-family: var(--font-body);
+  transition: all 0.5s ease-in-out;
+}
+
+/*--------------------------------------------------------------
+## Big picture on top (hero)
+--------------------------------------------------------------*/
+.top-hero {
+  width: 100%;
+  height: 480px;
+  min-height: 95vh; /* make it fullscreen if supported by the browser, otherwise just 480px high: iPhone 4; */
+
+  /* vh rekent op een telefoon met de adresbalk weggeschoven. Bij het laden
+     staat die balk er nog, dus 95vh vult dan het hele zichtbare scherm en
+     steekt er niets van de volgende sectie boven de vouw uit. svh rekent met
+     de balk erbij, zodat die strook er altijd is. */
+  min-height: 95svh;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Hero content */
+.hero-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+}
+
+/* Site title */
+.hero-title-container {
+  position: absolute;
+  display: table;
+  z-index: 2;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  /* Zonder dit rekt de cel op tot de langste ondeelbare regel van de kop, en
+     op een telefoon loopt hij dan buiten beeld. Nu is de tabelbreedte leidend
+     en moet de kop zich naar de cel voegen. */
+  table-layout: fixed;
+}
+.hero-title-wrapper {
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+}
+.hero-title-inside {
+  position: relative;
+  color: #fff;
+  padding: 0 60px;
+}
+.hero-title-inside:before,
+.hero-title-inside:after {
+  content: "";
+  position: absolute;
+  top: -50px;
+  left: 50%;
+  width: 2px;
+  margin-left: -1px;
+  height: 30px;
+
+  background: #ddd;
+  background: rgba(255, 255, 255, 0.5);
+}
+.hero-title-inside:after {
+  top: auto;
+  bottom: -50px;
+}
+.hero-greeting {
+  font-size: 1.2em;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  padding-bottom: 10px;
+  margin: 0;
+}
+
+/* De kop zelf valt woord voor woord binnen; zie WordReveal. */
+.hero-title {
+  font-size: 3em;
+  line-height: 1.3em;
+  margin: 0;
+  max-width: 100%;
+
+  /* "gebruiksvriendelijk" en "toekomstbestendig" passen op een smal scherm niet
+     op een regel. De taal staat op html, dus het afbreken volgt het Nederlands
+     of het Engels. break-word is het vangnet als er geen afbreekpunt is. */
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  overflow-wrap: break-word;
+}
+
+/* Hero footer */
+.scroll-to-next-section-container {
+  position: absolute;
+  bottom: 15px;
+  left: 50%;
+  width: 100px;
+  margin-left: -50px;
+  text-align: center;
+}
+
+.scroll-to-next-section {
+  display: block;
+  cursor: pointer;
+  color: #eee;
+  text-transform: uppercase;
+  font-size: 0.8em;
+  text-decoration: none;
+}
+.scroll-to-next-section:hover {
+  color: #fff;
+}
+.scroll-icon {
+  display: block;
+  width: 100%;
+  margin-bottom: 5px;
+  font-size: 1.5em;
+}
+.scroll-icon:before {
+  content: "";
+  animation: nudge-down 2.4s ease-in-out infinite;
+  background: no-repeat bottom;
+  background-image: url("data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjRkZGRkZGIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2ZXJzaW9uPSIxLjEiIHg9IjBweCIgeT0iMHB4IiB2aWV3Qm94PSIwIDAgOTAgOTAiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDkwIDkwIiB4bWw6c3BhY2U9InByZXNlcnZlIj48Y2lyY2xlIGN4PSI0NSIgY3k9IjEzIiByPSIzIi8+PHBhdGggZD0iTTQ1LDAuNWMtOC4yODQsMC0xNSw2LjcxNy0xNSwxNS4wMDJ2MjQuOTk2QzMwLDQ4Ljc4MywzNi43MTYsNTUuNSw0NSw1NS41czE1LTYuNzE3LDE1LTE1LjAwMlYxNS41MDIgIEM2MCw3LjIxNyw1My4yODQsMC41LDQ1LDAuNXogTTU4LDQwLjQ5OEM1OCw0Ny42NjcsNTIuMTY4LDUzLjUsNDUsNTMuNWMtNy4xNjgsMC0xMy01LjgzMy0xMy0xMy4wMDJWMTUuNTAyICBDMzIsOC4zMzMsMzcuODMyLDIuNSw0NSwyLjVjNy4xNjgsMCwxMyw1LjgzMywxMywxMy4wMDJWNDAuNDk4eiIvPjxwYXRoIGQ9Ik01OC4yOTMsNTkuNzkzTDQ1LDczLjA4NkwzMS43MDcsNTkuNzkzYy0wLjM5MS0wLjM5MS0xLjAyMy0wLjM5MS0xLjQxNCwwcy0wLjM5MSwxLjAyMywwLDEuNDE0bDE0LDE0ICBDNDQuNDg4LDc1LjQwMiw0NC43NDQsNzUuNSw0NSw3NS41czAuNTEyLTAuMDk4LDAuNzA3LTAuMjkzbDE0LTE0YzAuMzkxLTAuMzkxLDAuMzkxLTEuMDIzLDAtMS40MTRTNTguNjg0LDU5LjQwMiw1OC4yOTMsNTkuNzkzeiIvPjxwYXRoIGQ9Ik01OC4yOTMsNzMuNzkzTDQ1LDg3LjA4NkwzMS43MDcsNzMuNzkzYy0wLjM5MS0wLjM5MS0xLjAyMy0wLjM5MS0xLjQxNCwwcy0wLjM5MSwxLjAyMywwLDEuNDE0bDE0LDE0ICBDNDQuNDg4LDg5LjQwMiw0NC43NDQsODkuNSw0NSw4OS41czAuNTEyLTAuMDk4LDAuNzA3LTAuMjkzbDE0LTE0YzAuMzkxLTAuMzkxLDAuMzkxLTEuMDIzLDAtMS40MTRTNTguNjg0LDczLjQwMiw1OC4yOTMsNzMuNzkzeiIvPjwvc3ZnPg==");
+  height: 50px;
+  width: 64px;
+  position: absolute;
+  top: -67px;
+  transform: translateX(-50%);
+}
+
+/* Een stilstaand plaatje leest als versiering, een bewegend plaatje als
+   aanwijzing. De uitslag is klein genoeg om niet af te leiden van de kop. */
+@keyframes nudge-down {
+  0%,
+  60%,
+  100% {
+    transform: translateX(-50%) translateY(0);
+  }
+  75% {
+    transform: translateX(-50%) translateY(7px);
+  }
+}
+
+/*--------------------------------------------------------------
+## Smallere schermen
+--------------------------------------------------------------*/
+@media all and (max-width: 900px) {
+  /* Vloeiend van 24px op een scherm van 320px naar 32px op 900px, zodat
+     "gebruiksvriendelijk" en "toekomstbestendig" op elke breedte binnen de
+     kolom passen en niet halverwege afbreken. */
+  .hero-title {
+    font-size: clamp(1.5rem, 1.224rem + 1.379vw, 2rem);
+  }
+}
+
+@media all and (max-width: 600px) {
+  /* Homepage hero */
+  .hero-title-inside {
+    padding: 0 25px;
+  }
+  .hero-title-inside:before,
+  .hero-title-inside:after {
+    height: 30px;
+    top: -50px;
+  }
+  .hero-title-inside:after {
+    top: auto;
+    bottom: -50px;
+  }
+}
+
+@media all and (max-width: 480px) {
+  /* Header */
+  .site-header {
+    padding: 15px;
+  }
+  .logo-container {
+    padding-right: 0.5em;
+  }
+  .logo {
+    height: 3em;
+    width: 3em;
+  }
+  .site-title {
+    font-size: 1.7em;
+  }
+  .site-description {
+    font-size: 0.75em;
+  }
+}
+
+/* Op een smal scherm botst de muis-met-pijltjes met de kop: hij is 50px hoog
+   en hangt nog eens 67px boven zijn eigen container. Daar zetten we er een
+   klein pijltje voor in de plaats, onderaan, dat wel past. Het staat er dus
+   weer: zonder aanwijzing en zonder zichtbare strook eronder is er op een
+   telefoon niets dat vertelt dat de pagina doorloopt. */
+@media (max-width: 460px) {
+  .scroll-to-next-section-container {
+    bottom: 8px;
+
+    /* Een doel van 13px is met een duim niet te raken. De hoogte hier maakt
+       er een strook van waar de hele breedte van de link in past. */
+    height: 44px;
+  }
+  .scroll-to-next-section {
+    height: 100%;
+  }
+  .scroll-icon {
+    margin-bottom: 0;
+  }
+  .scroll-icon:before {
+    background-image: none;
+    height: 15px;
+    width: 15px;
+    top: 12px;
+    /* De sitebrede regel in styles/global.scss zet color op links met
+       !important terug naar de bodykleur, dus currentColor levert hier een
+       donker pijltje op. */
+    border-right: 2px solid #eee;
+    border-bottom: 2px solid #eee;
+    border-radius: 2px;
+    transform: translateX(-50%) rotate(45deg);
+    animation-name: nudge-down-small;
+  }
+
+  @keyframes nudge-down-small {
+    0%,
+    60%,
+    100% {
+      transform: translateX(-50%) rotate(45deg) translate(0, 0);
+    }
+    75% {
+      transform: translateX(-50%) rotate(45deg) translate(4px, 4px);
+    }
+  }
+
+  /* Een grotere strook van de volgende sectie: op een klein scherm is 5%
+     nauwelijks te zien, en juist die rand doet het werk. */
+  .top-hero {
+    min-height: 88vh;
+    min-height: 88svh;
+  }
+}
+
+/* Bij weinig hoogte (telefoon in liggende stand) is er geen ruimte voor een
+   aanwijzing onder de kop. */
+@media (max-height: 600px) {
+  .scroll-to-next-section-container {
+    display: none;
+  }
+}
+
+/* Staat bewust achter de mobiele variant hierboven, anders zet die de
+   animatie er weer op. */
+@media (prefers-reduced-motion: reduce) {
+  .scroll-icon:before {
+    animation: none;
+  }
+}

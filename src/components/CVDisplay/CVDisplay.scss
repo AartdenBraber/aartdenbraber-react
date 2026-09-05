@@ -1,41 +1,201 @@
-/* Verwijder standaard viewer-beperkingen */
-.rpv-core__viewer {
-  height: auto !important;
-  max-height: none !important;
-  overflow: visible !important;
+/*--------------------------------------------------------------
+# Cv: het pdf, pagina voor pagina op een canvas, met de downloadknop ervoor
+--------------------------------------------------------------*/
+section.showcase {
+  background: #263238;
 }
 
-/* Optioneel: viewer-breedte beter laten aansluiten */
-.rpv-core__inner-page {
-  width: 100% !important;
-  max-width: 850px;
-
-  margin: 0 auto;
-}
-
-.textLayer {
-  font-family: sans-serif;
-  line-height: 1;
-  white-space: pre;
-  user-select: text;
-  -webkit-user-select: text;
-  -moz-user-select: text;
-  -ms-user-select: text;
-  pointer-events: none;
-  overflow: hidden;
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
-.textLayer > span {
-  position: absolute;
-  white-space: pre;
-  transform-origin: 0 0;
-  cursor: text;
-}
-
-canvas {
+/* De pagina's van het pdf; PdfWithTextLayer tekent elke pagina op een canvas. */
+.showcase canvas {
   width: 100%;
   height: auto;
+}
+
+/*--------------------------------------------------------------
+## Buttons
+--------------------------------------------------------------*/
+.big-bad-button {
+  display: table;
+  width: 100%;
+  vertical-align: middle;
+  text-align: center;
+  padding: 10px 0;
+}
+.big-bad-button a {
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -ms-user-select: none;
+  position: relative;
+  display: inline-block;
+  border: 2px solid #ed5253;
+  color: #ed5253;
+  text-decoration: none;
+
+  /* Stond op de 16px van de body en dat viel weg naast de lopende tekst. */
+  font-size: 1.125rem;
+  padding: 20px 50px;
+  transition: all 0.5s;
+}
+.big-bad-button .little-span {
+  position: relative;
+  display: inline-block;
+  transition: all 0.2s;
+}
+.big-bad-button a:hover .little-span,
+.big-bad-button a:focus .little-span {
+  animation: its-hard-being-a-button 30s ease;
+}
+.big-bad-button a:hover span.action-word,
+.big-bad-button a:focus span.action-word {
+  animation: finally-click 60s ease;
+}
+
+/* this is fired after the other animation, 'its-hard-being-a-button', finished */
+@keyframes finally-click {
+  /* gentle */
+  43%,
+  50%,
+  52%,
+  54%,
+  56%,
+  60% {
+    font-weight: bold;
+  }
+
+  42%,
+  49%,
+  51%,
+  53%,
+  55%,
+  57% {
+    font-weight: normal;
+  }
+}
+@keyframes its-hard-being-a-button {
+  /* first try */
+  2.5% {
+    left: 10px;
+    transform: skew(-3deg);
+  }
+  /* backing up... */
+  10% {
+    left: -10px;
+    transform: none;
+  }
+  /* second try */
+  12.5% {
+    left: 20px;
+    transform: skew(-6deg);
+  }
+  /* come on, come on! */
+  15%,
+  20% {
+    left: 25px;
+    transform: skew(-9deg);
+  }
+
+  /* come on then... */
+  25.5% {
+    transform: translateY(-2px);
+  }
+  26% {
+    transform: translateY(2px);
+  }
+  26.5% {
+    transform: translateY(-1px);
+  }
+  27% {
+    transform: translateY(1px);
+  }
+  27.5% {
+    transform: translateY(-1px);
+  }
+  28% {
+    transform: translateY(1px);
+  }
+
+  /* ok, gotta stretch first */
+  36% {
+    transform: skew(-10deg);
+  }
+  40% {
+    transform: skew(10deg);
+  }
+
+  /* backing up... */
+  52%,
+  56% {
+    left: -40px;
+    transform: none;
+  }
+  /* third try */
+  60% {
+    left: 40px;
+    transform: skew(-15deg);
+  }
+  /* come on, come on! */
+  65%,
+  67% {
+    left: 45px;
+    transform: skew(-18deg);
+  }
+
+  /* these are the reset values */
+  from,
+  5%,
+  25%,
+  26%,
+  28.5%,
+  31%,
+  45%,
+  47%,
+  31%,
+  74%,
+  to {
+    left: 0px;
+    transform: none;
+  }
+}
+
+/*
+.big-bad-button a:after {
+	content: '';
+    background: url(assets/images/icons/arrow-right-ED5253.png) no-repeat center center;
+    background-size: 40px 40px;
+    height: 100%;
+    width: 40px;
+    position: absolute;
+    top: 0;
+    right: 20px;
+    opacity: 0;
+    transition: all .5s ease;
+}
+.big-bad-button a:hover:after {
+    right: 10px;
+    opacity: 1;
+    }*/
+
+/*--------------------------------------------------------------
+## Downloadknop, vast in beeld boven het cv
+--------------------------------------------------------------*/
+/** hide button outside of pdf viewer */
+/* Werkt samen met `section, footer { z-index: 2 }` in styles/global.scss: de
+   hero en de intro liggen boven deze knop, alleen bij het cv is hij te zien. */
+.hide-outside-pdf-viewer {
+  position: fixed;
+  z-index: 1;
+}
+.pdf-download-button-container {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  backdrop-filter: blur(5px);
+
+  /* De doos begint op 50% en werd daardoor nooit breder dan de helft van het
+     scherm. Op een telefoon brak het label daardoor over twee regels. */
+  width: max-content;
+  max-width: calc(100vw - 2rem);
 }
