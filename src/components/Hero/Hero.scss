@@ -300,11 +300,12 @@
     }
   }
 
-  /* Een grotere strook van de volgende sectie: op een klein scherm is 5%
-     nauwelijks te zien, en juist die rand doet het werk. */
+  /* Op een telefoon vult de hero het hele scherm. svh rekent met de adresbalk
+     erbij, zodat het pijltje onderin bij het laden niet onder de vouw valt;
+     schuift die balk weg, dan komt de volgende sectie er vanzelf onder uit. */
   .top-hero {
-    min-height: 88vh;
-    min-height: 88svh;
+    min-height: 100vh;
+    min-height: 100svh;
   }
 }
 
