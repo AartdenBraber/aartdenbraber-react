@@ -27,7 +27,7 @@
     "eject": "react-scripts eject",
     "prestart": "node scripts/copy-pdf-worker.js",
     "prebuild": "node scripts/copy-pdf-worker.js",
-    "postbuild": "node scripts/maak-en-pagina.js"
+    "postbuild": "node scripts/taalpaginas.js"
   },
   "watch": {
     "build": {

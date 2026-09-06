@@ -3,7 +3,7 @@ import { SiteContent } from './index';
 
 export const nl: SiteContent = {
   meta: {
-    title: 'Aart den Braber - developer',
+    title: 'Aart den Braber - developer | Backend, frontend, test en UX',
     description: 'Freelance developer uit Nederland. Backend, frontend, test en UX.',
   },
   header: {
