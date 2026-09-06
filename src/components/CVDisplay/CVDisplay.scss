@@ -77,15 +77,19 @@ section.showcase {
   display: inline-block;
   border: 2px solid #ed5253;
 
-  /* Matglas in de kleur van de sectie waar de knop bij hoort. Het cv schuift
-     er zichtbaar onderdoor, dus je blijft zien dat hij ergens boven zweeft.
-     Rood op wit haalde 3,5:1 en dat is te weinig voor tekst van 18px; wit op
-     dit glas haalt boven een witte pagina 5,9:1 en boven de donkere sectie
-     13:1. Onder ongeveer 0,7 dekking zakt het door de 4,5:1 heen. */
-  background: rgba(38, 50, 56, 0.75);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
-  color: #fff;
+  /* Matglas dat het cv eronder laat zien. Een dekkend vlak deed dat niet: over
+     dertien meetpunten in het cv was de spreiding in de achtergrond 0,004,
+     oftewel een egale plaat. Zo goed als doorzichtig komt op 0,047 en dan zie
+     je de pagina's er echt onderdoor schuiven.
+
+     Dat kan alleen met een omloop om de letters. De achtergrond loopt namelijk
+     van wit papier tot de donkere sectiekleur, en geen enkele vaste tekstkleur
+     houdt dat allebei: zwart op de donkere strook is 1,4:1. De witte omloop is
+     wat je feitelijk leest, en zwart daarop is 21:1. */
+  background: rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(12px) saturate(0.9);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
+  color: #14181a;
   text-decoration: none;
 
   /* Stond op de 16px van de body en dat viel weg naast de lopende tekst. */
@@ -97,6 +101,17 @@ section.showcase {
   position: relative;
   display: inline-block;
   transition: all 0.2s;
+
+  /* De vier hoekpunten leggen een harde omloop van 1px, de wazige erachter
+     maken de rand rustig. Text-shadow en niet -webkit-text-stroke, want die
+     laatste hangt aan paint-order en dat is niet overal hetzelfde. */
+  text-shadow:
+    1px 1px 0 #fff,
+    -1px 1px 0 #fff,
+    1px -1px 0 #fff,
+    -1px -1px 0 #fff,
+    0 0 3px #fff,
+    0 0 6px rgba(255, 255, 255, 0.9);
 }
 /* De grap zit op `:hover` en niet meer op `:focus`. Wie met de tab-toets bij
    de enige echte knop van de pagina aankomt, zette zo een halve minuut
@@ -104,8 +119,8 @@ section.showcase {
    liep. Met de muis kun je ervoor kiezen; met het toetsenbord niet. */
 .big-bad-button a:hover,
 .big-bad-button a:focus-visible {
-  background: rgba(38, 50, 56, 0.9);
-  border-color: #ff7071;
+  background: rgba(255, 255, 255, 0.35);
+  border-color: #d63c3d;
 }
 
 .big-bad-button a:hover .little-span {
