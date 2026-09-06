@@ -33,6 +33,8 @@ export interface SiteContent {
     rest: string;
     /** Naam van het cv-blok voor een schermlezer. */
     sectionLabel: string;
+    /** Komt in de tekstlaag te staan op de plek van het e-mailadres. */
+    emailVerborgen: string;
   };
   nav: {
     skipToContent: string;

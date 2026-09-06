@@ -24,12 +24,16 @@ const CVDisplay: React.FC = () => {
                 eigen maat. Met twee vingers is het te vergroten zonder dat de
                 rest van de pagina meegroeit. */}
             <PinchZoom>
-                <PdfWithTextLayer url={t.cv.url} label={t.cv.sectionLabel} />
+                <PdfWithTextLayer
+                    url={t.cv.url}
+                    label={t.cv.sectionLabel}
+                    emailVervanging={t.cv.emailVerborgen}
+                />
             </PinchZoom>
 
             <div className="big-bad-button">
                 <span className="pdf-download-button-container js-pdf-download-button-container">
-                    <a href={t.cv.url} target="_blank" rel="noopener noreferrer">
+                    <a href={t.cv.url} target="_blank" rel="noopener noreferrer nofollow">
                         <span className="little-span">
                             <span className="action-word">{t.cv.actionWord}</span>
                             {t.cv.rest}

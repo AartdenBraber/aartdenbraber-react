@@ -1,4 +1,21 @@
 User-agent: *
 Allow: /
 
+# De cv's blijven voor bezoekers gewoon te openen en te downloaden. Ze zijn
+# alleen niet voor zoekmachines: er staat een e-mailadres in en dat wordt
+# geoogst.
+#
+# Dit sluit twee deuren tegelijk. De eerste is het pdf zelf, dat Google
+# rechtstreeks uitleest. De tweede is de pagina: het cv wordt daar met
+# javascript getekend en de tekstlaag komt uit dit bestand. Kan een zoekmachine
+# het bestand niet ophalen, dan bestaat die tekstlaag voor hem ook niet. De
+# X-Robots-Tag in .htaccess doet dat eerste ook, maar alleen voor wie het
+# bestand wel mag ophalen.
+Disallow: /*.pdf$
+
+# Het patroon hierboven met * en $ kent niet elke crawler. De twee bestanden
+# staan hier daarom ook nog voluit.
+Disallow: /CV-Aart-den-Braber-NL.pdf
+Disallow: /CV-Aart-den-Braber-EN.pdf
+
 Sitemap: https://aartdenbraber.nl/sitemap.xml

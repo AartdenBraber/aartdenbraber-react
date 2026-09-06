@@ -37,4 +37,12 @@ RewriteRule . /index.html [L]
   <FilesMatch "^index\.html$">
     Header set Cache-Control "no-cache"
   </FilesMatch>
+
+  # De cv's blijven gewoon te downloaden, maar horen niet in de zoekresultaten:
+  # er staat een e-mailadres in en dat wordt geoogst. De pagina zelf blijft wel
+  # geindexeerd. Bewust geen Disallow in robots.txt: dan haalt een zoekmachine
+  # het bestand niet op en ziet hij deze regel dus ook nooit.
+  <FilesMatch "\.pdf$">
+    Header set X-Robots-Tag "noindex"
+  </FilesMatch>
 </IfModule>

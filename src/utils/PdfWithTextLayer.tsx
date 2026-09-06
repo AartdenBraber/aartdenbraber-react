@@ -10,10 +10,18 @@ interface PdfWithTextLayerProps {
     url: string;
     /** Naam van het hele blok, voor wie de pagina laat voorlezen. */
     label?: string;
+    /**
+     * Wat er in de tekstlaag komt te staan waar in het pdf een e-mailadres
+     * staat. Zonder dit staat het adres leesbaar in de pagina en halen
+     * spamrobots en zoekmachines het daar zo weg.
+     */
+    emailVervanging?: string;
 }
 
 /** Waarop het canvas getekend wordt. Hoger levert scherpere letters bij zoomen. */
 const TEKEN_SCHAAL = 1.5;
+
+const EMAIL = /[\w.+-]+@[\w-]+\.[\w.]+/g;
 
 /**
  * Tekent elke pagina van het pdf op een eigen canvas en legt daar de tekst van
@@ -30,7 +38,7 @@ const TEKEN_SCHAAL = 1.5;
  * halfklare tekening van het vorige pdf niet alsnog tussen de nieuwe pagina's
  * belandt.
  */
-const PdfWithTextLayer: React.FC<PdfWithTextLayerProps> = ({ url, label }) => {
+const PdfWithTextLayer: React.FC<PdfWithTextLayerProps> = ({ url, label, emailVervanging }) => {
     const containerRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
@@ -92,8 +100,18 @@ const PdfWithTextLayer: React.FC<PdfWithTextLayerProps> = ({ url, label }) => {
                 const tekst = await page.getTextContent();
                 if (geannuleerd) return;
 
+                // Het adres blijft gewoon in de tekening staan; het gaat alleen
+                // niet mee de tekstlaag in, want die is machineleesbaar.
+                const items = emailVervanging
+                    ? tekst.items.map((item) =>
+                          'str' in item && item.str.includes('@')
+                              ? { ...item, str: item.str.replace(EMAIL, emailVervanging) }
+                              : item,
+                      )
+                    : tekst.items;
+
                 await renderTextLayer({
-                    textContentSource: tekst,
+                    textContentSource: { ...tekst, items },
                     container: tekstlaag,
                     viewport: basis,
                 }).promise;
