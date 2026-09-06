@@ -57,6 +57,7 @@ export const en: SiteContent = {
   nav: {
     skipToContent: 'Skip to content',
     backToTop: 'Back to top',
+    noscript: 'This site needs JavaScript to show the CV.',
   },
   languageSwitcher: {
     label: 'Language',

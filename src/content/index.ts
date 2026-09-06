@@ -41,6 +41,8 @@ export interface SiteContent {
   nav: {
     skipToContent: string;
     backToTop: string;
+    /** Staat in het noscript-blok; zie scripts/taalpaginas.js. */
+    noscript: string;
   };
   languageSwitcher: {
     label: string;

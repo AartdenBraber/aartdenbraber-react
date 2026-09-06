@@ -1,7 +1,7 @@
 /**
  * Zet na de build de kop van het document goed voor beide talen:
- * build/index.html krijgt de Nederlandse titel en omschrijving, build/en.html
- * de Engelse, met een eigen canonical, og-velden en lang-attribuut.
+ * build/index.html krijgt de Nederlandse titel, omschrijving en noscript-tekst,
+ * build/en.html de Engelse, met een eigen canonical, og-velden en lang-attribuut.
  *
  * De site is één react-app die zelf ziet welke taal bij het adres hoort, maar
  * dat gebeurt pas als het javascript draait. Alles wat geen javascript draait,
@@ -23,23 +23,43 @@ if (!fs.existsSync(bron)) {
     process.exit(1);
 }
 
-/** Haalt title en description uit het meta-blok bovenaan een taalbestand. */
+/**
+ * Leest een tekst tussen enkele quotes uit een blok van een taalbestand. Het
+ * patroon laat ontsnapte tekens toe en haalt de backslashes er daarna af: met
+ * een simpel `[^']+` stopte het bij de eerste apostrof in de tekst zelf, en dan
+ * kwam er zonder enige melding een afgekapte titel in de pagina te staan.
+ */
+const leesTekst = (blok, veld) => {
+    const patroon = new RegExp(veld + ":\\s*'((?:[^'\\\\]|\\\\.)*)'");
+    const treffer = blok.match(patroon);
+    return treffer ? treffer[1].replace(/\\(.)/g, '$1') : null;
+};
+
+/** Haalt de teksten die in de kop en in het noscript-blok terechtkomen. */
 const teksten = (taal) => {
     const bestand = path.join(wortel, 'src', 'content', `${taal}.tsx`);
     const inhoud = fs.readFileSync(bestand, 'utf8');
-    const blok = inhoud.slice(inhoud.indexOf('meta:'), inhoud.indexOf('header:'));
-    const titel = (blok.match(/title:\s*'([^']+)'/) || [])[1];
-    const omschrijving = (blok.match(/description:\s*'([^']+)'/) || [])[1];
+    const deel = (van, tot) => inhoud.slice(inhoud.indexOf(van), inhoud.indexOf(tot));
 
-    if (!titel || !omschrijving) {
-        console.error(`Kon title of description niet uit het meta-blok van ${taal}.tsx halen.`);
+    const kop = deel('meta:', 'header:');
+    const titel = leesTekst(kop, 'title');
+    const omschrijving = leesTekst(kop, 'description');
+    const heroKop = leesTekst(deel('hero:', 'intro:'), 'title');
+    const zonderJs = leesTekst(deel('nav:', 'languageSwitcher:'), 'noscript');
+
+    if (!titel || !omschrijving || !heroKop || !zonderJs) {
+        console.error(`Kon title, description, hero.title of nav.noscript niet uit ${taal}.tsx halen.`);
         process.exit(1);
     }
 
-    return { titel, omschrijving };
+    return { titel, omschrijving, heroKop, zonderJs };
 };
 
+/** Voor tekst in een attribuut tussen dubbele quotes. */
 const ontsnap = (tekst) => tekst.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+
+/** Voor tekst tussen tags; daar hoeven quotes niet ontsnapt. */
+const ontsnapTekst = (tekst) => tekst.replace(/&/g, '&amp;').replace(/</g, '&lt;');
 
 const TALEN = [
     { code: 'nl', bestand: 'index.html', pad: '/', locale: 'nl_NL' },
@@ -49,8 +69,20 @@ const TALEN = [
 const sjabloon = fs.readFileSync(bron, 'utf8');
 
 for (const taal of TALEN) {
-    const { titel, omschrijving } = teksten(taal.code);
+    const { titel, omschrijving, heroKop, zonderJs } = teksten(taal.code);
     const adres = `https://aartdenbraber.nl${taal.pad}`;
+
+    // Het noscript-blok is het enige dat een crawler zonder javascript te lezen
+    // krijgt. Stond daar de Nederlandse tekst, dan sprak /en zichzelf tegen:
+    // een Engelse kop met Nederlandse inhoud eronder.
+    const noscript = [
+        '<noscript>',
+        '      <h1>Aart den Braber</h1>',
+        `      <p>${ontsnapTekst(omschrijving)}</p>`,
+        `      <p>${ontsnapTekst(heroKop)}</p>`,
+        `      <p>${ontsnapTekst(zonderJs)}</p>`,
+        '    </noscript>',
+    ].join('\n      ');
 
     const vervangingen = [
         [/<html lang="[a-z-]+">/, `<html lang="${taal.code}">`],
@@ -73,6 +105,7 @@ for (const taal of TALEN) {
             /<meta property="og:description" content="[^"]*"\s*\/>/,
             `<meta property="og:description" content="${ontsnap(omschrijving)}"/>`,
         ],
+        [/<noscript>[\s\S]*?<\/noscript>/, noscript],
     ];
 
     let html = sjabloon;

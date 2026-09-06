@@ -21,7 +21,54 @@ interface PdfWithTextLayerProps {
 /** Waarop het canvas getekend wordt. Hoger levert scherpere letters bij zoomen. */
 const TEKEN_SCHAAL = 1.5;
 
-const EMAIL = /[\w.+-]+@[\w-]+\.[\w.]+/g;
+const EMAIL = /[\w.+-]+@[\w-]+(?:\.[\w-]+)+/g;
+
+/**
+ * Haalt e-mailadressen uit de tekst-items van een pagina en zet er de opgegeven
+ * tekst voor in de plaats.
+ *
+ * Het gewone geval is één item met het hele adres erin. Maar pdf.js hakt een
+ * regel in meerdere items zodra font of tracking wisselt, en dan matcht geen
+ * enkel los item terwijl het adres in de laag wel gewoon aaneengesloten te
+ * selecteren is. Daarom kijken we daarna ook naar de items achter elkaar: valt
+ * daar alsnog een adres in, dan gaan alle items die eraan meedoen leeg. Half
+ * maskeren is hier hetzelfde als niet maskeren.
+ */
+const zonderEmail = <T extends { str?: string }>(items: T[], vervanging: string): T[] => {
+    const schoon = items.map((item) =>
+        typeof item.str === 'string' && item.str.includes('@')
+            ? { ...item, str: item.str.replace(EMAIL, vervanging) }
+            : item,
+    );
+
+    const grenzen: { i: number; van: number; tot: number }[] = [];
+    let tekst = '';
+    schoon.forEach((item, i) => {
+        const str = typeof item.str === 'string' ? item.str : '';
+        grenzen.push({ i, van: tekst.length, tot: tekst.length + str.length });
+        tekst += str;
+    });
+
+    const raak = new Set<number>();
+    for (const treffer of Array.from(tekst.matchAll(EMAIL))) {
+        const van = treffer.index ?? 0;
+        const tot = van + treffer[0].length;
+        grenzen.forEach((g) => {
+            if (g.van < tot && g.tot > van) raak.add(g.i);
+        });
+    }
+
+    if (raak.size === 0) return schoon;
+
+    // Luid falen: dit hoort niet voor te komen, en als het toch gebeurt zit het
+    // pdf anders in elkaar dan gedacht en wil je dat weten.
+    console.warn('Een e-mailadres liep over meerdere tekst-items heen; die items zijn leeggemaakt.');
+
+    const eerste = Math.min(...Array.from(raak));
+    return schoon.map((item, i) =>
+        raak.has(i) ? { ...item, str: i === eerste ? vervanging : '' } : item,
+    );
+};
 
 /**
  * Tekent elke pagina van het pdf op een eigen canvas en legt daar de tekst van
@@ -103,15 +150,11 @@ const PdfWithTextLayer: React.FC<PdfWithTextLayerProps> = ({ url, label, emailVe
                 // Het adres blijft gewoon in de tekening staan; het gaat alleen
                 // niet mee de tekstlaag in, want die is machineleesbaar.
                 const items = emailVervanging
-                    ? tekst.items.map((item) =>
-                          'str' in item && item.str.includes('@')
-                              ? { ...item, str: item.str.replace(EMAIL, emailVervanging) }
-                              : item,
-                      )
+                    ? zonderEmail(tekst.items as { str?: string }[], emailVervanging)
                     : tekst.items;
 
                 await renderTextLayer({
-                    textContentSource: { ...tekst, items },
+                    textContentSource: { ...tekst, items } as typeof tekst,
                     container: tekstlaag,
                     viewport: basis,
                 }).promise;
@@ -135,7 +178,7 @@ const PdfWithTextLayer: React.FC<PdfWithTextLayerProps> = ({ url, label, emailVe
             geannuleerd = true;
             meter?.disconnect();
         };
-    }, [url]);
+    }, [url, emailVervanging]);
 
     return <div className="pdf-pages" ref={containerRef} aria-label={label} />;
 };

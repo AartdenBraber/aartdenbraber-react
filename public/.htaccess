@@ -39,16 +39,28 @@ RewriteRule . /index.html [L]
     Header set Cache-Control "public, max-age=31536000, immutable"
   </FilesMatch>
 
-  # index.html moet elke keer opnieuw gecontroleerd worden, anders blijft een
-  # bezoeker na een uitrol naar de oude bestandsnamen verwijzen.
-  <FilesMatch "^index\.html$">
+  # Beide toegangsdocumenten moeten elke keer opnieuw gecontroleerd worden,
+  # anders blijft een bezoeker na een uitrol naar de oude bestandsnamen
+  # verwijzen. en.html hoort er net zo goed bij als index.html: zonder deze
+  # regel bewaart de browser hem heuristisch en wijst /en na een uitrol naar
+  # bundels die er niet meer zijn.
+  <FilesMatch "^(index|en)\.html$">
     Header set Cache-Control "no-cache"
   </FilesMatch>
 
   # De cv's blijven gewoon te downloaden, maar horen niet in de zoekresultaten:
   # er staat een e-mailadres in en dat wordt geoogst. De pagina zelf blijft wel
-  # geindexeerd. Bewust geen Disallow in robots.txt: dan haalt een zoekmachine
-  # het bestand niet op en ziet hij deze regel dus ook nooit.
+  # geindexeerd.
+  #
+  # robots.txt zet er daarnaast een Disallow op. Die twee bijten elkaar deels:
+  # wie het bestand niet mag ophalen, ziet deze header ook nooit. Dat is een
+  # bewuste keuze, want de Disallow sluit ook de tweede route af: het cv wordt
+  # met javascript getekend en de tekstlaag komt uit dit bestand, dus zonder
+  # ophalen bestaat die tekst ook niet voor een zoekmachine. Deze header blijft
+  # staan voor wie de pdf wel ophaalt zonder robots.txt te lezen. Restrisico:
+  # een pdf-url die van buitenaf gelinkt wordt, kan als kale vermelding zonder
+  # inhoud in de resultaten blijven staan; de downloadknop heeft daarom
+  # rel=nofollow.
   <FilesMatch "\.pdf$">
     Header set X-Robots-Tag "noindex"
   </FilesMatch>
