@@ -28,8 +28,9 @@ const PinchHint: React.FC = () => {
         if (!cv) return;
 
         const waarnemer = new IntersectionObserver(
-            ([item]) => {
-                if (!item.isIntersecting) return;
+            (meldingen) => {
+                // De laatste melding en niet de eerste; zie StickyBar.
+                if (!meldingen[meldingen.length - 1].isIntersecting) return;
                 setFase('aan');
                 // Eén keer is genoeg; hij hoeft niet terug te komen bij elke
                 // passage langs het cv.

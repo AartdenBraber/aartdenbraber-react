@@ -29,7 +29,10 @@ const StickyBar: React.FC = () => {
         if (typeof IntersectionObserver === 'undefined') return;
 
         const waarnemer = new IntersectionObserver(
-            ([item]) => setZichtbaar(!item.isIntersecting),
+            // De laatste melding en niet de eerste: een waarnemer kan er
+            // meerdere tegelijk afleveren als de hoofdthread bezet was met het
+            // tekenen van het cv, en dan is de oudste achterhaald.
+            (meldingen) => setZichtbaar(!meldingen[meldingen.length - 1].isIntersecting),
             { threshold: 0 },
         );
         waarnemer.observe(hero);

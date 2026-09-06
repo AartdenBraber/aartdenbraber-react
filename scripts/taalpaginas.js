@@ -114,7 +114,12 @@ for (const taal of TALEN) {
             console.error(`Patroon niet gevonden in build/index.html: ${patroon}`);
             process.exit(1);
         }
-        html = html.replace(patroon, nieuw);
+        // Een functie en geen string: in een vervangingstekst leest javascript
+        // een dollarteken als opdracht. Een titel met `$&` plakt de hele
+        // gevonden tag terug in het attribuut, en met een dollar plus apostrof
+        // komt de rest van het document erin, inclusief de scripttags. De build
+        // blijft daarbij groen en het gaat zo live.
+        html = html.replace(patroon, () => nieuw);
     }
 
     fs.writeFileSync(path.join(wortel, 'build', taal.bestand), html);

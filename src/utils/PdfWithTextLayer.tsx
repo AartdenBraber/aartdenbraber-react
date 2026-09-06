@@ -21,7 +21,10 @@ interface PdfWithTextLayerProps {
 /** Waarop het canvas getekend wordt. Hoger levert scherpere letters bij zoomen. */
 const TEKEN_SCHAAL = 1.5;
 
-const EMAIL = /[\w.+-]+@[\w-]+(?:\.[\w-]+)+/g;
+// De laatste groep moet met letters eindigen. Anders valt `react@18.2.0` uit een
+// technische opsomming er ook onder, en dan staat er in de tekstlaag een melding
+// over een e-mailadres boven een versienummer.
+const EMAIL = /[\w.+-]+@[\w-]+(?:\.[\w-]+)*\.[a-z]{2,}/gi;
 
 /**
  * Haalt e-mailadressen uit de tekst-items van een pagina en zet er de opgegeven
@@ -37,7 +40,10 @@ const EMAIL = /[\w.+-]+@[\w-]+(?:\.[\w-]+)+/g;
 const zonderEmail = <T extends { str?: string }>(items: T[], vervanging: string): T[] => {
     const schoon = items.map((item) =>
         typeof item.str === 'string' && item.str.includes('@')
-            ? { ...item, str: item.str.replace(EMAIL, vervanging) }
+            ? // Een functie en geen string: een dollarteken in de vervanging
+              // is anders een opdracht, en met `$&` zou het gevonden adres er
+              // juist weer in komen te staan.
+              { ...item, str: item.str.replace(EMAIL, () => vervanging) }
             : item,
     );
 
@@ -111,6 +117,11 @@ const PdfWithTextLayer: React.FC<PdfWithTextLayerProps> = ({ url, label, emailVe
         const meter =
             typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(schaalTekstlagen);
 
+        // Staat er al iets van dit pdf? Zo niet, dan is wat er hangt van de
+        // vorige taal en moet het weg als het misgaat; staat er al wel wat, dan
+        // laten we die pagina's staan in plaats van ze alsnog te wissen.
+        let nieuweStandBegonnen = false;
+
         // pdf.js start per getDocument een eigen worker. Zonder destroy blijft
         // die leven met het hele geparste cv erin: gemeten liep dat op van één
         // worker en 8MB naar zes workers en 23MB na vijf taalwissels.
@@ -131,6 +142,7 @@ const PdfWithTextLayer: React.FC<PdfWithTextLayerProps> = ({ url, label, emailVe
             meter?.disconnect();
             if (hoogte > 0) container.style.minHeight = `${hoogte}px`;
             container.innerHTML = '';
+            nieuweStandBegonnen = true;
 
             for (let i = 1; i <= pdf.numPages; i++) {
                 const page = await pdf.getPage(i);
@@ -186,7 +198,7 @@ const PdfWithTextLayer: React.FC<PdfWithTextLayerProps> = ({ url, label, emailVe
         // downloadknop en een aria-label van de andere taal.
         laadEnTeken().catch((fout) => {
             if (geannuleerd) return;
-            container.innerHTML = '';
+            if (!nieuweStandBegonnen) container.innerHTML = '';
             container.style.minHeight = '';
             console.error('Het cv kon niet getekend worden:', fout);
         });
