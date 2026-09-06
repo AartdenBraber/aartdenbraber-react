@@ -1,7 +1,6 @@
 import React from 'react';
 import './CVDisplay.scss';
 import PdfWithTextLayer from '../../utils/PdfWithTextLayer';
-import PinchZoom from '../PinchZoom/PinchZoom';
 import { useLanguage } from '../../i18n/LanguageContext';
 
 /**
@@ -20,16 +19,22 @@ const CVDisplay: React.FC = () => {
 
     return (
         <section className="page-content showcase" id="portfolio" aria-label={t.cv.sectionLabel}>
-            {/* Op een telefoon staat het cv op ongeveer veertig procent van zijn
-                eigen maat. Met twee vingers is het te vergroten zonder dat de
-                rest van de pagina meegroeit. */}
-            <PinchZoom>
-                <PdfWithTextLayer
-                    url={t.cv.url}
-                    label={t.cv.sectionLabel}
-                    emailVervanging={t.cv.emailVerborgen}
-                />
-            </PinchZoom>
+            {/* Het vergroten laten we aan de browser. Hier zat een eigen
+                knijpimplementatie omheen die de zoom van de browser uitzette en
+                op 2,4x dichtging. Die sprong bij het knijpen ook naar de
+                bovenkant van het cv: hij rekende de vinger af tegen de bovenkant
+                van het hele blok in plaats van tegen de bovenkant van het
+                scherm, en dat scheelde precies hoe diep je in het cv zat.
+
+                Nu zoomt de telefoon zoals overal: in twee richtingen te
+                schuiven, met dubbeltikken erbij, en zonder bovengrens voor wie
+                verder moet inzoomen om het te kunnen lezen. Voorbij ongeveer
+                2,4x wordt het zachter, want daar is het canvas op getekend. */}
+            <PdfWithTextLayer
+                url={t.cv.url}
+                label={t.cv.sectionLabel}
+                emailVervanging={t.cv.emailVerborgen}
+            />
 
             <div className="big-bad-button">
                 <span className="pdf-download-button-container js-pdf-download-button-container">
