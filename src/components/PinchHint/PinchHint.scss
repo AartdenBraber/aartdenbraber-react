@@ -46,6 +46,10 @@
   stroke-linejoin: round;
 }
 
+.pinch-hint--verdwijnt {
+  animation: hint-weg 0.45s ease-in forwards;
+}
+
 @keyframes hint-binnen {
   from {
     opacity: 0;
@@ -57,8 +61,20 @@
   }
 }
 
+@keyframes hint-weg {
+  from {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-6px);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .pinch-hint {
+  .pinch-hint,
+  .pinch-hint--verdwijnt {
     animation: none;
   }
 }

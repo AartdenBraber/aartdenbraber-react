@@ -12,9 +12,12 @@ import { useLanguage } from '../../i18n/LanguageContext';
  *
  * Alleen waar knijpen bestaat. Met een muis zegt hij niets en dan blijft hij weg.
  */
+/** weg -> aan -> verdwijnt -> weg. De middelste stap is het uitvagen. */
+type Fase = 'weg' | 'aan' | 'verdwijnt';
+
 const PinchHint: React.FC = () => {
     const { t } = useLanguage();
-    const [zichtbaar, setZichtbaar] = useState(false);
+    const [fase, setFase] = useState<Fase>('weg');
 
     useEffect(() => {
         if (typeof window.matchMedia !== 'function') return;
@@ -27,7 +30,7 @@ const PinchHint: React.FC = () => {
         const waarnemer = new IntersectionObserver(
             ([item]) => {
                 if (!item.isIntersecting) return;
-                setZichtbaar(true);
+                setFase('aan');
                 // Eén keer is genoeg; hij hoeft niet terug te komen bij elke
                 // passage langs het cv.
                 waarnemer.disconnect();
@@ -44,32 +47,51 @@ const PinchHint: React.FC = () => {
         return () => waarnemer.disconnect();
     }, []);
 
-    // Weg bij de eerste aanraking, bij het zoomen zelf, en anders na een paar
-    // seconden. Wie hem niet nodig heeft, houdt er niets aan over.
     useEffect(() => {
-        if (!zichtbaar) return;
+        if (fase !== 'aan') return;
 
-        const weg = () => setZichtbaar(false);
-        const teller = setTimeout(weg, 6000);
+        // Zonder aanraken gaat hij vanzelf na zes seconden.
+        const vanzelf = setTimeout(() => setFase('verdwijnt'), 6000);
+        let naspel: ReturnType<typeof setTimeout>;
 
-        window.addEventListener('touchstart', weg, { passive: true });
-        window.visualViewport?.addEventListener('resize', weg);
+        // Wie het cv aanraakt of gaat zoomen heeft hem gezien. Hij gaat dan
+        // weg, maar niet op slag: onder je vinger vandaan schieten leest als
+        // iets kapotmaken, en je kunt hem dan ook niet meer uitlezen.
+        const gezien = () => {
+            clearTimeout(vanzelf);
+            naspel = setTimeout(() => setFase('verdwijnt'), 3000);
+        };
+
+        window.addEventListener('touchstart', gezien, { passive: true, once: true });
+        window.visualViewport?.addEventListener('resize', gezien, { once: true });
 
         return () => {
-            clearTimeout(teller);
-            window.removeEventListener('touchstart', weg);
-            window.visualViewport?.removeEventListener('resize', weg);
+            clearTimeout(vanzelf);
+            clearTimeout(naspel);
+            window.removeEventListener('touchstart', gezien);
+            window.visualViewport?.removeEventListener('resize', gezien);
         };
-    }, [zichtbaar]);
+    }, [fase]);
 
-    if (!zichtbaar) return null;
+    // Het opruimen hangt aan een teller en niet aan het einde van de animatie:
+    // met beweging uit loopt die animatie niet en bleef hij anders staan.
+    useEffect(() => {
+        if (fase !== 'verdwijnt') return;
+        const teller = setTimeout(() => setFase('weg'), 450);
+        return () => clearTimeout(teller);
+    }, [fase]);
+
+    if (fase === 'weg') return null;
 
     return (
         /* Aria-hidden: dit gaat over een handgebaar om een tekening groter te
            maken. Wie de pagina laat voorlezen krijgt de tekst van het cv al
            rechtstreeks, en een blokje dat na zes seconden verdwijnt hoort niet
            in de leesvolgorde thuis. */
-        <div className="pinch-hint" aria-hidden="true">
+        <div
+            className={`pinch-hint${fase === 'verdwijnt' ? ' pinch-hint--verdwijnt' : ''}`}
+            aria-hidden="true"
+        >
             <span className="pinch-hint__pil">
                 <svg className="pinch-hint__icoon" viewBox="0 0 24 24" focusable="false">
                     {/* Twee pijlen uit elkaar: groter maken. */}
