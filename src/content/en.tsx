@@ -17,7 +17,7 @@ export const en: SiteContent = {
     },
     title:
       'I focus on crafting sustainable applications - technically strong, user-friendly, and future-proof.',
-    scrollLabel: 'To the next section',
+    cta: 'View my CV',
   },
   intro: {
     pageTitle: 'From vision to value.',
@@ -50,6 +50,11 @@ export const en: SiteContent = {
     url: '/CV-Aart-den-Braber-EN.pdf',
     actionWord: 'Download',
     rest: ' CV as PDF',
+    sectionLabel: 'The CV of Aart den Braber, page by page',
+  },
+  nav: {
+    skipToContent: 'Skip to content',
+    backToTop: 'Back to top',
   },
   languageSwitcher: {
     label: 'Language',

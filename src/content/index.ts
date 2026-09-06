@@ -20,7 +20,8 @@ export interface SiteContent {
       evening: string;
     };
     title: string;
-    scrollLabel: string;
+    /** Zichtbaar label op de knop onderin de hero. */
+    cta: string;
   };
   intro: {
     pageTitle: string;
@@ -30,6 +31,12 @@ export interface SiteContent {
     url: string;
     actionWord: string;
     rest: string;
+    /** Naam van het cv-blok voor een schermlezer. */
+    sectionLabel: string;
+  };
+  nav: {
+    skipToContent: string;
+    backToTop: string;
   };
   languageSwitcher: {
     label: string;

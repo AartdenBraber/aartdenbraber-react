@@ -3,21 +3,67 @@
 --------------------------------------------------------------*/
 section.showcase {
   background: #263238;
+
+  /* De knop in de hero wijst hierheen. De marge houdt rekening met de balk die
+     na de hero bovenin verschijnt; anders landt de eerste cv-pagina eronder. */
+  scroll-margin-top: 4.5rem;
 }
 
-/* De pagina's van het pdf; PdfWithTextLayer tekent elke pagina op een canvas. */
+/* Elke pagina van het pdf: de tekening, en daar precies overheen de tekst. */
+.pdf-page {
+  position: relative;
+}
+
 .showcase canvas {
+  display: block;
   width: 100%;
   height: auto;
+}
+
+/* De onzichtbare tekstlaag van pdf.js. De letters staan op transparant en op
+   dezelfde plek als in de tekening eronder, zodat selecteren, zoeken en
+   voorlezen werken zonder dat je iets dubbel ziet staan. De maten komen uit
+   `--scale-factor`, die PdfWithTextLayer per pagina zet. */
+.textLayer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  line-height: 1;
+  text-align: initial;
+  text-size-adjust: none;
+  -webkit-text-size-adjust: none;
+  forced-color-adjust: none;
+  transform-origin: 0 0;
+  z-index: 2;
+}
+.textLayer span,
+.textLayer br {
+  position: absolute;
+  color: transparent;
+  white-space: pre;
+  cursor: text;
+  transform-origin: 0% 0%;
+}
+.textLayer span.markedContent {
+  top: 0;
+  height: 0;
+}
+
+/* Zonder dit komt de sitebrede selectiekleur eroverheen en zie je de tekst
+   twee keer: één keer getekend, één keer in wit op rood. */
+.textLayer ::selection {
+  color: transparent;
+  background: rgba(237, 82, 83, 0.35);
 }
 
 /*--------------------------------------------------------------
 ## Buttons
 --------------------------------------------------------------*/
+/* Was `display: table`. Een tabel en `position: sticky` gaan niet samen, en de
+   strook hoeft alleen maar de knop te centreren. */
 .big-bad-button {
-  display: table;
+  display: block;
   width: 100%;
-  vertical-align: middle;
   text-align: center;
   padding: 10px 0;
 }
@@ -30,7 +76,12 @@ section.showcase {
   position: relative;
   display: inline-block;
   border: 2px solid #ed5253;
-  color: #ed5253;
+
+  /* De knop zweeft over witte cv-pagina's. Rood op wit haalt 3,5:1 en dat is te
+     weinig voor tekst van 18px. Hij draagt nu de kleur van de sectie waar hij
+     bij hoort, met de rode rand als accent: wit op #263238 is 13:1. */
+  background: rgba(38, 50, 56, 0.92);
+  color: #fff;
   text-decoration: none;
 
   /* Stond op de 16px van de body en dat viel weg naast de lopende tekst. */
@@ -43,13 +94,22 @@ section.showcase {
   display: inline-block;
   transition: all 0.2s;
 }
-.big-bad-button a:hover .little-span,
-.big-bad-button a:focus .little-span {
+/* De grap zit op `:hover` en niet meer op `:focus`. Wie met de tab-toets bij
+   de enige echte knop van de pagina aankomt, zette zo een halve minuut
+   schokkende beweging in gang waarbij het label onder zijn focusring vandaan
+   liep. Met de muis kun je ervoor kiezen; met het toetsenbord niet. */
+.big-bad-button a:hover .little-span {
   animation: its-hard-being-a-button 30s ease;
 }
-.big-bad-button a:hover span.action-word,
-.big-bad-button a:focus span.action-word {
+.big-bad-button a:hover span.action-word {
   animation: finally-click 60s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .big-bad-button a:hover .little-span,
+  .big-bad-button a:hover span.action-word {
+    animation: none;
+  }
 }
 
 /* this is fired after the other animation, 'its-hard-being-a-button', finished */
@@ -178,24 +238,30 @@ section.showcase {
     }*/
 
 /*--------------------------------------------------------------
-## Downloadknop, vast in beeld boven het cv
+## Downloadknop, zwevend boven het cv
 --------------------------------------------------------------*/
-/** hide button outside of pdf viewer */
-/* Werkt samen met `section, footer { z-index: 2 }` in styles/global.scss: de
-   hero en de intro liggen boven deze knop, alleen bij het cv is hij te zien. */
-.hide-outside-pdf-viewer {
-  position: fixed;
-  z-index: 1;
+/* Sticky en niet fixed: de knop hoort bij dit blok en verlaat het ook niet.
+   Daarvoor stond hij vast in beeld op een lage laag met de hero en de intro
+   eroverheen; hij bestond dus op de hele pagina en stond overal in de
+   tabvolgorde, ook waar niemand hem zag. */
+.big-bad-button {
+  position: sticky;
+  bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
+  z-index: 3;
+
+  /* De strook zelf is leeg en mag geen vingers of muiskliks afvangen die voor
+     het cv eronder bedoeld zijn. */
+  pointer-events: none;
 }
+.big-bad-button a {
+  pointer-events: auto;
+}
+
 .pdf-download-button-container {
-  position: fixed;
-  bottom: 1.5rem;
-  left: 50%;
-  transform: translateX(-50%);
+  display: inline-block;
   backdrop-filter: blur(5px);
 
-  /* De doos begint op 50% en werd daardoor nooit breder dan de helft van het
-     scherm. Op een telefoon brak het label daardoor over twee regels. */
-  width: max-content;
+  /* De doos begint gecentreerd en mag op een telefoon niet breder worden dan
+     het scherm; anders brak het label over twee regels. */
   max-width: calc(100vw - 2rem);
 }

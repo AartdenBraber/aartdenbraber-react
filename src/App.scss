@@ -1,4 +1,33 @@
 /* De omslag om de hele site heen; zie App.tsx. */
+/* Stond op `overflow-y: hidden`. Als één as verborgen is en de andere
+   zichtbaar, rekent de browser die andere om naar `auto`: er stond dus
+   ongemerkt een scrollcontainer om de hele site, en daarbinnen werkt
+   `position: sticky` niet. `clip` op één as mag wel naast `visible`. */
 .site-content {
-  overflow-y: hidden;
+  overflow-x: clip;
+}
+
+/* Staat buiten beeld tot hij focus krijgt. */
+.skip-link {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  z-index: 200;
+  transform: translate(-50%, -120%);
+
+  padding: 12px 20px;
+  background: #ed5253;
+  color: #fff;
+  font-family: var(--font-body);
+  text-decoration: none;
+  transition: transform 0.15s ease-in-out;
+}
+.skip-link:focus {
+  transform: translate(-50%, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skip-link {
+    transition: none;
+  }
 }

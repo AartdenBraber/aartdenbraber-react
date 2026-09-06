@@ -21,7 +21,11 @@ const Intro: React.FC = () => {
     useRevealOnView(sectieRef, TE_ONTHULLEN);
 
     return (
-        <section ref={sectieRef} className="page-content homepage-intro parallax clearfix">
+        <section
+            id="inhoud"
+            ref={sectieRef}
+            className="page-content homepage-intro parallax clearfix"
+        >
             <div ref={achtergrondRef} className="parallax-bg background-cover"></div>
 
             <div className="entry-content content parallax-content">

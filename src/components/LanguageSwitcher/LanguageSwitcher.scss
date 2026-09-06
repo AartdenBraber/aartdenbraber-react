@@ -1,11 +1,10 @@
 /* Overgenomen uit de stylesheet van de site zoals die live stond. */
 
+/* Stond absoluut rechtsboven in de merknaam en viel daardoor op een smal
+   scherm over de naam heen. Nu een gewoon blok in de flex-rij van de header. */
 .language-switcher-container {
-  position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
   display: flex;
+  flex: none;
   justify-content: flex-end;
   z-index: 10;
 }
@@ -20,7 +19,12 @@
   font-family: inherit;
 
   button {
-    padding: 0.5rem;
+    /* 38x32 was met een duim niet te raken. */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0.5rem 0.85rem;
     border: none;
     border-radius: 0;
     background: transparent;
@@ -36,11 +40,18 @@
       text-transform: uppercase;
     }
 
-    &:hover,
-    &:focus {
-      background: rgba(255, 255, 255, 0.2) !important;
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
       opacity: 1;
-      outline: none;
+    }
+
+    /* Stond op `outline: none`, waardoor met het toetsenbord niet te zien was
+       waar je stond. */
+    &:focus-visible {
+      background: rgba(255, 255, 255, 0.2);
+      opacity: 1;
+      outline: 2px solid #fff;
+      outline-offset: -2px;
     }
 
     &.active {

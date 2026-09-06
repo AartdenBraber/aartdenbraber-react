@@ -76,9 +76,9 @@ const FocusSpotlight: React.FC<FocusSpotlightProps> = ({ image }) => {
     return (
         <div className="spotlight-background">
             <div className="background-wrapper" ref={wrapperRef}>
-                <img src={image} alt="Blurred background" className="background blurred" />
+                <img src={image} alt="" className="background blurred" />
                 <div ref={spotlightRef} className="spotlight">
-                    <img src={image} alt="Focused background" className="background focused" />
+                    <img src={image} alt="" className="background focused" />
                 </div>
             </div>
         </div>

@@ -17,7 +17,7 @@ export const nl: SiteContent = {
     },
     title:
       'Mijn focus ligt op het bouwen van duurzame applicaties - technisch sterk, gebruiksvriendelijk en toekomstbestendig.',
-    scrollLabel: 'Naar het volgende onderdeel',
+    cta: 'Bekijk mijn cv',
   },
   intro: {
     pageTitle: 'Ontwikkeling begint bij visie.',
@@ -50,6 +50,11 @@ export const nl: SiteContent = {
     url: '/CV-Aart-den-Braber-NL.pdf',
     actionWord: 'Download',
     rest: ' CV als PDF',
+    sectionLabel: 'Het cv van Aart den Braber, pagina voor pagina',
+  },
+  nav: {
+    skipToContent: 'Naar de inhoud',
+    backToTop: 'Terug naar boven',
   },
   languageSwitcher: {
     label: 'Taal',

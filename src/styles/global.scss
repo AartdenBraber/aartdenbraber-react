@@ -124,9 +124,21 @@ table {
 ## General
 --------------------------------------------------------------*/
 html {
+  /* De knop onderin de hero wijst met een anker naar het cv. Zonder dit springt
+     de pagina er hard heen. */
+  scroll-behavior: smooth;
+
   height: 100vh; /* set viewport constraint */
   min-height: 100%; /* enforce height */
+
+  /* `overflow-x: hidden` rekent de andere as om naar `auto`, en dan is dit een
+     scrollcontainer. De downloadknop bij het cv is `position: sticky` en zoekt
+     de dichtstbijzijnde scrollcontainer; die vond hij hier, en die scrolt niet,
+     dus bleef de knop staan waar hij stond. `clip` snijdt hetzelfde af zonder
+     scrollcontainer te worden. De regel erboven blijft staan voor browsers die
+     `clip` nog niet kennen. */
   overflow-x: hidden;
+  overflow-x: clip;
   width: 100%;
 }
 
@@ -139,9 +151,20 @@ body {
   line-height: 100%;
   letter-spacing: 1px;
   overflow-x: hidden;
+  overflow-x: clip;
 }
-*:focus {
-  outline: 1px dashed #ed5253;
+/* Stond op `*:focus`, dus ook bij een muisklik. `:focus-visible` laat de ring
+   zien wanneer hij nodig is, en een streepje van 1px was met een donkere foto
+   erachter nauwelijks te vinden. */
+*:focus-visible {
+  outline: 2px solid #ed5253;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
 *::selection {
   background: #ed5253;
@@ -169,26 +192,21 @@ img {
   transition: opacity 1s;
 }
 
-/* Een link neemt de kleur van de tekst eromheen over. Dit wint met !important
-   van Bootstrap en van elke kleur die een onderdeel zelf op een link zet; het
-   pijltje op een smal scherm in Hero.scss houdt daar rekening mee. */
+/* Een link neemt de kleur van de tekst eromheen over. Bootstrap wordt hierboven
+   geïmporteerd, dus deze regel wint daar vanzelf van. Zonder !important, want
+   dat sloopte de kleur van de downloadknop en van de knop in de hero. */
 a {
-  color: inherit !important;
+  color: inherit;
 }
 
 /*--------------------------------------------------------------
 ## Lagen
 --------------------------------------------------------------*/
-/** hide button outside of pdf viewer */
-/* De downloadknop in CVDisplay.scss staat vast in beeld op z-index 1. Elke
-   sectie met een eigen positie (de hero en de intro) ligt daardoor boven die
-   knop, zodat hij alleen te zien is waar het cv staat. De footer in de hero
-   komt zo ook boven de kop te liggen; anders was het pijltje niet aan te
-   klikken. */
-section,
-footer {
-  z-index: 2;
-}
+/* Hier stond `section, footer { z-index: 2 }`. Dat bestond alleen om de
+   downloadknop, die vast in beeld stond op z-index 1, onder de hero en de intro
+   te verstoppen. Die knop is nu `position: sticky` binnen het cv-blok zelf, dus
+   hij komt er niet meer buiten en heeft geen laag nodig die hem afdekt. De knop
+   in de hero regelt zijn eigen z-index in Hero.scss. */
 
 /*--------------------------------------------------------------
 ## Clearings

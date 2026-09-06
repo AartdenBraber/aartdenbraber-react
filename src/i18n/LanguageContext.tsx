@@ -45,6 +45,13 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
     setAttribute('meta[name="description"]', 'content', meta.description);
     setAttribute('link[rel="canonical"]', 'href', canonicalForLanguage(language));
+
+    // Wat een deelvenster op LinkedIn of in een chat laat zien, hoort dezelfde
+    // taal te spreken als de pagina zelf.
+    setAttribute('meta[property="og:title"]', 'content', meta.title);
+    setAttribute('meta[property="og:description"]', 'content', meta.description);
+    setAttribute('meta[property="og:url"]', 'content', canonicalForLanguage(language));
+    setAttribute('meta[property="og:locale"]', 'content', language === 'nl' ? 'nl_NL' : 'en_GB');
   }, [language]);
 
   const value = useMemo(

@@ -9,34 +9,39 @@
   position: absolute;
   z-index: 100;
   box-sizing: border-box;
-  display: table;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
   padding: 20px;
+  padding-left: max(20px, env(safe-area-inset-left));
+  padding-right: max(20px, env(safe-area-inset-right));
   width: 100%;
   transition: all 0.5s ease-in-out, top 0s;
 }
 
 .site-branding {
   display: table;
-  text-decoration: none;
   color: #fff;
   white-space: nowrap;
 
-  /* De taalwisselaar hangt hier absoluut in, rechts en verticaal gecentreerd. */
-  position: relative;
+  /* Mag krimpen, anders duwt de naam de taalwisselaar van het scherm af. */
+  min-width: 0;
 }
 
+/* De overgangen op padding, breedte en hoogte zijn eraf. Ze konden alleen
+   afgaan bij het oversteken van een mediaquery, en dan animeer je de layout van
+   een logo dat niemand ziet bewegen. */
 .logo-container {
   display: table-cell;
   vertical-align: middle;
   padding-right: 1em;
-  transition: padding-right 0.5s ease-in-out;
 }
 .logo {
   vertical-align: middle;
   height: 4em;
   width: 4em;
   max-width: 4em;
-  transition: width 0.5s ease-in-out, height 0.5s ease-in-out;
 }
 
 .site-title-container {
@@ -155,55 +160,73 @@
   overflow-wrap: break-word;
 }
 
-/* Hero footer */
-.scroll-to-next-section-container {
+/*--------------------------------------------------------------
+## De knop onderin de hero
+--------------------------------------------------------------*/
+/* Was een pijltje van 15px zonder label. Op een scherm waar de hero precies
+   de hele viewport vult, is dat het enige bewijs dat de pagina doorloopt, en
+   dat is te weinig: de onderste strook is egaal en donker en leest als een
+   bodem. Een knop met tekst zegt zelf waar hij heen gaat. */
+.hero-cta-container {
   position: absolute;
-  bottom: 15px;
+  bottom: calc(24px + env(safe-area-inset-bottom, 0px));
   left: 50%;
-  width: 100px;
-  margin-left: -50px;
-  text-align: center;
-}
-
-.scroll-to-next-section {
-  display: block;
-  cursor: pointer;
-  color: #eee;
-  text-transform: uppercase;
-  font-size: 0.8em;
-  text-decoration: none;
-}
-.scroll-to-next-section:hover {
-  color: #fff;
-}
-.scroll-icon {
-  display: block;
-  width: 100%;
-  margin-bottom: 5px;
-  font-size: 1.5em;
-}
-.scroll-icon:before {
-  content: "";
-  animation: nudge-down 2.4s ease-in-out infinite;
-  background: no-repeat bottom;
-  background-image: url("data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjRkZGRkZGIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2ZXJzaW9uPSIxLjEiIHg9IjBweCIgeT0iMHB4IiB2aWV3Qm94PSIwIDAgOTAgOTAiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDkwIDkwIiB4bWw6c3BhY2U9InByZXNlcnZlIj48Y2lyY2xlIGN4PSI0NSIgY3k9IjEzIiByPSIzIi8+PHBhdGggZD0iTTQ1LDAuNWMtOC4yODQsMC0xNSw2LjcxNy0xNSwxNS4wMDJ2MjQuOTk2QzMwLDQ4Ljc4MywzNi43MTYsNTUuNSw0NSw1NS41czE1LTYuNzE3LDE1LTE1LjAwMlYxNS41MDIgIEM2MCw3LjIxNyw1My4yODQsMC41LDQ1LDAuNXogTTU4LDQwLjQ5OEM1OCw0Ny42NjcsNTIuMTY4LDUzLjUsNDUsNTMuNWMtNy4xNjgsMC0xMy01LjgzMy0xMy0xMy4wMDJWMTUuNTAyICBDMzIsOC4zMzMsMzcuODMyLDIuNSw0NSwyLjVjNy4xNjgsMCwxMyw1LjgzMywxMywxMy4wMDJWNDAuNDk4eiIvPjxwYXRoIGQ9Ik01OC4yOTMsNTkuNzkzTDQ1LDczLjA4NkwzMS43MDcsNTkuNzkzYy0wLjM5MS0wLjM5MS0xLjAyMy0wLjM5MS0xLjQxNCwwcy0wLjM5MSwxLjAyMywwLDEuNDE0bDE0LDE0ICBDNDQuNDg4LDc1LjQwMiw0NC43NDQsNzUuNSw0NSw3NS41czAuNTEyLTAuMDk4LDAuNzA3LTAuMjkzbDE0LTE0YzAuMzkxLTAuMzkxLDAuMzkxLTEuMDIzLDAtMS40MTRTNTguNjg0LDU5LjQwMiw1OC4yOTMsNTkuNzkzeiIvPjxwYXRoIGQ9Ik01OC4yOTMsNzMuNzkzTDQ1LDg3LjA4NkwzMS43MDcsNzMuNzkzYy0wLjM5MS0wLjM5MS0xLjAyMy0wLjM5MS0xLjQxNCwwcy0wLjM5MSwxLjAyMywwLDEuNDE0bDE0LDE0ICBDNDQuNDg4LDg5LjQwMiw0NC43NDQsODkuNSw0NSw4OS41czAuNTEyLTAuMDk4LDAuNzA3LTAuMjkzbDE0LTE0YzAuMzkxLTAuMzkxLDAuMzkxLTEuMDIzLDAtMS40MTRTNTguNjg0LDczLjQwMiw1OC4yOTMsNzMuNzkzeiIvPjwvc3ZnPg==");
-  height: 50px;
-  width: 64px;
-  position: absolute;
-  top: -67px;
   transform: translateX(-50%);
+  width: max-content;
+  max-width: calc(100% - 40px);
+
+  /* Boven de kop, anders vangt die de klik af. */
+  z-index: 3;
 }
 
-/* Een stilstaand plaatje leest als versiering, een bewegend plaatje als
-   aanwijzing. De uitslag is klein genoeg om niet af te leiden van de kop. */
+.hero-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7em;
+  box-sizing: border-box;
+  min-height: 44px;
+  padding: 15px 30px;
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(6px);
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  letter-spacing: 1px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+.hero-cta:hover,
+.hero-cta:focus-visible {
+  background: rgba(0, 0, 0, 0.55);
+  border-color: #fff;
+}
+
+/* Hetzelfde pijltje als eerst, nu naast het label in plaats van als enige
+   aanwijzing. */
+.hero-cta-icon {
+  flex: none;
+  width: 9px;
+  height: 9px;
+  margin-top: -4px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  border-radius: 2px;
+  transform: rotate(45deg);
+  animation: nudge-down 2.4s ease-in-out infinite;
+}
+
+/* Een stilstaand pijltje leest als versiering, een bewegend als aanwijzing.
+   De uitslag is klein genoeg om niet af te leiden van de kop. */
 @keyframes nudge-down {
   0%,
   60%,
   100% {
-    transform: translateX(-50%) translateY(0);
+    transform: rotate(45deg) translate(0, 0);
   }
   75% {
-    transform: translateX(-50%) translateY(7px);
+    transform: rotate(45deg) translate(3px, 3px);
   }
 }
 
@@ -239,6 +262,8 @@
   /* Header */
   .site-header {
     padding: 15px;
+    padding-left: max(15px, env(safe-area-inset-left));
+    padding-right: max(15px, env(safe-area-inset-right));
   }
   .logo-container {
     padding-right: 0.5em;
@@ -255,72 +280,65 @@
   }
 }
 
-/* Op een smal scherm botst de muis-met-pijltjes met de kop: hij is 50px hoog
-   en hangt nog eens 67px boven zijn eigen container. Daar zetten we er een
-   klein pijltje voor in de plaats, onderaan, dat wel past. Het staat er dus
-   weer: zonder aanwijzing en zonder zichtbare strook eronder is er op een
-   telefoon niets dat vertelt dat de pagina doorloopt. */
+/* Onder 420px past "Aart den Braber" naast de taalwisselaar alleen nog als
+   allebei een maat kleiner worden. Gemeten liep de naam op 360px 23px over de
+   knoppen heen en op 375px 8px. */
+@media all and (max-width: 420px) {
+  .logo {
+    height: 2.5em;
+    width: 2.5em;
+  }
+  .site-title {
+    font-size: 1.4em;
+  }
+  .site-description {
+    font-size: 0.7em;
+  }
+}
+
 @media (max-width: 460px) {
-  .scroll-to-next-section-container {
-    bottom: 8px;
-
-    /* Een doel van 13px is met een duim niet te raken. De hoogte hier maakt
-       er een strook van waar de hele breedte van de link in past. */
-    height: 44px;
-  }
-  .scroll-to-next-section {
-    height: 100%;
-  }
-  .scroll-icon {
-    margin-bottom: 0;
-  }
-  .scroll-icon:before {
-    background-image: none;
-    height: 15px;
-    width: 15px;
-    top: 12px;
-    /* De sitebrede regel in styles/global.scss zet color op links met
-       !important terug naar de bodykleur, dus currentColor levert hier een
-       donker pijltje op. */
-    border-right: 2px solid #eee;
-    border-bottom: 2px solid #eee;
-    border-radius: 2px;
-    transform: translateX(-50%) rotate(45deg);
-    animation-name: nudge-down-small;
-  }
-
-  @keyframes nudge-down-small {
-    0%,
-    60%,
-    100% {
-      transform: translateX(-50%) rotate(45deg) translate(0, 0);
-    }
-    75% {
-      transform: translateX(-50%) rotate(45deg) translate(4px, 4px);
-    }
-  }
-
   /* Op een telefoon vult de hero het hele scherm. svh rekent met de adresbalk
-     erbij, zodat het pijltje onderin bij het laden niet onder de vouw valt;
-     schuift die balk weg, dan komt de volgende sectie er vanzelf onder uit. */
+     erbij, zodat de knop onderin bij het laden niet onder de vouw valt. */
   .top-hero {
     min-height: 100vh;
     min-height: 100svh;
   }
+
+  .hero-cta-container {
+    bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  }
+  .hero-cta {
+    padding: 14px 24px;
+    font-size: 0.95rem;
+  }
 }
 
-/* Bij weinig hoogte (telefoon in liggende stand) is er geen ruimte voor een
-   aanwijzing onder de kop. */
+/* Bij weinig hoogte (telefoon in liggende stand) botst de vaste hoogte van
+   480px met een venster dat lager is. De hero werd daardoor hoger dan het
+   scherm en de knop viel eronder weg. Nu volgt de hero het venster en blijft
+   de knop staan; juist daar is hij nodig, want van de volgende sectie is niets
+   te zien. */
 @media (max-height: 600px) {
-  .scroll-to-next-section-container {
+  .top-hero {
+    height: auto;
+    min-height: 100svh;
+  }
+  .hero-cta-container {
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  }
+  .hero-cta {
+    padding: 11px 22px;
+    font-size: 0.9rem;
+    min-height: 40px;
+  }
+  .hero-title-inside:before,
+  .hero-title-inside:after {
     display: none;
   }
 }
 
-/* Staat bewust achter de mobiele variant hierboven, anders zet die de
-   animatie er weer op. */
 @media (prefers-reduced-motion: reduce) {
-  .scroll-icon:before {
+  .hero-cta-icon {
     animation: none;
   }
 }

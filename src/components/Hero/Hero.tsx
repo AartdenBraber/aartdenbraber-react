@@ -45,24 +45,30 @@ const Hero: React.FC = () => {
     const greeting = getGreeting(t.hero.greetings);
 
     return (
-        <section className="top-hero js-top-hero clearfix" data-hour={hour}>
+        <section id="top" className="top-hero js-top-hero clearfix" data-hour={hour}>
             <FocusSpotlight image={topBg} />
 
             <div className="hero-content">
                 <header className="site-header">
-                    <a className="site-branding">
+                    {/* Geen <a> meer om de merknaam heen: die had geen href en
+                        was dus geen link, en hij slokte de taalknoppen op. De
+                        wisselaar staat nu naast de naam in de flex-rij, zodat
+                        hij er op een smal scherm niet meer overheen valt. */}
+                    <div className="site-branding">
                         <div className="logo-container">
-                            <img className="logo" src={logo} alt="Logo" />
+                            <img className="logo" src={logo} alt="" />
                         </div>
                         <div className="site-title-container">
-                            <h1 className="site-title">Aart den Braber</h1>
+                            {/* De naam is merk, niet de kop van de pagina. Die
+                                rol heeft de herokop hieronder. */}
+                            <p className="site-title">Aart den Braber</p>
                             <p className="site-description">{t.header.siteDescription}</p>
                         </div>
-                        <LanguageSwitcher />
-                    </a>
+                    </div>
+                    <LanguageSwitcher />
                 </header>
 
-                <main className="hero-title-container">
+                <div className="hero-title-container">
                     <div className="hero-title-wrapper">
                         <div className="hero-title-inside">
                             <p id="hero-greeting" className="hero-greeting">{greeting}!</p>
@@ -71,26 +77,20 @@ const Hero: React.FC = () => {
                             <WordReveal className="hero-title" text={t.hero.title} delay={150} />
                         </div>
                     </div>
-                </main>
+                </div>
 
-                <footer className="scroll-to-next-section-container">
-                    <a
-                        tabIndex={0}
-                        role="button"
-                        aria-label={t.hero.scrollLabel}
-                        onClick={() => {
-                            window.scrollBy({ top: window.innerHeight, behavior: 'smooth' });
-                        }}
-                        onKeyDown={(event) => {
-                            if (event.key === 'Enter' || event.key === ' ') {
-                                event.preventDefault();
-                                window.scrollBy({ top: window.innerHeight, behavior: 'smooth' });
-                            }
-                        }}
-                        className="scroll-to-next-section">
-                        <span className="scroll-icon"></span>
+                <div className="hero-cta-container">
+                    {/* Een gewone link naar het cv-blok. Dat werkt zonder
+                        javascript, houdt de toetsenbordbediening die de browser
+                        zelf al levert, en scrollt niet langer met een
+                        vensterhoogte die zelden gelijk is aan de hero. Het
+                        soepele scrollen staat in global.scss en luistert daar
+                        naar prefers-reduced-motion. */}
+                    <a className="hero-cta" href="#portfolio">
+                        <span className="hero-cta-label">{t.hero.cta}</span>
+                        <span className="hero-cta-icon" aria-hidden="true"></span>
                     </a>
-                </footer>
+                </div>
             </div>
         </section>
     );
