@@ -87,12 +87,16 @@ section.showcase {
      houdt dat allebei: zwart op de donkere strook is 1,4:1. De witte omloop is
      wat je feitelijk leest, en zwart daarop is 21:1. */
   background: transparent;
-  backdrop-filter: blur(20px) saturate(1.4);
+
+  /* Terug op de 5px waarmee deze knop begon. Meer blur maakt hem niet
+     doorzichtiger maar juist doffer: het middelt de tekst eronder uit tot een
+     egale plaat. Op 5px zie je de regels van het cv er scherp onderdoor lopen. */
+  backdrop-filter: blur(5px);
 
   /* Een lichtrand langs de bovenkant en een schaduw eronder: zonder die twee
      is een doorzichtig vlak geen ruit maar een gat. */
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
     0 6px 24px rgba(0, 0, 0, 0.22);
   color: #14181a;
   text-decoration: none;
