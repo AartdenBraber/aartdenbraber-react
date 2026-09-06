@@ -111,13 +111,25 @@ const PdfWithTextLayer: React.FC<PdfWithTextLayerProps> = ({ url, label, emailVe
         const meter =
             typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(schaalTekstlagen);
 
+        // pdf.js start per getDocument een eigen worker. Zonder destroy blijft
+        // die leven met het hele geparste cv erin: gemeten liep dat op van één
+        // worker en 8MB naar zes workers en 23MB na vijf taalwissels.
+        let taak: ReturnType<typeof getDocument> | null = null;
+
         const laadEnTeken = async () => {
-            const pdf = await getDocument(url).promise;
+            taak = getDocument(url);
+            const pdf = await taak.promise;
             if (geannuleerd) return;
 
-            // Meteen leegmaken, zodat bij een taalwissel niet het oude cv blijft
-            // staan terwijl het nieuwe nog getekend wordt.
+            // Pas leegmaken nu het nieuwe cv binnen is, zodat er bij een trage
+            // verbinding niet eerst een gat valt. De hoogte houden we vast tot
+            // de nieuwe pagina's er staan: zonder dat stort het document in van
+            // ruim twintigduizend pixels naar een paar honderd, klemt de
+            // browser de scrollpositie, en staat wie op pagina acht van taal
+            // wisselde ineens weer bovenaan.
+            const hoogte = container.getBoundingClientRect().height;
             meter?.disconnect();
+            if (hoogte > 0) container.style.minHeight = `${hoogte}px`;
             container.innerHTML = '';
 
             for (let i = 1; i <= pdf.numPages; i++) {
@@ -164,19 +176,28 @@ const PdfWithTextLayer: React.FC<PdfWithTextLayerProps> = ({ url, label, emailVe
                 meter?.observe(pagina);
             }
 
+            container.style.minHeight = '';
             schaalTekstlagen();
         };
 
         // Zonder dit mislukt het tekenen in stilte en zie je alleen een lege
-        // plek waar het cv hoort.
+        // plek waar het cv hoort. Het oude cv gaat er dan ook uit: bij een
+        // taalwissel die strandt bleef anders het vorige cv staan onder een
+        // downloadknop en een aria-label van de andere taal.
         laadEnTeken().catch((fout) => {
             if (geannuleerd) return;
+            container.innerHTML = '';
+            container.style.minHeight = '';
             console.error('Het cv kon niet getekend worden:', fout);
         });
 
         return () => {
             geannuleerd = true;
             meter?.disconnect();
+            // Stopt de worker en gooit het geparste document weg. De lopende
+            // render verwerpt daardoor; dat is precies wat we willen en de
+            // catch hierboven zwijgt erover omdat `geannuleerd` al staat.
+            taak?.destroy().catch(() => undefined);
         };
     }, [url, emailVervanging]);
 
