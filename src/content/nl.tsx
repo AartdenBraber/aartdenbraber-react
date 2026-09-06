@@ -52,6 +52,7 @@ export const nl: SiteContent = {
     rest: ' CV als PDF',
     sectionLabel: 'Het cv van Aart den Braber, pagina voor pagina',
     emailVerborgen: '(e-mailadres staat in de pdf)',
+    zoomHint: 'Knijp om te vergroten',
   },
   nav: {
     skipToContent: 'Naar de inhoud',

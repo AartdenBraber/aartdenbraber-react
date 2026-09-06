@@ -1,6 +1,7 @@
 import React from 'react';
 import './CVDisplay.scss';
 import PdfWithTextLayer from '../../utils/PdfWithTextLayer';
+import PinchHint from '../PinchHint/PinchHint';
 import { useLanguage } from '../../i18n/LanguageContext';
 
 /**
@@ -19,6 +20,8 @@ const CVDisplay: React.FC = () => {
 
     return (
         <section className="page-content showcase" id="portfolio" aria-label={t.cv.sectionLabel}>
+            <PinchHint />
+
             {/* Het vergroten laten we aan de browser. Hier zat een eigen
                 knijpimplementatie omheen die de zoom van de browser uitzette en
                 op 2,4x dichtging. Die sprong bij het knijpen ook naar de

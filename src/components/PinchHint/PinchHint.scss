@@ -1,0 +1,64 @@
+/*--------------------------------------------------------------
+# De eenmalige aanwijzing dat het cv te vergroten is
+--------------------------------------------------------------*/
+.pinch-hint {
+  position: fixed;
+
+  /* Onder de balk die na de hero verschijnt, zodat ze elkaar niet overlappen. */
+  top: calc(57px + 14px + env(safe-area-inset-top, 0px));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 90;
+
+  /* Het is een mededeling en geen knop: vingers gaan er dwars doorheen naar het
+     cv eronder. */
+  pointer-events: none;
+
+  animation: hint-binnen 0.35s ease-out;
+}
+
+.pinch-hint__pil {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55em;
+  padding: 9px 16px;
+  border-radius: 999px;
+
+  background: rgba(38, 50, 56, 0.92);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.pinch-hint__icoon {
+  flex: none;
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@keyframes hint-binnen {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pinch-hint {
+    animation: none;
+  }
+}
