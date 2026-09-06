@@ -73,8 +73,12 @@ je het tabblad naar voren haalt. Dat is geen fout in de site.
 ## Hosting
 
 De server meldt zich als Apache. Onbekende paden krijgen daar `index.html`
-terug, waardoor `/en` werkt. De rewrite die dat regelt staat in
-`public/.htaccess` en gaat met de build mee.
+terug, waardoor de app op elk pad opstart. `/en` heeft daarnaast een eigen
+regel: dat adres krijgt `en.html`, hetzelfde document met een Engelse titel,
+omschrijving, canonical en `lang`. Dat bestand komt na elke build uit
+`scripts/taalpaginas.js`. Wie geen javascript draait, zoals het deelvenster van
+LinkedIn, kreeg daar anders de Nederlandse tekst. De rewrites staan in
+`public/.htaccess` en dat bestand gaat met de build mee.
 
 Uitrollen gaat via `.github/workflows/deploy.yml`: bij elke push naar `main`
 bouwt en test GitHub de site en spiegelt die met `lftp` over FTPS naar de
@@ -135,13 +139,14 @@ vernieuwd worden zonder dat hier iets hoeft te veranderen.
 De site mag nooit naar bestanden wijzen die er nog niet staan, en de uitrol mag
 niets weggooien dat niet uit deze repo komt. Vandaar drie fasen.
 
-1. Alles behalve `index.html` en `.htaccess` gaat omhoog, zonder iets te
-   verwijderen. De nieuwe bundels komen naast de oude te staan en de site
-   draait ondertussen door op de oude `index.html`.
-2. `index.html` en `.htaccess` gaan omhoog onder een tijdelijke naam en worden
-   daarna hernoemd. Hernoemen binnen een map is een enkele handeling op het
-   bestandssysteem, dus niemand krijgt een half geschreven bestand te zien.
-   Hier klapt de site om.
+1. Alles behalve de toegangsdocumenten (`index.html`, `en.html`) en
+   `.htaccess` gaat omhoog, zonder iets te verwijderen. De nieuwe bundels komen
+   naast de oude te staan en de site draait ondertussen door op de oude
+   documenten.
+2. De toegangsdocumenten en `.htaccess` gaan omhoog onder een tijdelijke naam
+   en worden daarna hernoemd. Hernoemen binnen een map is een enkele handeling
+   op het bestandssysteem, dus niemand krijgt een half geschreven bestand te
+   zien. Hier klapt de site om.
 3. Opruimen gebeurt **alleen in `static/`**.
 
 Struikelt fase 1 of 2, dan staat de oude site er nog compleet bij en is er
@@ -151,7 +156,7 @@ Echt blauw-groen is het niet. Wie de pagina vlak voor de omschakeling laadde
 en daarna pas een lui geladen chunk opvraagt, kan die net opgeruimd zien zijn.
 En terugrollen gaat niet met een schakelaar, maar door de vorige commit
 opnieuw uit te rollen. Wat je wel hebt: op geen enkel moment wijst de live
-`index.html` naar bundels die er niet zijn.
+`index.html` of `en.html` naar bundels die er niet zijn.
 
 ### Waarom er alleen in static/ wordt opgeruimd
 
