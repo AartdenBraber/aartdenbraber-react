@@ -10,8 +10,15 @@ RewriteBase /
 RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
 RewriteRule ^ https://%1%{REQUEST_URI} [R=301,L]
 
+# /en krijgt zijn eigen html met de Engelse titel, omschrijving en canonical,
+# en met lang="en". Het is dezelfde app; dit is alleen de kop van het document.
+# Wie geen javascript draait, zoals het deelvenster van LinkedIn, zag daar
+# anders de Nederlandse tekst. Deze regel moet boven de fallback hieronder
+# staan, anders vangt die hem eerder af. scripts/maak-en-pagina.js zet het
+# bestand bij elke build klaar.
+RewriteRule ^en/?$ /en.html [L]
+
 # De kern: alles wat geen bestaand bestand of map is, krijgt index.html terug.
-# Daarom werkt /en zonder dat daar iets voor is ingericht.
 RewriteRule ^index\.html$ - [L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d

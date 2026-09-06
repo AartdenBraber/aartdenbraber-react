@@ -8,6 +8,11 @@
     <title>Aart den Braber - developer</title>
     <meta name="description" content="Freelance developer uit Nederland. Backend, frontend, test en UX." />
 
+    <!-- max-image-preview:large laat een zoekmachine de hero als groot beeld
+         tonen in plaats van als duimnagel. De rest is de standaard, maar dan
+         opgeschreven. -->
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+
     <!-- De taal hangt aan het adres: / is Nederlands, /en is Engels. Deze twee
          regels vertellen een zoekmachine welke twee dat zijn. De canonical
          wordt door de taalcontext bijgewerkt zodra er gewisseld wordt. -->
@@ -35,10 +40,62 @@
 
     <!-- De achtergrond van de hero is het eerste wat je ziet, dus die halen we
          vooruit in plaats van te wachten tot het javascript geladen is. -->
-    <link rel="preload" as="image" href="%PUBLIC_URL%/images/top-bg.jpg" />
+    <link rel="preload" as="image" href="%PUBLIC_URL%/images/top-bg.jpg" fetchpriority="high" />
+
+    <!-- Wie ben je, in een vorm die een zoekmachine kan lezen. Alles hier staat
+         ook ergens op de site of in het cv; er is niets bij verzonnen, en het
+         e-mailadres staat er bewust niet in. -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "https://aartdenbraber.nl/#aart",
+            "name": "Aart den Braber",
+            "url": "https://aartdenbraber.nl/",
+            "jobTitle": "Freelance developer",
+            "image": "https://aartdenbraber.nl/images/top-bg.jpg",
+            "address": { "@type": "PostalAddress", "addressCountry": "NL" },
+            "sameAs": ["https://www.linkedin.com/in/aartdenbraber"],
+            "knowsAbout": [
+              "Frontend development",
+              "Backend development",
+              "Angular",
+              "TypeScript",
+              "Node.js",
+              "Java",
+              "UX",
+              "Accessibility",
+              "Testing"
+            ]
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://aartdenbraber.nl/#site",
+            "url": "https://aartdenbraber.nl/",
+            "name": "Aart den Braber",
+            "inLanguage": ["nl-NL", "en"],
+            "about": { "@id": "https://aartdenbraber.nl/#aart" },
+            "publisher": { "@id": "https://aartdenbraber.nl/#aart" }
+          }
+        ]
+      }
+    </script>
   </head>
   <body>
-    <noscript>Je hebt JavaScript nodig om deze site te bekijken.</noscript>
+    <!-- Zonder javascript blijft de pagina leeg, en dat geldt ook voor de
+         crawlers die geen javascript draaien. Dit is het minimum dat er dan
+         nog staat. -->
+    <noscript>
+      <h1>Aart den Braber</h1>
+      <p>Freelance developer uit Nederland. Backend, frontend, test en UX.</p>
+      <p>
+        Mijn focus ligt op het bouwen van duurzame applicaties: technisch sterk,
+        gebruiksvriendelijk en toekomstbestendig.
+      </p>
+      <p>Deze site heeft JavaScript nodig om het cv te tonen.</p>
+    </noscript>
     <div id="root"></div>
   </body>
 </html>

@@ -19,6 +19,16 @@ thema is opgeruimd.
 /*--------------------------------------------------------------
 # Reset
 --------------------------------------------------------------*/
+/* De reset hieronder komt uit het oude thema en kent dit nog niet: die is van
+   voor de tijd dat border-box normaal werd. Bootstrap zette het voor de hele
+   pagina en daar rekende de rest van de opmaak op; sinds Bootstrap eruit is,
+   moet het hier staan. Zonder dit tellen padding en rand niet meer mee in een
+   opgegeven breedte en schuift de hele site. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
 html,
 body,
 div,
@@ -153,6 +163,15 @@ body {
   overflow-x: hidden;
   overflow-x: clip;
 }
+/* Het hidden-attribuut hoort te winnen van wat een onderdeel zelf op display
+   zet. De browser heeft daar een regel voor, maar die van een stylesheet wint
+   daar altijd van: `.sticky-bar { display: flex }` liet de balk dus gewoon
+   staan. Bootstrap had deze regel en dekte het toe; sinds die eruit is moet hij
+   hier staan. */
+[hidden] {
+  display: none !important;
+}
+
 /* Stond op `*:focus`, dus ook bij een muisklik. `:focus-visible` laat de ring
    zien wanneer hij nodig is, en een streepje van 1px was met een donkere foto
    erachter nauwelijks te vinden. */
@@ -178,6 +197,22 @@ h5,
 h6 {
   font-family: var(--font-heading);
   line-height: 1em;
+
+  /* De browser zet koppen op 700. Bootstrap zette ze op 500 en zo zag de site
+     eruit; Literata heeft een gewichtsas, dus dat scheelt zichtbaar. */
+  font-weight: 500;
+}
+
+/* Een knop of een invoerveld erft de letter van de pagina niet vanzelf: die
+   krijgt de systeemletter van de browser. De taalknoppen stonden daardoor in
+   Arial 13px in plaats van in Raleway. Ook dit kwam uit de reset van Bootstrap. */
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  letter-spacing: inherit;
+  margin: 0;
 }
 h1,
 h2,

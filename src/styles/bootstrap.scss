@@ -1,8 +1,0 @@
-// Override default variables before the import
-$body-bg: #ffffff;
-// Bootstrap zet hiermee de letter op body. Zonder gelijktrekken vecht dat met
-// de regel in global.scss en beslist de volgorde van de bundel wie wint.
-$font-family-base: var(--font-body);
-
-// Import Bootstrap and its default variables
-@import "~bootstrap/scss/bootstrap.scss";

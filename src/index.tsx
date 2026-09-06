@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './styles/bootstrap.scss';
 import './styles/global.scss';
 // Literata via de opsz-as, zodat een kop van 67px en een kaarttitel van 20px
 // niet dezelfde tekening opgeblazen krijgen. De lopende tekst blijft Raleway,
