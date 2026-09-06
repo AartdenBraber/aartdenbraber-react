@@ -22,6 +22,13 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   );
 
   const setLanguage = useCallback((next: Language) => {
+    // Een tik op de taal die al aanstaat hoort geen geschiedenisregel op te
+    // leveren. De knoppen zijn niet uitgeschakeld en staan sinds de plakbalk
+    // twee keer op de pagina, dus dat gebeurt makkelijk; daarna leek de
+    // terugknop een paar klikken lang niets te doen. Het adres is hier de bron
+    // van waarheid, net als bij het laden.
+    if (languageFromPath(window.location.pathname) === next) return;
+
     setLanguageState(next);
 
     const { search, hash } = window.location;

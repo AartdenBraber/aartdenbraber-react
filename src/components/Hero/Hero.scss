@@ -284,6 +284,12 @@
    allebei een maat kleiner worden. Gemeten liep de naam op 360px 23px over de
    knoppen heen en op 375px 8px. */
 @media all and (max-width: 420px) {
+  /* Elke pixel telt hier: op 375px was de header precies zo breed als het
+     scherm, dus zonder deze marge liep hij eroverheen zodra een terugvalletter
+     ingezet werd. */
+  .site-header {
+    gap: 0.5rem;
+  }
   .logo {
     height: 2.5em;
     width: 2.5em;
@@ -293,6 +299,21 @@
   }
   .site-description {
     font-size: 0.7em;
+  }
+}
+
+/* Onder 360px past de rij niet meer op één regel: gemeten was de header 369px
+   breed in een venster van 320 en 360, dus de taalwisselaar viel er naast en werd
+   door de `overflow: hidden` van de hero afgesneden. Dan is de knop niet meer
+   te raken. De naam mag hier afbreken; de header wordt een regel hoger en de
+   wisselaar blijft staan waar hij hoort. */
+@media all and (max-width: 374px) {
+  .site-branding {
+    white-space: normal;
+  }
+  .site-title {
+    font-size: 1.25em;
+    line-height: 1.1em;
   }
 }
 

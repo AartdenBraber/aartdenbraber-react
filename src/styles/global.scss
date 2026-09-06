@@ -160,7 +160,12 @@ body {
   -ms-text-size-adjust: 100%;
   line-height: 100%;
   letter-spacing: 1px;
-  overflow-x: hidden;
+
+  /* Hier staat bewust geen `overflow-x: hidden` als terugval. In een browser
+     die `clip` niet kent, rekent die de andere as om naar `auto` en is body een
+     scrollcontainer; dan zoekt de sticky downloadknop bij het cv die container,
+     vindt body, en body scrolt nooit. Het afsnijden gebeurt al op html
+     hierboven, en die propageert naar het venster. */
   overflow-x: clip;
 }
 /* Het hidden-attribuut hoort te winnen van wat een onderdeel zelf op display

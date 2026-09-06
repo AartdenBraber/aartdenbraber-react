@@ -57,6 +57,7 @@ export const nl: SiteContent = {
   nav: {
     skipToContent: 'Naar de inhoud',
     backToTop: 'Terug naar boven',
+    noscript: 'Deze site heeft JavaScript nodig om het cv te tonen.',
   },
   languageSwitcher: {
     label: 'Taal',

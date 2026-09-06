@@ -7,6 +7,15 @@ section.showcase {
   /* De knop in de hero wijst hierheen. De marge houdt rekening met de balk die
      na de hero bovenin verschijnt; anders landt de eerste cv-pagina eronder. */
   scroll-margin-top: 4.5rem;
+
+  /* Zolang het pdf nog binnenkomt is dit blok alleen de knopstrook van tachtig
+     pixels. Wie dan op "Bekijk mijn cv" tikt, springt naar een sectie die
+     onderaan het document plakt en landt op de intro: gemeten bleef de
+     bovenkant van het cv 860px onder de vouw hangen, ook nadat de pagina's er
+     waren. Met een scherm hoogte staat de sprong meteen goed en groeit de rest
+     eronder aan. */
+  min-height: 100vh;
+  min-height: 100svh;
 }
 
 /* Elke pagina van het pdf: de tekening, en daar precies overheen de tekst. */
@@ -29,6 +38,13 @@ section.showcase {
   inset: 0;
   overflow: hidden;
   line-height: 1;
+
+  /* De body zet `letter-spacing: 1px` en dat erfde hierheen. pdf.js rekent de
+     breedte van elke regel uit met measureText, en dat kent die afstand niet:
+     de onzichtbare spans werden daardoor gemeten 15 tot 38 procent breder dan
+     de letters in de tekening eronder. Selecteren, dubbeltikken op een woord en
+     ctrl+F markeerden dus naast de tekst. */
+  letter-spacing: normal;
   text-align: initial;
   text-size-adjust: none;
   -webkit-text-size-adjust: none;

@@ -7,7 +7,13 @@ import App from './App';
 // in de plaats.
 jest.mock('pdfjs-dist', () => ({
   GlobalWorkerOptions: { workerSrc: '' },
-  getDocument: () => ({ promise: Promise.resolve({ numPages: 0, getPage: jest.fn() }) }),
+  getDocument: () => ({
+    promise: Promise.resolve({ numPages: 0, getPage: jest.fn() }),
+    // De echte laadtaak heeft deze ook, en de component roept hem aan bij het
+    // opruimen om de worker te stoppen. Stond hij hier niet, dan dekte de test
+    // dat pad niet af.
+    destroy: jest.fn(() => Promise.resolve()),
+  }),
 }));
 
 const ga = (pad: string) => window.history.pushState({}, '', pad);

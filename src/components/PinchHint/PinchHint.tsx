@@ -27,24 +27,50 @@ const PinchHint: React.FC = () => {
         const cv = document.querySelector('#portfolio');
         if (!cv) return;
 
-        const waarnemer = new IntersectionObserver(
-            ([item]) => {
-                if (!item.isIntersecting) return;
-                setFase('aan');
-                // Eén keer is genoeg; hij hoeft niet terug te komen bij elke
-                // passage langs het cv.
-                waarnemer.disconnect();
-            },
-            // Geen drempel op een deel van het blok: het cv is bijna
-            // twintigduizend pixels hoog, dus daar past nooit vijf procent van
-            // in een telefoonscherm en dan vuurt de waarnemer alleen zolang de
-            // pagina's nog niet getekend zijn. Deze marge kijkt naar een strook
-            // midden in beeld: de aanwijzing komt zodra het cv daar staat.
-            { threshold: 0, rootMargin: '-45% 0px -45% 0px' },
-        );
-        waarnemer.observe(cv);
+        let waarnemer: IntersectionObserver | null = null;
+        let opbouw: MutationObserver | null = null;
 
-        return () => waarnemer.disconnect();
+        const kijkOfHetInBeeldStaat = () => {
+            waarnemer = new IntersectionObserver(
+                (meldingen) => {
+                    // De laatste melding en niet de eerste; zie StickyBar.
+                    if (!meldingen[meldingen.length - 1].isIntersecting) return;
+                    setFase('aan');
+                    // Eén keer is genoeg; hij hoeft niet terug te komen bij elke
+                    // passage langs het cv.
+                    waarnemer?.disconnect();
+                },
+                // Geen drempel op een deel van het blok: het cv is bijna
+                // twintigduizend pixels hoog, dus daar past nooit vijf procent
+                // van in een telefoonscherm. Deze marge kijkt naar een strook
+                // midden in beeld: de aanwijzing komt zodra het cv daar staat.
+                { threshold: 0, rootMargin: '-45% 0px -45% 0px' },
+            );
+            waarnemer.observe(cv);
+        };
+
+        // Er moet eerst iets te vergroten zijn. Sinds het cv-blok een
+        // minimumhoogte van een scherm heeft, staat het er namelijk al voordat
+        // de pagina's getekend zijn: zonder deze wachtstap ging de aanwijzing
+        // af boven een lege donkere vlakte en was hij weer verdwenen tegen de
+        // tijd dat er een cv stond.
+        const heeftPaginas = () => cv.querySelector('.pdf-page') !== null;
+
+        if (heeftPaginas() || typeof MutationObserver === 'undefined') {
+            kijkOfHetInBeeldStaat();
+        } else {
+            opbouw = new MutationObserver(() => {
+                if (!heeftPaginas()) return;
+                opbouw?.disconnect();
+                kijkOfHetInBeeldStaat();
+            });
+            opbouw.observe(cv, { childList: true, subtree: true });
+        }
+
+        return () => {
+            waarnemer?.disconnect();
+            opbouw?.disconnect();
+        };
     }, []);
 
     useEffect(() => {
