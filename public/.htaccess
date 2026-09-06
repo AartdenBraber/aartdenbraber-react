@@ -10,13 +10,28 @@ RewriteBase /
 RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
 RewriteRule ^ https://%1%{REQUEST_URI} [R=301,L]
 
+# en.html is het bestand achter /en en hoort zelf geen adres te zijn. De app
+# leest de taal uit het pad, en `/en.html` telt daar als Nederlands: de kop zou
+# dan Engels zijn en de inhoud Nederlands. Wie er toch op uitkomt gaat door naar
+# /en.
+#
+# De voorwaarde kijkt naar de oorspronkelijke aanvraagregel en niet naar het pad.
+# Zonder dat zou de interne herschrijving hieronder deze regel opnieuw raken, en
+# dan stuurt /en naar /en.html naar /en, eindeloos.
+RewriteCond %{THE_REQUEST} \s/+en\.html[\s?] [NC]
+RewriteRule ^en\.html$ /en [R=301,L]
+
 # /en krijgt zijn eigen html met de Engelse titel, omschrijving en canonical,
 # en met lang="en". Het is dezelfde app; dit is alleen de kop van het document.
 # Wie geen javascript draait, zoals het deelvenster van LinkedIn, zag daar
-# anders de Nederlandse tekst. Deze regel moet boven de fallback hieronder
-# staan, anders vangt die hem eerder af. scripts/maak-en-pagina.js zet het
-# bestand bij elke build klaar.
-RewriteRule ^en/?$ /en.html [L]
+# anders de Nederlandse tekst. scripts/taalpaginas.js zet het bestand bij elke
+# build klaar.
+#
+# Hoofdletterongevoelig en inclusief subpaden, want src/i18n/routes.ts leest
+# `/EN` en `/en/wat-dan-ook` ook als Engels. Stond dat hier strenger, dan kreeg
+# zo'n adres de Nederlandse kop met een Engelse pagina eronder. Deze regel moet
+# boven de fallback hieronder staan, anders vangt die hem eerder af.
+RewriteRule ^en(/.*)?$ /en.html [NC,L]
 
 # De kern: alles wat geen bestaand bestand of map is, krijgt index.html terug.
 RewriteRule ^index\.html$ - [L]
@@ -45,6 +60,16 @@ RewriteRule . /index.html [L]
   # regel bewaart de browser hem heuristisch en wijst /en na een uitrol naar
   # bundels die er niet meer zijn.
   <FilesMatch "^(index|en)\.html$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+
+  # pdf.worker.min.js heeft geen hash in zijn naam en viel daardoor buiten alle
+  # regels hierboven, dus bewaarde de browser hem op gevoel. pdf.js vergelijkt de
+  # versie van de worker met die van de bundel en gooit een fout als ze
+  # verschillen: na een versiebump zou een terugkerende bezoeker dan een leeg
+  # cv-blok zien. Hij moet dus net als de toegangsdocumenten elke keer opnieuw
+  # gecontroleerd worden.
+  <FilesMatch "^pdf\.worker\.min\.js$">
     Header set Cache-Control "no-cache"
   </FilesMatch>
 

@@ -29,6 +29,13 @@ section.showcase {
   inset: 0;
   overflow: hidden;
   line-height: 1;
+
+  /* De body zet `letter-spacing: 1px` en dat erfde hierheen. pdf.js rekent de
+     breedte van elke regel uit met measureText, en dat kent die afstand niet:
+     de onzichtbare spans werden daardoor gemeten 15 tot 38 procent breder dan
+     de letters in de tekening eronder. Selecteren, dubbeltikken op een woord en
+     ctrl+F markeerden dus naast de tekst. */
+  letter-spacing: normal;
   text-align: initial;
   text-size-adjust: none;
   -webkit-text-size-adjust: none;
