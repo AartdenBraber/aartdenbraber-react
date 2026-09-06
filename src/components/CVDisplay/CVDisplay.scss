@@ -77,10 +77,14 @@ section.showcase {
   display: inline-block;
   border: 2px solid #ed5253;
 
-  /* De knop zweeft over witte cv-pagina's. Rood op wit haalt 3,5:1 en dat is te
-     weinig voor tekst van 18px. Hij draagt nu de kleur van de sectie waar hij
-     bij hoort, met de rode rand als accent: wit op #263238 is 13:1. */
-  background: rgba(38, 50, 56, 0.92);
+  /* Matglas in de kleur van de sectie waar de knop bij hoort. Het cv schuift
+     er zichtbaar onderdoor, dus je blijft zien dat hij ergens boven zweeft.
+     Rood op wit haalde 3,5:1 en dat is te weinig voor tekst van 18px; wit op
+     dit glas haalt boven een witte pagina 5,9:1 en boven de donkere sectie
+     13:1. Onder ongeveer 0,7 dekking zakt het door de 4,5:1 heen. */
+  background: rgba(38, 50, 56, 0.75);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
   color: #fff;
   text-decoration: none;
 
@@ -98,6 +102,12 @@ section.showcase {
    de enige echte knop van de pagina aankomt, zette zo een halve minuut
    schokkende beweging in gang waarbij het label onder zijn focusring vandaan
    liep. Met de muis kun je ervoor kiezen; met het toetsenbord niet. */
+.big-bad-button a:hover,
+.big-bad-button a:focus-visible {
+  background: rgba(38, 50, 56, 0.9);
+  border-color: #ff7071;
+}
+
 .big-bad-button a:hover .little-span {
   animation: its-hard-being-a-button 30s ease;
 }
@@ -259,7 +269,6 @@ section.showcase {
 
 .pdf-download-button-container {
   display: inline-block;
-  backdrop-filter: blur(5px);
 
   /* De doos begint gecentreerd en mag op een telefoon niet breder worden dan
      het scherm; anders brak het label over twee regels. */
