@@ -169,6 +169,34 @@ php scripts/test-contactformulier.php
 
 De workflow draait ze voor elke uitrol.
 
+## Beheer vanaf je eigen machine
+
+SSH staat uit op deze hosting, maar FTP met expliciete TLS werkt. Voor losse
+klussen op de server staan er twee scripts klaar, opgezet zoals in de repo van
+warmonbikes:
+
+```bash
+python scripts/server_lijst.py --proef
+python scripts/server_lijst.py public_html contactformulier
+python scripts/server_verplaats.py <van> <naar> --echt
+```
+
+`--proef` controleert alleen de verbinding en het certificaat en logt niet in.
+`server_lijst.py` toont namen en groottes en haalt nooit de inhoud van een
+bestand op. `server_verplaats.py` hernoemt op de server zelf, overschrijft
+niets en doet zonder `--echt` alleen een proefrit.
+
+De gegevens staan in `.env.server`, dat niet in git komt; `.env.server.example`
+laat zien wat erin hoort. Niet in `.env`: dat bestand staat wel in git, en de
+repo is openbaar. Gebruik er een eigen FTP-account voor en niet dat van de uitrol.
+Kies in DirectAdmin als map `/home/aartdenbraber/domains/aartdenbraber.nl`, één
+niveau boven `public_html`. Alleen dan kan het account ook bij de config van het
+contactformulier.
+
+ProFTPD stuurt de tussenliggende CA niet mee, dus ook deze scripts verifiëren
+het certificaat met `deploy/PerfectSSL.pem` erbij. Lukt de TLS-handshake niet,
+dan stoppen ze voordat het wachtwoord verstuurd is.
+
 ## Hosting
 
 De server meldt zich als Apache. Onbekende paden krijgen daar `index.html`
