@@ -77,7 +77,6 @@ export const nl: SiteContent = {
     versturen: 'Versturen',
     bezig: 'Bezig met versturen…',
     privacy: 'Ik gebruik je gegevens alleen om op dit bericht te reageren.',
-    turnstile: 'Cloudflare Turnstile controleert of het bericht niet van een bot komt.',
     verzonden: {
       titel: 'Je bericht is verstuurd.',
       tekst: 'Bedankt. Ik reageer op het e-mailadres dat je hebt ingevuld.',

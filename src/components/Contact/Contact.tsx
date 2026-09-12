@@ -280,10 +280,7 @@ const Formulier: React.FC = () => {
                 <button type="submit" className="contact-knop" aria-disabled={fase === 'versturen'}>
                     {fase === 'versturen' ? tekst.bezig : tekst.versturen}
                 </button>
-                <p className="contact-privacy">
-                    {tekst.privacy}
-                    {turnstileSitekey ? ` ${tekst.turnstile}` : ''}
-                </p>
+                <p className="contact-privacy">{tekst.privacy}</p>
             </div>
         </form>
     );

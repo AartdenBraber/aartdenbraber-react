@@ -66,8 +66,6 @@ export interface SiteContent {
     versturen: string;
     bezig: string;
     privacy: string;
-    /** Komt achter de privacyregel, alleen als Turnstile aanstaat. */
-    turnstile: string;
     verzonden: {
       titel: string;
       tekst: string;

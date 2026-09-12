@@ -77,7 +77,6 @@ export const en: SiteContent = {
     versturen: 'Send',
     bezig: 'Sending…',
     privacy: 'I only use your details to reply to this message.',
-    turnstile: "Cloudflare Turnstile checks that the message isn't coming from a bot.",
     verzonden: {
       titel: 'Your message has been sent.',
       tekst: "Thanks. I'll reply to the email address you entered.",
