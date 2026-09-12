@@ -4,6 +4,8 @@ import './Contact.scss';
 import { SiteContent } from '../../content';
 import { useRevealOnView } from '../../hooks/useRevealOnView';
 import { useLanguage } from '../../i18n/LanguageContext';
+import FocusSpotlight from '../FocusSpotlight/FocusSpotlight';
+import WordReveal from '../WordReveal/WordReveal';
 import { volgMuisLicht } from '../../utils/zoeklicht';
 
 import { Antwoord, ONDERWERPEN, Onderwerp, Veld, verstuurBericht } from './contactApi';
@@ -21,7 +23,7 @@ const TE_ONTHULLEN = '.contact-afsluiter-kop, .contact-afsluiter-tekst, .contact
  */
 const TURNSTILE_WACHTTIJD_MS = 15000;
 
-/** Dezelfde foto als in de hero, dus die staat al in de cache; zie .contact-paneel-kop. */
+/** Dezelfde foto als in de hero, dus die staat al in de cache. */
 const HERO_FOTO = '/images/top-bg.jpg';
 
 const VELDEN: Veld[] = ['naam', 'email', 'onderwerp', 'bericht'];
@@ -301,7 +303,7 @@ const Formulier: React.FC = () => {
 const minderBeweging = (): boolean =>
     typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-/** Iets langer dan het wegschuiven in Contact.scss: een vangnet voor als animationend uitblijft. */
+/** Iets langer dan het wegschuiven in Contact.scss: een vangnet voor als transitionend uitblijft. */
 const WEGSCHUIVEN_VANGNET_MS = 650;
 
 /**
@@ -324,6 +326,7 @@ const Paneel: React.FC = () => {
     const vorigeFocus = useRef<HTMLElement | null>(null);
     const drukBegonNaastVenster = useRef(false);
     const stopWegschuiven = useRef<(() => void) | null>(null);
+    const inschuifFrame = useRef<number | null>(null);
 
     useEffect(() => {
         const dialoog = dialoogRef.current;
@@ -340,9 +343,10 @@ const Paneel: React.FC = () => {
         };
 
         if (open) {
-            // Weer geopend terwijl hij nog wegschoof: dan blijft hij gewoon staan.
+            // Weer geopend terwijl hij nog wegschoof: dan schuift hij gewoon terug.
             if (stopWegschuiven.current) {
                 stopWegschuiven.current();
+                dialoog.setAttribute('data-binnen', '');
                 return;
             }
             if (staatOpen) return;
@@ -350,21 +354,41 @@ const Paneel: React.FC = () => {
             vorigeFocus.current =
                 bron.current ?? (document.activeElement instanceof HTMLElement ? document.activeElement : null);
 
-            // De breedte van de schuifbalk, gemeten voordat die verdwijnt als de
-            // pagina op slot gaat; zie Contact.scss.
-            const schuifbalk = Math.max(0, window.innerWidth - document.documentElement.clientWidth);
-            document.documentElement.style.setProperty('--contact-schuifbalk', `${schuifbalk}px`);
-
             if (typeof dialoog.showModal === 'function') dialoog.showModal();
             else dialoog.setAttribute('open', '');
 
             // De sluitknop en niet het eerste veld: op een telefoon zou dat
-            // meteen het toetsenbord over de helft van het paneel leggen.
-            sluitknopRef.current?.focus();
+            // meteen het toetsenbord over de helft van het paneel leggen. Zonder
+            // scrollen, want het venster staat op dit moment nog buiten beeld.
+            sluitknopRef.current?.focus({ preventScroll: true });
+
+            if (typeof dialoog.showModal !== 'function' || minderBeweging()) {
+                dialoog.setAttribute('data-binnen', '');
+                return;
+            }
+
+            // Inschuiven is een transitie die twee frames na showModal begint, zodat
+            // de beginstand, buiten beeld, eerst echt getekend is. Waarom de dialoog
+            // daarbij niet mag scrollen, staat bij .contact-paneel in Contact.scss.
+            inschuifFrame.current = requestAnimationFrame(() => {
+                inschuifFrame.current = requestAnimationFrame(() => {
+                    inschuifFrame.current = null;
+                    dialoog.setAttribute('data-binnen', '');
+                });
+            });
             return;
         }
 
+        if (inschuifFrame.current !== null) {
+            cancelAnimationFrame(inschuifFrame.current);
+            inschuifFrame.current = null;
+        }
+
         if (!staatOpen) {
+            // Door de browser zelf gesloten. De standen gaan eraf, anders schuift
+            // het venster bij de volgende keer niet meer in.
+            dialoog.removeAttribute('data-binnen');
+            dialoog.removeAttribute('data-sluit');
             herstelFocus();
             return;
         }
@@ -377,25 +401,26 @@ const Paneel: React.FC = () => {
             herstelFocus();
         };
 
-        if (typeof dialoog.showModal !== 'function' || minderBeweging()) {
+        if (typeof dialoog.showModal !== 'function' || minderBeweging() || !dialoog.hasAttribute('data-binnen')) {
+            dialoog.removeAttribute('data-binnen');
             dicht();
             return;
         }
 
-        // Eerst wegschuiven, dan pas dicht. De dialoog blijft zo lang open, dus de
-        // pagina eronder blijft ook zo lang op slot en springt niet.
+        // Eerst terug naar rechts, dan pas dicht.
         const venster = vensterRef.current;
-        const opEinde = (event: AnimationEvent) => {
-            if (event.target === venster) dicht();
+        const opEinde = (event: TransitionEvent) => {
+            if (event.target === venster && event.propertyName === 'transform') dicht();
         };
         const vangnet = window.setTimeout(dicht, WEGSCHUIVEN_VANGNET_MS);
 
-        venster?.addEventListener('animationend', opEinde);
+        venster?.addEventListener('transitionend', opEinde);
         dialoog.setAttribute('data-sluit', '');
+        dialoog.removeAttribute('data-binnen');
 
         stopWegschuiven.current = () => {
             window.clearTimeout(vangnet);
-            venster?.removeEventListener('animationend', opEinde);
+            venster?.removeEventListener('transitionend', opEinde);
             dialoog.removeAttribute('data-sluit');
             stopWegschuiven.current = null;
         };
@@ -405,7 +430,11 @@ const Paneel: React.FC = () => {
     // vangnet daarna niet alsnog afgaan.
     useEffect(() => {
         const wegschuiven = stopWegschuiven;
-        return () => wegschuiven.current?.();
+        const frame = inschuifFrame;
+        return () => {
+            wegschuiven.current?.();
+            if (frame.current !== null) cancelAnimationFrame(frame.current);
+        };
     }, []);
 
     // Escape: de browser zou de dialoog meteen weghalen. Hier schuift hij weg,
@@ -448,17 +477,13 @@ const Paneel: React.FC = () => {
             onClick={klik}
         >
             <div ref={vensterRef} className="contact-venster">
-                {/* Bovenin een rustig stukje hero: dezelfde wazige foto, met de kop
-                    tussen de dunne streepjes erboven en eronder. Het enige dat hier
-                    beweegt is het venster zelf. */}
-                <div
-                    className="contact-paneel-kop"
-                    style={{ '--kop-foto': `url(${HERO_FOTO})` } as React.CSSProperties}
-                >
+                {/* Bovenin een stukje hero: dezelfde wazige foto, waarin het
+                    zoeklicht met de muis meegaat, en de kop die woord voor woord
+                    binnenkomt tussen de dunne streepjes erboven en eronder. */}
+                <div className="contact-paneel-kop">
+                    <FocusSpotlight image={HERO_FOTO} />
                     <div className="contact-paneel-kop-inhoud">
-                        <h2 id="contact-kop" className="contact-kop">
-                            {tekst.titel}
-                        </h2>
+                        <WordReveal as="h2" id="contact-kop" className="contact-kop" text={tekst.titel} delay={180} />
                     </div>
                     <button
                         ref={sluitknopRef}

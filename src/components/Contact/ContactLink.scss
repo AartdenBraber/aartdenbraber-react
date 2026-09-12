@@ -85,7 +85,7 @@
   transition: border-color 0.3s ease;
 
   @include zoeklicht-knop(0.16);
-  @include zoeklicht-pijl-door('.contact-link-pijl', rechts);
+  @include zoeklicht-pijl-door('.contact-link-pijl');
 
   &:hover,
   &:focus-visible {
@@ -94,7 +94,7 @@
 }
 
 .contact-link-pijl {
-  @include zoeklicht-pijl(rechts);
+  @include zoeklicht-pijl;
 }
 
 @media (prefers-reduced-motion: reduce) {

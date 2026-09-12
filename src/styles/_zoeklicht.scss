@@ -51,12 +51,9 @@
 
 /* Het pijltje van "Bekijk mijn cv" in de hero: een hoek van twee randen. Het
    duwt steeds even de kant op waar de knop je heen brengt, zodat er ook zonder
-   hover iets beweegt. $richting is rechts of omlaag. */
-@mixin zoeklicht-pijl($richting: rechts) {
+   hover iets beweegt. Het wijst naar rechts: de knop brengt je ergens heen. */
+@mixin zoeklicht-pijl {
   $draai: -45deg;
-  @if $richting == omlaag {
-    $draai: 45deg;
-  }
 
   flex: none;
   width: 9px;
@@ -66,9 +63,9 @@
   border-radius: 2px;
   transform: rotate($draai);
   transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-  animation: zoeklicht-duw-#{$richting} 2.4s ease-in-out infinite;
+  animation: zoeklicht-duw 2.4s ease-in-out infinite;
 
-  @keyframes zoeklicht-duw-#{$richting} {
+  @keyframes zoeklicht-duw {
     0%,
     60%,
     100% {
@@ -85,12 +82,9 @@
   }
 }
 
-/* Op de knop: bij hover of focus schiet het pijltje door in zijn richting. */
-@mixin zoeklicht-pijl-door($pijl, $richting: rechts) {
+/* Op de knop: bij hover of focus schiet het pijltje door. */
+@mixin zoeklicht-pijl-door($pijl) {
   $draai: -45deg;
-  @if $richting == omlaag {
-    $draai: 45deg;
-  }
 
   &:hover #{$pijl},
   &:focus-visible #{$pijl} {

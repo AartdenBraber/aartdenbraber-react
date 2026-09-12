@@ -35,7 +35,13 @@
   margin: 0;
   padding: 0;
   border: 0;
-  overflow: hidden;
+  /* clip en niet hidden. Een modale dialoog is voor de browser een scrollvlak,
+     en showModal zet de focus op de sluitknop. Die stond dan nog buiten beeld,
+     dus scrolde de browser de dialoog precies zo ver op als het venster naar
+     rechts stond, en liep die stand mee terug terwijl het inschoof: op het
+     scherm stond het venster daardoor vanaf het eerste beeld stil. Met clip is
+     de dialoog geen scrollvlak meer. */
+  overflow: clip;
   background: transparent;
 
   color: var(--paneel-tekst);
@@ -57,17 +63,26 @@
       16 16,
     pointer;
 
-  /* Een licht waas over de pagina erachter, zoals de foto in de hero. */
+  /* De browser tekent achter een dialoog zijn eigen laag. Die blijft leeg: een
+     transitie daarop werkt niet in elke browser. Het waas is hieronder een
+     gewone laag in de dialoog, die met het venster mee in- en uitfadet. */
   &::backdrop {
-    background: rgba(20, 24, 26, 0.6);
-    backdrop-filter: blur(3px);
+    background: transparent;
   }
 
-  &[open]::backdrop {
-    animation: contact-achtergrond-in 0.42s ease-out;
+  /* Een licht waas over de pagina erachter, zoals de foto in de hero. */
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: rgba(20, 24, 26, 0.6);
+    backdrop-filter: blur(3px);
+    opacity: 0;
+    transition: opacity 0.42s ease-out;
   }
-  &[data-sluit]::backdrop {
-    animation: contact-achtergrond-uit 0.42s ease-in-out forwards;
+  &[data-binnen]::before {
+    opacity: 1;
   }
 }
 
@@ -88,50 +103,22 @@
   overscroll-behavior: contain;
   scrollbar-color: rgba(255, 255, 255, 0.28) transparent;
 
-  /* Erin en eruit even lang en even rustig, zodat je het venster ook echt
-     ziet komen en gaan. Met een steil versnellende curve eruit stond het eerst
-     bijna stil en was het daarna in één keer weg; dat las als verdwijnen. */
-  .contact-paneel[open] & {
-    animation: contact-paneel-in 0.42s cubic-bezier(0.25, 1, 0.5, 1);
-  }
+  /* Buiten beeld tot Contact.tsx data-binnen zet, twee frames nadat de dialoog
+     er staat; zie daar waarom. Erin en eruit even lang en even rustig, zodat je
+     het venster echt ziet komen en gaan. */
+  transform: translateX(100%);
+  transition: transform 0.42s cubic-bezier(0.25, 1, 0.5, 1);
 
-  /* forwards houdt het buiten beeld tot de dialoog echt dicht is; zie
-     Contact.tsx. Deze regel staat na die voor het openen, zodat hij wint. */
+  .contact-paneel[data-binnen] & {
+    transform: none;
+  }
   .contact-paneel[data-sluit] & {
-    animation: contact-paneel-uit 0.42s cubic-bezier(0.45, 0, 0.55, 1) forwards;
+    transition-timing-function: cubic-bezier(0.45, 0, 0.55, 1);
   }
 }
 
-@keyframes contact-paneel-in {
-  from {
-    transform: translateX(100%);
-  }
-}
-@keyframes contact-paneel-uit {
-  to {
-    transform: translateX(100%);
-  }
-}
-@keyframes contact-achtergrond-in {
-  from {
-    opacity: 0;
-  }
-}
-@keyframes contact-achtergrond-uit {
-  to {
-    opacity: 0;
-  }
-}
-
-/* De pagina eronder staat stil zolang het paneel open is, en blijft waar hij
-   was. Met de schuifbalk verdwijnt ook zijn breedte. Contact.tsx meet die vlak
-   voor het openen, en hier komt hij terug als marge; anders schuift alles een
-   stukje op. scrollbar-gutter: stable hield de ruimte ook vrij, maar dan ook
-   naast het paneel: gemeten op 1280px stond het 15px van de rand. */
-html:has(.contact-paneel[open]) {
-  overflow: hidden;
-  padding-right: var(--contact-schuifbalk, 0px);
-}
+/* De pagina eronder gaat niet op slot. Ze blijft scrollbaar, en de schuifbalk
+   blijft staan, zodat er bij openen en sluiten niets verspringt. */
 
 /*--------------------------------------------------------------
 ## De kop: een stukje hero
@@ -144,19 +131,6 @@ html:has(.contact-paneel[open]) {
   color: #fff;
   text-align: center;
 
-  /* De foto van de hero, even wazig als daar, maar stil: geen zoeklicht. De
-     plek komt uit --kop-foto, dat Contact.tsx zet, zodat de build het pad naar
-     public/ niet probeert op te lossen. De foto loopt iets buiten het vak, anders
-     vervaagt de rand van het waas naar wit. */
-  &::before {
-    content: "";
-    position: absolute;
-    inset: -40px;
-    z-index: 0;
-    pointer-events: none;
-    background: var(--kop-foto) center 30% / cover no-repeat;
-    filter: blur(20px);
-  }
 
   /* De foto loopt onderaan over in de grond van het paneel. Zo zijn kop en
      formulier één vlak, en de witte kop blijft leesbaar op de lichtere plekken
@@ -495,7 +469,7 @@ html:has(.contact-paneel[open]) {
   cursor: pointer;
 
   @include zoeklicht-knop(0.32);
-  @include zoeklicht-pijl-door('.contact-knop-pijl', rechts);
+  @include zoeklicht-pijl-door('.contact-knop-pijl');
 
   &[aria-disabled='true'] {
     cursor: progress;
@@ -507,7 +481,7 @@ html:has(.contact-paneel[open]) {
 }
 
 .contact-knop-pijl {
-  @include zoeklicht-pijl(rechts);
+  @include zoeklicht-pijl;
 }
 
 .contact-privacy {
@@ -578,11 +552,9 @@ html:has(.contact-paneel[open]) {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .contact-paneel[open] .contact-venster,
-  .contact-paneel[data-sluit] .contact-venster,
-  .contact-paneel[open]::backdrop,
-  .contact-paneel[data-sluit]::backdrop {
-    animation: none;
+  .contact-venster,
+  .contact-paneel::before {
+    transition: none;
   }
   .contact-invoer,
   .contact-keuze,

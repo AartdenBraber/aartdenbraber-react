@@ -47,7 +47,26 @@ const CVDisplay: React.FC = () => {
                             <span className="action-word">{t.cv.actionWord}</span>
                             {t.cv.rest}
                         </span>
-                        <span className="pdf-download-pijl" aria-hidden="true" />
+                        {/* Een pijl in een bakje: downloaden. Een los pijltje omlaag
+                            leek op dat van "Bekijk mijn cv", en dat scrolt. */}
+                        <svg
+                            className="pdf-download-icoon"
+                            aria-hidden="true"
+                            viewBox="0 0 24 24"
+                            width="20"
+                            height="20"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        >
+                            <g className="pdf-download-pijl">
+                                <path d="M12 4v10.5" />
+                                <path d="m7.5 10 4.5 4.5 4.5-4.5" />
+                            </g>
+                            <path d="M5 19.5h14" />
+                        </svg>
                     </a>
                 </span>
             </div>

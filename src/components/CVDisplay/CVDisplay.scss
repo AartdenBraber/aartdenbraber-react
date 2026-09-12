@@ -99,8 +99,9 @@ section.showcase {
   padding: 10px 0;
 }
 
-/* In de knopfamilie van de site; zie src/styles/_zoeklicht.scss. Het pijltje
-   wijst omlaag, net als in "Bekijk mijn cv": je haalt iets binnen. */
+/* In de knopfamilie van de site; zie src/styles/_zoeklicht.scss. In plaats van
+   het pijltje van de familie een downloadicoon: een los pijltje omlaag leek op
+   dat van "Bekijk mijn cv" in de hero, en dat scrolt de pagina. */
 .big-bad-button a {
   display: inline-flex;
   align-items: center;
@@ -142,11 +143,16 @@ section.showcase {
   transition: border-color 0.3s ease;
 
   @include zoeklicht-knop(0.18);
-  @include zoeklicht-pijl-door('.pdf-download-pijl', omlaag);
 
   &:hover,
   &:focus-visible {
     border-color: #d63c3d;
+  }
+
+  /* Bij hover zakt de pijl een stukje het bakje in. */
+  &:hover .pdf-download-pijl,
+  &:focus-visible .pdf-download-pijl {
+    transform: translateY(2px);
   }
 }
 
@@ -166,12 +172,18 @@ section.showcase {
     0 0 6px rgba(255, 255, 255, 0.9);
 }
 
-/* Het pijltje krijgt dezelfde witte omloop als de letters, anders verdwijnt het
+/* Het icoon krijgt dezelfde witte omloop als de letters, anders verdwijnt het
    boven de donkere strook onder het cv. */
-.pdf-download-pijl {
+.pdf-download-icoon {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  overflow: visible;
   filter: drop-shadow(0 0 1px #fff) drop-shadow(0 0 2px #fff);
+}
 
-  @include zoeklicht-pijl(omlaag);
+.pdf-download-pijl {
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /*--------------------------------------------------------------
@@ -203,7 +215,8 @@ section.showcase {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .big-bad-button a {
+  .big-bad-button a,
+  .pdf-download-pijl {
     transition: none;
   }
 }

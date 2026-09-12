@@ -6,6 +6,9 @@ interface WordRevealProps {
   className?: string;
   /** Milliseconden die het eerste woord wacht op wat ervoor binnenkomt. */
   delay?: number;
+  /** Het element van de kop. Standaard h1, zoals in de hero. */
+  as?: 'h1' | 'h2';
+  id?: string;
 }
 
 /**
@@ -15,8 +18,8 @@ interface WordRevealProps {
  * en zoekmachines lezen een doorlopende regel. Zonder javascript of met
  * beweging uit staat de kop er meteen; zie WordReveal.scss.
  */
-const WordReveal: React.FC<WordRevealProps> = ({ text, className, delay = 0 }) => (
-  <h1 className={className} style={{ '--word-base': `${delay}ms` } as React.CSSProperties}>
+const WordReveal: React.FC<WordRevealProps> = ({ text, className, delay = 0, as: Kop = 'h1', id }) => (
+  <Kop id={id} className={className} style={{ '--word-base': `${delay}ms` } as React.CSSProperties}>
     {text.split(/\s+/).map((woord, index) => (
       <React.Fragment key={`${index}-${woord}`}>
         {index > 0 && ' '}
@@ -27,7 +30,7 @@ const WordReveal: React.FC<WordRevealProps> = ({ text, className, delay = 0 }) =
         </span>
       </React.Fragment>
     ))}
-  </h1>
+  </Kop>
 );
 
 export default WordReveal;
