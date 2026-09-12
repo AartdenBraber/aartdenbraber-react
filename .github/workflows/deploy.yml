@@ -135,12 +135,25 @@ jobs:
           # misging; de laatste regels van dat verloop zeggen dat wel. lftp
           # vervangt het wachtwoord in PASS al door XXXX, en die regel gaat er
           # hier voor de zekerheid ook nog uit.
-          if ! lftp -d -f "$HOME/controle.lftp" 2> "$HOME/controle.err"; then
-            grep -v 'PASS ' "$HOME/controle.err" >&2
-            fout=$(grep -v 'PASS ' "$HOME/controle.err" | grep -E -i 'fatal|error|connect|<---|certificate|ssl|tls|timed out|refused|reset|login' | tail -n 10 | paste -sd' ' | tr -d '[:cntrl:]' | sed 's/%/%25/g' | cut -c1-1500)
-            echo "::error::lftp kon index.html in DEPLOY_PATH niet lezen: ${fout:-geen melding van lftp}. De uitrol is gestopt voordat er iets verwijderd werd."
-            exit 1
-          fi
+          #
+          # Vanaf de runners loopt het verbinden soms even vast. Op 12 september
+          # 2026 gaf deze stap drie keer "Timeout - reconnecting" en daarna
+          # "max-retries exceeded", terwijl een uitrol kort daarna gewoon lukte.
+          # Daarom tot drie pogingen met een minuut ertussen. Een geweigerde
+          # login is geen storing en stopt meteen: nog eens proberen maakt dat
+          # niet beter, en de server kan het adres dan blokkeren.
+          poging=1
+          until lftp -d -f "$HOME/controle.lftp" 2> "$HOME/controle.err"; do
+            if grep -q -E '530|Login failed' "$HOME/controle.err" || [ "$poging" -ge 3 ]; then
+              grep -v 'PASS ' "$HOME/controle.err" >&2
+              fout=$(grep -v 'PASS ' "$HOME/controle.err" | grep -E -i 'fatal|error|connect|<---|certificate|ssl|tls|timed out|timeout|refused|reset|login' | tail -n 10 | paste -sd' ' | tr -d '[:cntrl:]' | sed 's/%/%25/g' | cut -c1-1500)
+              echo "::error::lftp kon index.html in DEPLOY_PATH niet lezen na $poging poging(en): ${fout:-geen melding van lftp}. De uitrol is gestopt voordat er iets verwijderd werd."
+              exit 1
+            fi
+            echo "::warning::Verbinden met de server lukte niet bij poging $poging van 3. Over een minuut opnieuw."
+            poging=$((poging + 1))
+            sleep 60
+          done
 
       # De uitrol raakt alleen aan wat de build zelf maakt.
       #
