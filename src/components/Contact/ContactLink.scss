@@ -1,3 +1,5 @@
+@use '../../styles/zoeklicht' as *;
+
 /*--------------------------------------------------------------
 # De knoppen die het contactpaneel openen
 --------------------------------------------------------------*/
@@ -68,20 +70,10 @@
   }
 }
 
-/* Onder de introductie en onder het cv. De tekstmaat daar is groot, dus de maat
-   staat hier vast.
-
-   Bij hover en focus volgt een zachte rode gloed de muis binnen de rand, een
-   verre echo van het zoeklicht in de hero. ContactLink.tsx zet de plek in
-   --licht-x en --licht-y; zonder muis staat het licht in het midden. De tekst
-   blijft donker en de knop licht, dus het contrast verandert niet. */
+/* Onder de introductie en onder het cv, in de knopfamilie van de site; zie
+   src/styles/_zoeklicht.scss. De tekstmaat daar is groot, dus de maat staat hier
+   vast. De tekst blijft donker en de knop licht, dus het contrast verandert niet. */
 .contact-link--intro {
-  --licht-x: 50%;
-  --licht-y: 50%;
-
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
   gap: 0.75em;
   margin-top: 1rem;
   padding: 15px 28px 15px 30px;
@@ -92,69 +84,21 @@
   line-height: 1.2;
   transition: border-color 0.3s ease;
 
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-    background: radial-gradient(
-      circle 120px at var(--licht-x) var(--licht-y),
-      rgba(237, 82, 83, 0.16) 0%,
-      rgba(237, 82, 83, 0.06) 60%,
-      transparent 100%
-    );
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
+  @include zoeklicht-knop(0.16);
+  @include zoeklicht-pijl-door('.contact-link-pijl', rechts);
 
   &:hover,
   &:focus-visible {
     border-color: #d63c3d;
   }
-  &:hover::before,
-  &:focus-visible::before {
-    opacity: 1;
-  }
-
-  &:hover .contact-link-pijl,
-  &:focus-visible .contact-link-pijl {
-    animation: none;
-    transform: rotate(-45deg) translate(3px, 3px);
-  }
 }
 
-/* Hetzelfde pijltje als in "Bekijk mijn cv", maar naar rechts. Het wijst net
-   als daar steeds even de kant op waar de knop je heen brengt, zodat er ook op
-   een telefoon, zonder hover, iets beweegt. */
 .contact-link-pijl {
-  flex: none;
-  width: 9px;
-  height: 9px;
-  border-right: 2px solid currentColor;
-  border-bottom: 2px solid currentColor;
-  border-radius: 2px;
-  transform: rotate(-45deg);
-  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-  animation: contact-link-duw 2.4s ease-in-out infinite;
-}
-
-@keyframes contact-link-duw {
-  0%,
-  60%,
-  100% {
-    transform: rotate(-45deg) translate(0, 0);
-  }
-  75% {
-    transform: rotate(-45deg) translate(3px, 3px);
-  }
+  @include zoeklicht-pijl(rechts);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .contact-link,
-  .contact-link::before,
-  .contact-link-pijl {
+  .contact-link {
     transition: none;
-    animation: none;
   }
 }

@@ -1,0 +1,107 @@
+/*--------------------------------------------------------------
+# De knopfamilie
+--------------------------------------------------------------*/
+/* Eén stijl voor de knoppen die je ergens heen brengen: "Stuur me een bericht",
+   "Download CV als PDF" en Versturen. Een rode rand, en bij hover of focus een
+   zachte rode gloed die de muis volgt, een verre echo van het zoeklicht in de
+   hero. volgMuisLicht in src/utils/zoeklicht.ts zet --licht-x en --licht-y;
+   zonder muis staat het licht in het midden.
+
+   Gebruik: eerst de eigen eigenschappen van de knop, dan de mixins, dan pas
+   geneste regels als :hover. Sass waarschuwt voor eigenschappen na geneste
+   regels, en de build van de workflow ziet elke waarschuwing als fout. */
+
+/* $kracht is de dekking in het hart van de gloed. Op een lichte grond is 0,16
+   genoeg; op het donker van het paneel zie je dat niet en is meer nodig. */
+@mixin zoeklicht-knop($kracht: 0.16) {
+  --licht-x: 50%;
+  --licht-y: 50%;
+
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: radial-gradient(
+      circle 120px at var(--licht-x) var(--licht-y),
+      rgba(237, 82, 83, $kracht) 0%,
+      rgba(237, 82, 83, $kracht * 0.4) 60%,
+      transparent 100%
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  &:hover::before,
+  &:focus-visible::before {
+    opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &::before {
+      transition: none;
+    }
+  }
+}
+
+/* Het pijltje van "Bekijk mijn cv" in de hero: een hoek van twee randen. Het
+   duwt steeds even de kant op waar de knop je heen brengt, zodat er ook zonder
+   hover iets beweegt. $richting is rechts of omlaag. */
+@mixin zoeklicht-pijl($richting: rechts) {
+  $draai: -45deg;
+  @if $richting == omlaag {
+    $draai: 45deg;
+  }
+
+  flex: none;
+  width: 9px;
+  height: 9px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  border-radius: 2px;
+  transform: rotate($draai);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: zoeklicht-duw-#{$richting} 2.4s ease-in-out infinite;
+
+  @keyframes zoeklicht-duw-#{$richting} {
+    0%,
+    60%,
+    100% {
+      transform: rotate($draai) translate(0, 0);
+    }
+    75% {
+      transform: rotate($draai) translate(3px, 3px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+    animation: none;
+  }
+}
+
+/* Op de knop: bij hover of focus schiet het pijltje door in zijn richting. */
+@mixin zoeklicht-pijl-door($pijl, $richting: rechts) {
+  $draai: -45deg;
+  @if $richting == omlaag {
+    $draai: 45deg;
+  }
+
+  &:hover #{$pijl},
+  &:focus-visible #{$pijl} {
+    animation: none;
+    transform: rotate($draai) translate(3px, 3px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &:hover #{$pijl},
+    &:focus-visible #{$pijl} {
+      transform: rotate($draai);
+    }
+  }
+}

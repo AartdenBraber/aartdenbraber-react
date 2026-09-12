@@ -4,6 +4,7 @@ import './Contact.scss';
 import { SiteContent } from '../../content';
 import { useRevealOnView } from '../../hooks/useRevealOnView';
 import { useLanguage } from '../../i18n/LanguageContext';
+import { volgMuisLicht } from '../../utils/zoeklicht';
 
 import { Antwoord, ONDERWERPEN, Onderwerp, Veld, verstuurBericht } from './contactApi';
 import ContactLink from './ContactLink';
@@ -281,7 +282,12 @@ const Formulier: React.FC = () => {
             )}
 
             <div className="contact-verstuur">
-                <button type="submit" className="contact-knop" aria-disabled={fase === 'versturen'}>
+                <button
+                    type="submit"
+                    className="contact-knop"
+                    aria-disabled={fase === 'versturen'}
+                    onPointerMove={volgMuisLicht}
+                >
                     {fase === 'versturen' ? tekst.bezig : tekst.versturen}
                     {fase !== 'versturen' && <span className="contact-knop-pijl" aria-hidden="true" />}
                 </button>
@@ -296,7 +302,7 @@ const minderBeweging = (): boolean =>
     typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /** Iets langer dan het wegschuiven in Contact.scss: een vangnet voor als animationend uitblijft. */
-const WEGSCHUIVEN_VANGNET_MS = 450;
+const WEGSCHUIVEN_VANGNET_MS = 650;
 
 /**
  * Het paneel dat over de pagina schuift. Een echte `<dialog>` met showModal:

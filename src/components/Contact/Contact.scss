@@ -1,3 +1,5 @@
+@use '../../styles/zoeklicht' as *;
+
 /*--------------------------------------------------------------
 # Contact: het paneel met het formulier, en de afsluiter onder het cv
 --------------------------------------------------------------*/
@@ -62,10 +64,10 @@
   }
 
   &[open]::backdrop {
-    animation: contact-achtergrond-in 0.35s ease-out;
+    animation: contact-achtergrond-in 0.42s ease-out;
   }
   &[data-sluit]::backdrop {
-    animation: contact-achtergrond-uit 0.3s ease-in forwards;
+    animation: contact-achtergrond-uit 0.42s ease-in-out forwards;
   }
 }
 
@@ -86,15 +88,17 @@
   overscroll-behavior: contain;
   scrollbar-color: rgba(255, 255, 255, 0.28) transparent;
 
+  /* Erin en eruit even lang en even rustig, zodat je het venster ook echt
+     ziet komen en gaan. Met een steil versnellende curve eruit stond het eerst
+     bijna stil en was het daarna in één keer weg; dat las als verdwijnen. */
   .contact-paneel[open] & {
-    animation: contact-paneel-in 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    animation: contact-paneel-in 0.42s cubic-bezier(0.25, 1, 0.5, 1);
   }
 
-  /* Weg gaat sneller dan erin, en versnelt: het wordt weggeduwd, het komt niet
-     binnen. forwards houdt het buiten beeld tot de dialoog echt dicht is; zie
+  /* forwards houdt het buiten beeld tot de dialoog echt dicht is; zie
      Contact.tsx. Deze regel staat na die voor het openen, zodat hij wint. */
   .contact-paneel[data-sluit] & {
-    animation: contact-paneel-uit 0.3s cubic-bezier(0.7, 0, 0.84, 0) forwards;
+    animation: contact-paneel-uit 0.42s cubic-bezier(0.45, 0, 0.55, 1) forwards;
   }
 }
 
@@ -473,54 +477,37 @@ html:has(.contact-paneel[open]) {
   margin-top: 0.25rem;
 }
 
-/* De randknop van de hero, "Bekijk mijn cv". Bij hover vult hij met het rood
-   van de site en schuift de pijl door. Wit op dit rood haalt 5:1. */
+/* In de knopfamilie van de site; zie src/styles/_zoeklicht.scss. Op het donker
+   van het paneel is de gloed sterker, anders zie je hem niet, en de tekst blijft
+   wit. Op het hart van de gloed haalt wit nog ruim 10:1. */
 .contact-knop {
   display: inline-flex;
   align-items: center;
   gap: 0.8em;
   min-height: 44px;
   padding: 1rem 2.25rem;
-  border: 2px solid rgba(255, 255, 255, 0.85);
+  border: 2px solid #ed5253;
   border-radius: 0;
   background: rgba(0, 0, 0, 0.25);
   color: #fff;
   font-size: 1.125rem;
   letter-spacing: 1px;
   cursor: pointer;
-  transition:
-    background-color 0.3s ease,
-    border-color 0.3s ease;
 
-  &:hover,
-  &:focus-visible {
-    background: #d63c3d;
-    border-color: #d63c3d;
-  }
+  @include zoeklicht-knop(0.32);
+  @include zoeklicht-pijl-door('.contact-knop-pijl', rechts);
 
-  &:hover .contact-knop-pijl,
-  &:focus-visible .contact-knop-pijl {
-    transform: rotate(-45deg) translate(3px, 3px);
-  }
-
-  &[aria-disabled='true'],
-  &[aria-disabled='true']:hover {
+  &[aria-disabled='true'] {
     cursor: progress;
-    background: rgba(0, 0, 0, 0.25);
-    border-color: rgba(255, 255, 255, 0.5);
+    border-color: rgba(237, 82, 83, 0.5);
+  }
+  &[aria-disabled='true']::before {
+    opacity: 0;
   }
 }
 
-/* Hetzelfde pijltje als in de knop van de hero, een kwartslag gedraaid. */
 .contact-knop-pijl {
-  flex: none;
-  width: 9px;
-  height: 9px;
-  border-right: 2px solid currentColor;
-  border-bottom: 2px solid currentColor;
-  border-radius: 2px;
-  transform: rotate(-45deg);
-  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  @include zoeklicht-pijl(rechts);
 }
 
 .contact-privacy {
@@ -599,13 +586,7 @@ html:has(.contact-paneel[open]) {
   }
   .contact-invoer,
   .contact-keuze,
-  .contact-knop,
-  .contact-knop-pijl,
   .contact-sluit {
     transition: none;
-  }
-  .contact-knop:hover .contact-knop-pijl,
-  .contact-knop:focus-visible .contact-knop-pijl {
-    transform: rotate(-45deg);
   }
 }
