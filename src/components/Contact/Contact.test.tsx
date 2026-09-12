@@ -107,6 +107,30 @@ describe('het contactpaneel', () => {
         expect(screen.getByRole('button', { name: 'Stuur me een bericht' })).toHaveFocus();
     });
 
+    it('gaat dicht bij een klik naast het venster', async () => {
+        zetServer([uitnodiging('token-1')]);
+        toon();
+        await openPaneel();
+
+        const dialoog = paneel() as HTMLElement;
+        fireEvent.mouseDown(dialoog);
+        fireEvent.click(dialoog);
+
+        await waitFor(() => expect(paneel()).not.toHaveAttribute('open'));
+    });
+
+    it('blijft open bij een klik in het venster', async () => {
+        zetServer([uitnodiging('token-1')]);
+        toon();
+        await openPaneel();
+
+        const naam = screen.getByLabelText('Naam');
+        fireEvent.mouseDown(naam);
+        fireEvent.click(naam);
+
+        expect(paneel()).toHaveAttribute('open');
+    });
+
     it('bewaart wat je invulde als je het paneel sluit en weer opent', async () => {
         zetServer([uitnodiging('token-1')]);
         toon();

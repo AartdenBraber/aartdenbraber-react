@@ -5,10 +5,12 @@
 /*--------------------------------------------------------------
 ## Het paneel
 --------------------------------------------------------------*/
-/* Een stukje hero dat van rechts over de pagina schuift. Bovenin de wazige
-   foto met het zoeklicht, daaronder de leisteen van het cv. De browser zet een
-   dialoog midden in beeld met een rand en een marge; dat gaat er allemaal af.
-   Op een telefoon vult hij het hele scherm. */
+/* De dialoog beslaat het hele scherm en is zelf doorzichtig. Wat je ziet is het
+   venster erin, dat van rechts over de pagina schuift; op een telefoon vult het
+   het hele scherm. Zo hoort de strook naast het venster bij de dialoog: die
+   krijgt een eigen cursor, en een klik daar is zeker een klik naast het venster.
+   De browser zet een dialoog midden in beeld met een rand en een marge; dat
+   gaat er allemaal af. */
 .contact-paneel {
   /* De grond is die van het cv-blok. De foutkleur is een lichte tint van het
      accentrood: het rood zelf haalt op deze grond 3,7:1, en kleine tekst moet
@@ -21,20 +23,20 @@
   --paneel-fout: #ff9a9b;
 
   position: fixed;
-  inset: 0 0 0 auto;
+  inset: 0;
   z-index: 1000;
   box-sizing: border-box;
-  width: min(36rem, 100%);
-  max-width: 100%;
+  width: 100%;
   height: 100%;
+  max-width: 100%;
   max-height: 100%;
   margin: 0;
   padding: 0;
   border: 0;
+  overflow: hidden;
+  background: transparent;
 
-  background: var(--paneel-grond);
   color: var(--paneel-tekst);
-  box-shadow: -16px 0 48px rgba(0, 0, 0, 0.35);
   line-height: 1.6;
 
   /* Dezelfde reden als bij de intro: de 1px van de body rekt lopende tekst uit. */
@@ -43,12 +45,15 @@
   /* Keuzerondjes, de schuifbalk en ingevulde velden van de browser horen donker
      te zijn op een donker paneel. */
   color-scheme: dark;
-  scrollbar-color: rgba(255, 255, 255, 0.28) transparent;
 
-  /* Het paneel scrolt zelf. Loopt dat tegen zijn eind aan, dan hoort de pagina
-     eronder niet mee te gaan. */
-  overflow-y: auto;
-  overscroll-behavior: contain;
+  /* Naast het venster sluit een klik het paneel. Een kruisje als cursor zegt dat
+     voordat je klikt: een witte stip met het kruis van de sluitknop, zichtbaar
+     op de donkere waas. De hand is de terugval voor een browser zonder
+     eigen cursors. */
+  cursor:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='%23fff' stroke='%23263238' stroke-width='1.5'/%3E%3Cpath d='M11.5 11.5l9 9m0-9-9 9' fill='none' stroke='%23263238' stroke-width='2.2' stroke-linecap='round'/%3E%3C/svg%3E")
+      16 16,
+    pointer;
 
   /* Een licht waas over de pagina erachter, zoals de foto in de hero. */
   &::backdrop {
@@ -56,11 +61,40 @@
     backdrop-filter: blur(3px);
   }
 
-  &[open] {
-    animation: contact-paneel-in 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-  }
   &[open]::backdrop {
     animation: contact-achtergrond-in 0.35s ease-out;
+  }
+  &[data-sluit]::backdrop {
+    animation: contact-achtergrond-uit 0.3s ease-in forwards;
+  }
+}
+
+.contact-venster {
+  position: absolute;
+  inset: 0 0 0 auto;
+  box-sizing: border-box;
+  width: min(36rem, 100%);
+  height: 100%;
+
+  background: var(--paneel-grond);
+  box-shadow: -16px 0 48px rgba(0, 0, 0, 0.35);
+  cursor: auto;
+
+  /* Het venster scrolt zelf. Loopt dat tegen zijn eind aan, dan hoort de pagina
+     eronder niet mee te gaan. */
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-color: rgba(255, 255, 255, 0.28) transparent;
+
+  .contact-paneel[open] & {
+    animation: contact-paneel-in 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* Weg gaat sneller dan erin, en versnelt: het wordt weggeduwd, het komt niet
+     binnen. forwards houdt het buiten beeld tot de dialoog echt dicht is; zie
+     Contact.tsx. Deze regel staat na die voor het openen, zodat hij wint. */
+  .contact-paneel[data-sluit] & {
+    animation: contact-paneel-uit 0.3s cubic-bezier(0.7, 0, 0.84, 0) forwards;
   }
 }
 
@@ -69,8 +103,18 @@
     transform: translateX(100%);
   }
 }
+@keyframes contact-paneel-uit {
+  to {
+    transform: translateX(100%);
+  }
+}
 @keyframes contact-achtergrond-in {
   from {
+    opacity: 0;
+  }
+}
+@keyframes contact-achtergrond-uit {
+  to {
     opacity: 0;
   }
 }
@@ -533,8 +577,10 @@ html:has(.contact-paneel[open]) {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .contact-paneel[open],
-  .contact-paneel[open]::backdrop {
+  .contact-paneel[open] .contact-venster,
+  .contact-paneel[data-sluit] .contact-venster,
+  .contact-paneel[open]::backdrop,
+  .contact-paneel[data-sluit]::backdrop {
     animation: none;
   }
   .contact-invoer,

@@ -299,10 +299,21 @@ const Formulier: React.FC = () => {
     );
 };
 
+/** Wie om minder beweging vraagt, krijgt het paneel meteen weg in plaats van weggeschoven. */
+const minderBeweging = (): boolean =>
+    typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/** Iets langer dan het wegschuiven in Contact.scss: een vangnet voor als animationend uitblijft. */
+const WEGSCHUIVEN_VANGNET_MS = 450;
+
 /**
  * Het paneel dat over de pagina schuift. Een echte `<dialog>` met showModal:
  * de rest van de pagina is dan niet te bereiken met tab of een schermlezer, en
  * Escape sluit hem. Jsdom kent showModal niet; daar zet het `open` zelf.
+ *
+ * De dialoog beslaat het hele scherm en is zelf doorzichtig; wat je ziet is het
+ * venster erin. Zo hoort de strook naast het venster bij de dialoog: die krijgt
+ * een eigen cursor, en een klik daar is zeker een klik naast het venster.
  */
 const Paneel: React.FC = () => {
     const { t } = useLanguage();
@@ -310,9 +321,11 @@ const Paneel: React.FC = () => {
     const tekst = t.contact;
 
     const dialoogRef = useRef<HTMLDialogElement>(null);
+    const vensterRef = useRef<HTMLDivElement>(null);
     const sluitknopRef = useRef<HTMLButtonElement>(null);
     const vorigeFocus = useRef<HTMLElement | null>(null);
-    const drukBegonOpAchtergrond = useRef(false);
+    const drukBegonNaastVenster = useRef(false);
+    const stopWegschuiven = useRef<(() => void) | null>(null);
 
     useEffect(() => {
         const dialoog = dialoogRef.current;
@@ -320,7 +333,22 @@ const Paneel: React.FC = () => {
 
         const staatOpen = dialoog.hasAttribute('open');
 
-        if (open && !staatOpen) {
+        // Terug naar de knop waarmee het paneel openging, zodat wie met het
+        // toetsenbord werkt verder kan waar hij was.
+        const herstelFocus = () => {
+            const terug = vorigeFocus.current;
+            vorigeFocus.current = null;
+            if (terug?.isConnected) terug.focus();
+        };
+
+        if (open) {
+            // Weer geopend terwijl hij nog wegschoof: dan blijft hij gewoon staan.
+            if (stopWegschuiven.current) {
+                stopWegschuiven.current();
+                return;
+            }
+            if (staatOpen) return;
+
             vorigeFocus.current =
                 bron.current ?? (document.activeElement instanceof HTMLElement ? document.activeElement : null);
 
@@ -338,39 +366,78 @@ const Paneel: React.FC = () => {
             return;
         }
 
-        if (!open) {
-            if (staatOpen) {
-                if (typeof dialoog.close === 'function') dialoog.close();
-                else dialoog.removeAttribute('open');
-            }
-
-            // Terug naar de knop waarmee het paneel openging, zodat wie met het
-            // toetsenbord werkt verder kan waar hij was.
-            const terug = vorigeFocus.current;
-            vorigeFocus.current = null;
-            if (terug?.isConnected) terug.focus();
+        if (!staatOpen) {
+            herstelFocus();
+            return;
         }
+        if (stopWegschuiven.current) return;
+
+        const dicht = () => {
+            stopWegschuiven.current?.();
+            if (typeof dialoog.close === 'function') dialoog.close();
+            else dialoog.removeAttribute('open');
+            herstelFocus();
+        };
+
+        if (typeof dialoog.showModal !== 'function' || minderBeweging()) {
+            dicht();
+            return;
+        }
+
+        // Eerst wegschuiven, dan pas dicht. De dialoog blijft zo lang open, dus de
+        // pagina eronder blijft ook zo lang op slot en springt niet.
+        const venster = vensterRef.current;
+        const opEinde = (event: AnimationEvent) => {
+            if (event.target === venster) dicht();
+        };
+        const vangnet = window.setTimeout(dicht, WEGSCHUIVEN_VANGNET_MS);
+
+        venster?.addEventListener('animationend', opEinde);
+        dialoog.setAttribute('data-sluit', '');
+
+        stopWegschuiven.current = () => {
+            window.clearTimeout(vangnet);
+            venster?.removeEventListener('animationend', opEinde);
+            dialoog.removeAttribute('data-sluit');
+            stopWegschuiven.current = null;
+        };
     }, [open, bron]);
 
-    // Escape sluit de dialoog in de browser zelf. Die melding moet terug naar de
-    // staat, anders denkt de pagina dat het paneel nog open is.
+    // Verdwijnt het paneel uit de pagina terwijl het wegschuift, dan mag het
+    // vangnet daarna niet alsnog afgaan.
+    useEffect(() => {
+        const wegschuiven = stopWegschuiven;
+        return () => wegschuiven.current?.();
+    }, []);
+
+    // Escape: de browser zou de dialoog meteen weghalen. Hier schuift hij weg,
+    // net als bij de andere manieren van sluiten. Staat de browser dat niet toe,
+    // dan sluit hij toch, en die melding moet terug naar de staat.
     useEffect(() => {
         const dialoog = dialoogRef.current;
         if (!dialoog) return;
 
+        const opEscape = (event: Event) => {
+            event.preventDefault();
+            sluitPaneel();
+        };
+
+        dialoog.addEventListener('cancel', opEscape);
         dialoog.addEventListener('close', sluitPaneel);
-        return () => dialoog.removeEventListener('close', sluitPaneel);
+        return () => {
+            dialoog.removeEventListener('cancel', opEscape);
+            dialoog.removeEventListener('close', sluitPaneel);
+        };
     }, [sluitPaneel]);
 
-    // Een klik op de donkere achtergrond sluit het paneel. Alleen als de klik
-    // daar ook begon: wie tekst selecteert en buiten het paneel loslaat, wil
-    // het niet dicht.
+    // Een klik naast het venster sluit het paneel. Alleen als de klik daar ook
+    // begon: wie tekst selecteert en naast het venster loslaat, wil het niet dicht.
     const drukOmlaag = (event: React.MouseEvent<HTMLDialogElement>) => {
-        drukBegonOpAchtergrond.current = event.target === event.currentTarget;
+        drukBegonNaastVenster.current = event.target === event.currentTarget;
     };
     const klik = (event: React.MouseEvent<HTMLDialogElement>) => {
-        if (drukBegonOpAchtergrond.current && event.target === event.currentTarget) sluitPaneel();
-        drukBegonOpAchtergrond.current = false;
+        if (drukBegonNaastVenster.current && event.target === event.currentTarget) sluitPaneel();
+        drukBegonNaastVenster.current = false;
     };
 
     return (
@@ -382,40 +449,42 @@ const Paneel: React.FC = () => {
             onMouseDown={drukOmlaag}
             onClick={klik}
         >
-            {/* Bovenin een stukje hero: dezelfde wazige foto met het zoeklicht,
-                de kop die woord voor woord binnenkomt en de dunne streepjes
-                erboven en eronder. Dat speelt bij elke keer openen opnieuw, want
-                een dichte dialoog staat op display: none. */}
-            <div className="contact-paneel-kop">
-                <FocusSpotlight image={HERO_FOTO} />
-                <div className="contact-paneel-kop-inhoud">
-                    <WordReveal as="h2" id="contact-kop" className="contact-kop" text={tekst.titel} delay={180} />
-                </div>
-                <button
-                    ref={sluitknopRef}
-                    type="button"
-                    className="contact-sluit"
-                    aria-label={tekst.sluiten}
-                    onClick={sluitPaneel}
-                >
-                    <svg
-                        aria-hidden="true"
-                        viewBox="0 0 24 24"
-                        width="20"
-                        height="20"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
+            <div ref={vensterRef} className="contact-venster">
+                {/* Bovenin een stukje hero: dezelfde wazige foto met het zoeklicht,
+                    de kop die woord voor woord binnenkomt en de dunne streepjes
+                    erboven en eronder. Dat speelt bij elke keer openen opnieuw, want
+                    een dichte dialoog staat op display: none. */}
+                <div className="contact-paneel-kop">
+                    <FocusSpotlight image={HERO_FOTO} />
+                    <div className="contact-paneel-kop-inhoud">
+                        <WordReveal as="h2" id="contact-kop" className="contact-kop" text={tekst.titel} delay={180} />
+                    </div>
+                    <button
+                        ref={sluitknopRef}
+                        type="button"
+                        className="contact-sluit"
+                        aria-label={tekst.sluiten}
+                        onClick={sluitPaneel}
                     >
-                        <path d="M6 6l12 12M18 6L6 18" />
-                    </svg>
-                </button>
-            </div>
-            <div className="contact-paneel-binnen">
-                <p className="contact-intro">{tekst.intro}</p>
+                        <svg
+                            aria-hidden="true"
+                            viewBox="0 0 24 24"
+                            width="20"
+                            height="20"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                        >
+                            <path d="M6 6l12 12M18 6L6 18" />
+                        </svg>
+                    </button>
+                </div>
+                <div className="contact-paneel-binnen">
+                    <p className="contact-intro">{tekst.intro}</p>
 
-                <Formulier />
+                    <Formulier />
+                </div>
             </div>
         </dialog>
     );
