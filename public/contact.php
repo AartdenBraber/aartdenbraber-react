@@ -257,7 +257,21 @@ function cf_tel(array $config, string $sleutel, int $vensterSec, int $max, int $
     }
 
     try {
-        if (!flock($handvat, LOCK_EX)) {
+        // Nooit blijven wachten op de lock. Houdt een ander verzoek hem vast, dan proberen we het
+        // een paar keer kort, hooguit een vijfde seconde. Lukt het dan nog niet, dan telt dit
+        // verzoek niet mee en gaat het door. Op 12 september 2026 hing elk GET-verzoek vanaf één
+        // adres minutenlang, terwijl een PUT meteen antwoordde; het enige dat daartussen kan
+        // wachten is deze lock. Zolang dat duurde, bleven de knoppen op de site weg.
+        $vast = false;
+        for ($poging = 0; $poging < 10 && !$vast; $poging++) {
+            $vast = flock($handvat, LOCK_EX | LOCK_NB);
+            if (!$vast) {
+                usleep(20000);
+            }
+        }
+        if (!$vast) {
+            $log('de teller ' . basename($pad) . ' zat vast, verzoek doorgelaten zonder te tellen');
+
             return true;
         }
 

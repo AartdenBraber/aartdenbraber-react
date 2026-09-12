@@ -332,6 +332,23 @@ verwacht(
 verwacht(cf_tel($config, 'b', 3600, 2, 7203, $stil), true, 'een andere sleutel telt apart');
 verwacht(cf_tel($config, 'a', 3600, 2, 10800, $stil), true, 'in het volgende venster begint de teller opnieuw');
 
+// Een ander verzoek houdt de lock vast. Een tweede handvat op hetzelfde bestand speelt dat na:
+// zowel op Linux als op Windows krijgt een tweede handvat de lock dan niet.
+$vastLogs = [];
+$vastLog = function (string $regel) use (&$vastLogs): void {
+    $vastLogs[] = $regel;
+};
+$vastPad = $config['opslag'] . '/tellers/' . substr(hash_hmac('sha256', 'vast', cf_sleutel($config, 'teller')), 0, 32);
+$ander = fopen($vastPad, 'c+');
+flock($ander, LOCK_EX);
+$begin = microtime(true);
+$uitkomst = cf_tel($config, 'vast', 3600, 5, 7200, $vastLog);
+$duur = microtime(true) - $begin;
+flock($ander, LOCK_UN);
+fclose($ander);
+verwacht([$uitkomst, count($vastLogs)], [true, 1], 'een teller die vastzit laat het verzoek door, met een regel in het log');
+verwacht($duur < 1.0, true, 'en blijft daar niet op wachten');
+
 cf_tel($config, 'bericht|' . IP, 3600, 5, 7200, $stil);
 $opgeslagen = '';
 foreach (glob($config['opslag'] . '/tellers/*') ?: [] as $pad) {
