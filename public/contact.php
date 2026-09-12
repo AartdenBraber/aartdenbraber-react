@@ -71,7 +71,20 @@ function cf_laad_config(string $pad): array
         return [null, 'er staat geen configbestand op ' . $pad];
     }
 
-    $ingelezen = require $pad;
+    // Wat het configbestand zelf uitvoert, gaat weg. Een regeleinde of spatie na het sluitlabel van PHP
+    // komt anders vóór de headers in het antwoord terecht, en dan stuurt PHP de status en het
+    // inhoudstype niet meer mee. De site ziet dan geen JSON en laat het formulier weg.
+    //
+    // Een syntaxfout in het bestand zet het formulier uit in plaats van een 500 te geven. De
+    // melding gaat alleen naar het foutenlog, nooit naar de bezoeker.
+    ob_start();
+    try {
+        $ingelezen = require $pad;
+    } catch (\Throwable $fout) {
+        return [null, 'het configbestand geeft een fout: ' . $fout->getMessage()];
+    } finally {
+        ob_end_clean();
+    }
     if (!is_array($ingelezen)) {
         return [null, 'het configbestand geeft geen array terug'];
     }

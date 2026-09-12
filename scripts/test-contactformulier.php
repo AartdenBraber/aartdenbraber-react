@@ -157,6 +157,19 @@ $stil = function (string $regel): void {
 
 verwacht(cf_laad_config($tijdelijk . '/bestaat-niet.php')[0], null, 'zonder configbestand staat het formulier uit');
 
+$pad = $tijdelijk . '/met-uitvoer.php';
+file_put_contents($pad, '<?php return ' . var_export(['ontvanger' => 'aart@example.com', 'geheim' => str_repeat('x', 32)], true) . '; ?>' . PHP_EOL . PHP_EOL . ' uitvoer');
+ob_start();
+[$metUitvoer] = cf_laad_config($pad);
+$doorgelekt = ob_get_clean();
+verwacht($metUitvoer === null ? null : $metUitvoer['ontvanger'], 'aart@example.com', 'een config met tekst na ?> wordt gewoon gelezen');
+verwacht($doorgelekt, '', 'en die tekst komt niet in het antwoord');
+
+$pad = $tijdelijk . '/kapot.php';
+file_put_contents($pad, '<?php return [');
+[$kapot, $reden] = cf_laad_config($pad);
+verwacht([$kapot, strpos($reden, 'het configbestand geeft een fout') === 0], [null, true], 'een config met een syntaxfout zet het formulier uit in plaats van een 500');
+
 $config = maak_config();
 verwacht($config['afzender'], 'noreply@aartdenbraber.nl', 'de afzender heeft een standaardwaarde');
 verwacht($config['minLeeftijdMs'], 3000, 'de tijdval staat standaard op drie seconden');
