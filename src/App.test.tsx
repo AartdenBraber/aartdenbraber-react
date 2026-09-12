@@ -63,3 +63,32 @@ describe('de taal volgt het adres', () => {
     expect(engels).toHaveAttribute('href', '/CV-Aart-den-Braber-EN.pdf');
   });
 });
+
+describe('het contactformulier op de pagina', () => {
+  beforeEach(() => ga('/'));
+  afterEach(() => {
+    delete (window as { fetch?: unknown }).fetch;
+  });
+
+  it('staat er met de link onder de intro als contact.php klaarstaat', async () => {
+    window.fetch = jest.fn(async () => ({
+      ok: true,
+      status: 200,
+      headers: { get: () => 'application/json' },
+      json: async () => ({ ok: true, token: 'token', minLeeftijdMs: 0, turnstileSitekey: null }),
+    })) as unknown as typeof fetch;
+
+    render(<App />);
+
+    expect(await screen.findByRole('link', { name: 'Stuur me een bericht' })).toHaveAttribute('href', '#contact');
+    expect(screen.getByRole('heading', { name: 'Laten we kennismaken.' })).toBeInTheDocument();
+  });
+
+  it('staat er niet, en de link ook niet, zonder contact.php', async () => {
+    render(<App />);
+
+    await screen.findByRole('heading', { name: /Mijn focus ligt op het bouwen/ });
+    expect(screen.queryByRole('link', { name: 'Stuur me een bericht' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: 'Laten we kennismaken.' })).not.toBeInTheDocument();
+  });
+});

@@ -41,6 +41,14 @@ jobs:
       - name: Types controleren
         run: npx tsc --noEmit
 
+      # Het contactformulier is een PHP-script dat met de build meegaat. PHP
+      # staat al op de runner. Zakt het script hier, dan gaat er niets uit.
+      - name: Contactformulier testen
+        run: |
+          php --version
+          php -l public/contact.php
+          php scripts/test-contactformulier.php
+
       # CI=true laat Create React App waarschuwingen als fouten behandelen.
       # Er gaat niets naar de server als de tests of de build struikelen.
       - name: Tests draaien

@@ -54,6 +54,55 @@ export const en: SiteContent = {
     emailVerborgen: '(email address not copyable, to block bots)',
     zoomHint: 'Pinch to zoom in',
   },
+  contact: {
+    link: 'Contact',
+    introLink: 'Send me a message',
+    titel: "Let's talk.",
+    intro:
+      "Do you have a project that needs a developer, or are you looking for someone to build a new website? Tell me what it's about below.",
+    velden: {
+      naam: 'Name',
+      email: 'Email address',
+      onderwerp: 'What is it about?',
+      optioneel: '(optional)',
+      bericht: 'Message',
+    },
+    onderwerpen: {
+      opdracht: 'Freelance developer work',
+      website: 'A new website',
+      anders: 'Something else',
+    },
+    versturen: 'Send',
+    bezig: 'Sending…',
+    privacy: 'I only use your details to reply to this message.',
+    turnstile: "Cloudflare Turnstile checks that the message isn't coming from a bot.",
+    verzonden: {
+      titel: 'Your message has been sent.',
+      tekst: "Thanks. I'll reply to the email address you entered.",
+    },
+    fouten: {
+      naam: {
+        leeg: 'Please enter your name.',
+        teLang: 'Your name can be up to 100 characters long.',
+        ongeldig: "Your name contains characters that aren't allowed.",
+      },
+      email: {
+        leeg: 'Please enter your email address.',
+        ongeldig: "This email address doesn't look right.",
+      },
+      onderwerp: {
+        ongeldig: 'Please pick one of the topics.',
+      },
+      bericht: {
+        leeg: 'Please write a message.',
+        teLang: 'Your message can be up to 5,000 characters long.',
+        ongeldig: "Your message contains characters that aren't allowed.",
+      },
+      teVeel: 'Too many messages were sent just now. Please try again later.',
+      botcheck: 'The bot check failed. Reload the page and try again.',
+      algemeen: "Your message couldn't be sent. Please try again later.",
+    },
+  },
   nav: {
     skipToContent: 'Skip to content',
     backToTop: 'Back to top',

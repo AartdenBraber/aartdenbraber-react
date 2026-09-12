@@ -1,0 +1,84 @@
+/*--------------------------------------------------------------
+# De links naar het contactformulier
+--------------------------------------------------------------*/
+.contact-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease;
+}
+
+/* In de balk bovenin, in dezelfde pil als de taalwisselaar ernaast. */
+.contact-link--balk {
+  position: relative;
+  justify-content: center;
+  padding: 0.5rem 0.85rem;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 999px;
+  color: #fff;
+
+  &:hover,
+  &:focus-visible {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.6);
+  }
+  &:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+  }
+}
+
+.contact-link-icoon {
+  display: none;
+  flex: none;
+}
+
+/* Op een smal scherm alleen een envelop, zoals de taalwisselaar daar EN en NL
+   toont in plaats van de volle namen. Met het woord erin bleef er van de naam
+   links in de balk te weinig over: gemeten op 320px was dat "Aart d". Het woord
+   blijft staan voor een schermlezer. */
+@media (max-width: 615px) {
+  .contact-link--balk {
+    width: 44px;
+    padding: 0;
+  }
+  .contact-link--balk .contact-link-icoon {
+    display: block;
+  }
+  .contact-link--balk .contact-link-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+/* Onder de introductie. De tekstmaat daar is groot, dus de maat staat hier vast. */
+.contact-link--intro {
+  margin-top: 1rem;
+  padding: 15px 30px;
+  border: 2px solid #ed5253;
+  color: #14181a;
+  font-size: 1.125rem;
+  letter-spacing: 1px;
+  line-height: 1.2;
+
+  &:hover,
+  &:focus-visible {
+    background: rgba(237, 82, 83, 0.1);
+    border-color: #d63c3d;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contact-link {
+    transition: none;
+  }
+}

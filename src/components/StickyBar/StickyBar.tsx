@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './StickyBar.scss';
 import LanguageSwitcher from '../LanguageSwitcher/LanguageSwitcher';
+import ContactLink from '../Contact/ContactLink';
 import { useLanguage } from '../../i18n/LanguageContext';
 
 /**
@@ -44,10 +45,13 @@ const StickyBar: React.FC = () => {
         <div className="sticky-bar" hidden={!zichtbaar}>
             <a className="sticky-bar-naam" href="#top">
                 <span className="sticky-bar-pijl" aria-hidden="true"></span>
-                <span>Aart den Braber</span>
+                <span className="sticky-bar-tekst">Aart den Braber</span>
                 <span className="visueel-verborgen">, {t.nav.backToTop.toLowerCase()}</span>
             </a>
-            <LanguageSwitcher />
+            <div className="sticky-bar-acties">
+                <ContactLink variant="balk" />
+                <LanguageSwitcher />
+            </div>
         </div>
     );
 };

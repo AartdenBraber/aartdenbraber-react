@@ -3,6 +3,7 @@ import './Intro.scss';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { useParallax } from '../../utils/useParallax';
 import { useRevealOnView } from '../../hooks/useRevealOnView';
+import ContactLink from '../Contact/ContactLink';
 
 /**
  * De kop en de alinea's komen na elkaar omhoog binnen zodra ze in beeld
@@ -35,6 +36,8 @@ const Intro: React.FC = () => {
                     </header>
 
                     {t.intro.body}
+
+                    <ContactLink variant="intro" />
                 </div>
             </div>
         </section>

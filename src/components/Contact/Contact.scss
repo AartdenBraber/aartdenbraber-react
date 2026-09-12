@@ -1,0 +1,279 @@
+/*--------------------------------------------------------------
+# Contact: het formulier onder het cv
+--------------------------------------------------------------*/
+.contact {
+  /* De links in de balk en onder de intro wijzen hierheen. De balk bovenin mag
+     de kop niet afdekken. */
+  scroll-margin-top: 4.5rem;
+
+  padding: 5em 20px;
+  padding-left: max(20px, env(safe-area-inset-left));
+  padding-right: max(20px, env(safe-area-inset-right));
+  padding-bottom: calc(5em + env(safe-area-inset-bottom, 0px));
+
+  background: #fff;
+  color: #556f7c;
+  line-height: 1.6;
+
+  /* Dezelfde reden als bij de intro: de 1px van de body rekt lopende tekst uit. */
+  letter-spacing: 0.02em;
+}
+
+.contact-binnen {
+  max-width: 40rem;
+  margin: 0 auto;
+}
+
+/*--------------------------------------------------------------
+## Kop en inleiding, op de maat van de intro
+--------------------------------------------------------------*/
+.contact-kop {
+  display: block;
+  margin: 0 0 1rem;
+  color: #263238;
+  text-align: center;
+
+  /* Twee keer de tekstmaat, net als de kop van de intro. */
+  font-size: clamp(2.5rem, 2.272rem + 0.97vw, 3rem);
+  line-height: 1.1;
+}
+
+.contact-intro {
+  margin: 0 0 2.5rem;
+  text-align: center;
+  font-size: clamp(1.25rem, 1.136rem + 0.485vw, 1.5rem);
+}
+
+@media all and (max-width: 600px) {
+  .contact-intro {
+    text-align: left;
+  }
+}
+
+/*--------------------------------------------------------------
+## Het formulier
+--------------------------------------------------------------*/
+.contact-formulier {
+  position: relative;
+  display: grid;
+  gap: 1.5rem;
+  font-size: 1rem;
+}
+
+.contact-rij {
+  display: grid;
+  gap: 1.5rem;
+}
+@media (min-width: 640px) {
+  .contact-rij {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* align-content: start, anders rekt het veld naast een foutregel mee: de rij is
+   dan hoger en het raster verdeelt die hoogte over label en invoerveld. */
+.contact-veld {
+  display: grid;
+  align-content: start;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+/* Een legend is geen gewoon rasteritem, dus de fieldset stapelt met marges. */
+.contact-onderwerpen {
+  display: block;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+
+  .contact-label {
+    margin-bottom: 0.5rem;
+  }
+  .contact-fout {
+    margin-top: 0.5rem;
+  }
+}
+
+.contact-label {
+  padding: 0;
+  color: #263238;
+}
+
+.contact-optioneel {
+  color: #556f7c;
+  font-size: 0.9rem;
+}
+
+/* Rand op #78909c: 3,3 tegen wit, en een invoerveld moet minstens 3 halen om
+   als veld herkend te worden. */
+.contact-invoer {
+  display: block;
+  width: 100%;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid #78909c;
+  border-radius: 4px;
+  background: #fff;
+  color: #263238;
+  line-height: 1.5;
+
+  /* Vanaf 16px zoomt Safari op een iPhone niet in als je het veld aantikt. */
+  font-size: 1.0625rem;
+  transition: border-color 0.15s ease;
+
+  &:hover {
+    border-color: #455a64;
+  }
+  &:focus {
+    border-color: #ed5253;
+  }
+  &[aria-invalid='true'] {
+    border-color: #c62828;
+  }
+}
+
+.contact-bericht {
+  min-height: 10rem;
+  resize: vertical;
+}
+
+.contact-keuzes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.contact-keuze {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 44px;
+  padding: 0.5rem 1rem;
+  border: 1px solid #78909c;
+  border-radius: 999px;
+  color: #263238;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease;
+
+  input {
+    flex: none;
+    width: 1rem;
+    height: 1rem;
+    margin: 0;
+    accent-color: #ed5253;
+    cursor: pointer;
+  }
+
+  &:hover {
+    border-color: #455a64;
+  }
+  &:has(input:checked) {
+    border-color: #ed5253;
+    background: rgba(237, 82, 83, 0.08);
+  }
+}
+
+/* #c62828 haalt 5,6 tegen wit en 4,9 tegen de lichtrode achtergrond. */
+.contact-fout {
+  margin: 0;
+  color: #c62828;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.contact-melding {
+  padding: 0.75rem 1rem;
+  border-left: 3px solid #c62828;
+  background: #fdecea;
+}
+
+/* Het lokveld. Buiten beeld, niet weg; zie Contact.tsx. */
+.contact-fax {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/*--------------------------------------------------------------
+## Versturen
+--------------------------------------------------------------*/
+.contact-verstuur {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.5rem;
+}
+
+/* Dezelfde rode rand als de downloadknop bij het cv, zonder de grap die daar
+   op hover zit. */
+.contact-knop {
+  min-height: 44px;
+  padding: 1rem 2.5rem;
+  border: 2px solid #ed5253;
+  border-radius: 0;
+  background: transparent;
+  color: #14181a;
+  font-size: 1.125rem;
+  cursor: pointer;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease;
+
+  &:hover,
+  &:focus-visible {
+    background: rgba(237, 82, 83, 0.1);
+    border-color: #d63c3d;
+  }
+
+  &[aria-disabled='true'] {
+    cursor: progress;
+    opacity: 0.75;
+  }
+}
+
+.contact-privacy {
+  flex: 1 1 14rem;
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.contact-verzonden {
+  padding: 1.25rem 1.5rem;
+  border-left: 3px solid #ed5253;
+  background: #f5f7f8;
+  color: #263238;
+  font-size: 1.125rem;
+
+  /* Dit blok krijgt alleen focus zodat een schermlezer het voorleest; er valt
+     niets aan te bedienen. Een focusring bovenop de rode rand is dan ruis. */
+  &:focus {
+    outline: none;
+  }
+
+  p {
+    margin: 0;
+  }
+  p + p {
+    margin-top: 0.5rem;
+  }
+}
+
+.contact-verzonden-kop {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  line-height: 1.2;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contact-invoer,
+  .contact-keuze,
+  .contact-knop {
+    transition: none;
+  }
+}

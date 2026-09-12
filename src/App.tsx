@@ -4,6 +4,8 @@ import Hero from './components/Hero/Hero';
 import Intro from './components/Intro/Intro';
 import CVDisplay from './components/CVDisplay/CVDisplay';
 import StickyBar from './components/StickyBar/StickyBar';
+import Contact from './components/Contact/Contact';
+import { ContactformulierProvider } from './components/Contact/ContactformulierContext';
 import { LanguageProvider, useLanguage } from './i18n/LanguageContext';
 
 /**
@@ -31,6 +33,7 @@ const Pagina: React.FC = () => (
       <Hero />
       <Intro />
       <CVDisplay />
+      <Contact />
     </main>
   </div>
 );
@@ -38,7 +41,9 @@ const Pagina: React.FC = () => (
 function App() {
   return (
     <LanguageProvider>
-      <Pagina />
+      <ContactformulierProvider>
+        <Pagina />
+      </ContactformulierProvider>
     </LanguageProvider>
   );
 }

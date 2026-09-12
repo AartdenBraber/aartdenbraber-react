@@ -54,6 +54,55 @@ export const nl: SiteContent = {
     emailVerborgen: '(e-mailadres niet kopieerbaar, tegen bots)',
     zoomHint: 'Knijp om te vergroten',
   },
+  contact: {
+    link: 'Contact',
+    introLink: 'Stuur me een bericht',
+    titel: 'Laten we kennismaken.',
+    intro:
+      'Heb je een opdracht voor een developer, of zoek je iemand die een nieuwe website voor je bouwt? Vertel hieronder waar het om gaat.',
+    velden: {
+      naam: 'Naam',
+      email: 'E-mailadres',
+      onderwerp: 'Waar gaat het over?',
+      optioneel: '(niet verplicht)',
+      bericht: 'Bericht',
+    },
+    onderwerpen: {
+      opdracht: 'Een opdracht als developer',
+      website: 'Een nieuwe website',
+      anders: 'Iets anders',
+    },
+    versturen: 'Versturen',
+    bezig: 'Bezig met versturen…',
+    privacy: 'Ik gebruik je gegevens alleen om op dit bericht te reageren.',
+    turnstile: 'Cloudflare Turnstile controleert of het bericht niet van een bot komt.',
+    verzonden: {
+      titel: 'Je bericht is verstuurd.',
+      tekst: 'Bedankt. Ik reageer op het e-mailadres dat je hebt ingevuld.',
+    },
+    fouten: {
+      naam: {
+        leeg: 'Vul je naam in.',
+        teLang: 'Je naam mag hooguit 100 tekens lang zijn.',
+        ongeldig: 'Er staan tekens in je naam die niet kunnen.',
+      },
+      email: {
+        leeg: 'Vul je e-mailadres in.',
+        ongeldig: 'Dit e-mailadres klopt niet.',
+      },
+      onderwerp: {
+        ongeldig: 'Kies een van de onderwerpen.',
+      },
+      bericht: {
+        leeg: 'Schrijf een bericht.',
+        teLang: 'Je bericht mag hooguit 5000 tekens lang zijn.',
+        ongeldig: 'Er staan tekens in je bericht die niet kunnen.',
+      },
+      teVeel: 'Er zijn net te veel berichten verstuurd. Probeer het later nog eens.',
+      botcheck: 'De controle op bots is niet gelukt. Laad de pagina opnieuw en probeer het nog een keer.',
+      algemeen: 'Versturen is niet gelukt. Probeer het later nog eens.',
+    },
+  },
   nav: {
     skipToContent: 'Naar de inhoud',
     backToTop: 'Terug naar boven',

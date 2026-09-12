@@ -18,7 +18,8 @@ De site draait dan op http://localhost:3000.
 | `npm run build` | Productiebundel in `build/`                    |
 
 De site is één pagina: een hero met zoeklichteffect, een korte introductie en
-daaronder het cv, pagina voor pagina getekend met pdf.js.
+daaronder het cv, pagina voor pagina getekend met pdf.js. Onder het cv staat een
+contactformulier.
 
 ## Structuur
 
@@ -69,6 +70,104 @@ de gebruikte versie past. Het gekopieerde bestand staat in `.gitignore`.
 Tekenen gebeurt met `requestAnimationFrame`. Een browser laat dat niet lopen in
 een tabblad op de achtergrond, dus in een verborgen tab blijft het cv leeg tot
 je het tabblad naar voren haalt. Dat is geen fout in de site.
+
+## Contactformulier
+
+Onder het cv staat een contactformulier, met een link ernaartoe onder de
+introductie en in de balk bovenin. De site stuurt een bericht naar
+`public/contact.php`, en dat script stuurt het per mail door. Het gaat gewoon
+mee met de build.
+
+Het formulier staat er pas als dat script antwoordt. Bij het laden van de
+pagina haalt de site een token op bij `/contact.php`. Lukt dat niet, dan
+blijven het formulier en beide links weg. Een bezoeker ziet dus nooit een
+formulier dat het niet doet, ook niet zolang de instellingen op de server nog
+ontbreken.
+
+### Instellen op de server
+
+De instellingen staan niet in deze repo, want die is openbaar. Ze staan in een
+bestand boven de webroot:
+
+```
+/home/aartdenbraber/domains/aartdenbraber.nl/contactformulier/config.php
+```
+
+Het FTP-account van de uitrol begint in de webroot en kan daar niet bij.
+`deploy/contactformulier-config.voorbeeld.php` laat zien wat erin hoort; zet
+de kopie neer met Bestandsbeheer in DirectAdmin. Verplicht zijn `ontvanger` en
+`geheim`. Een geheim maak je met
+`php -r "echo bin2hex(random_bytes(32)), PHP_EOL;"`.
+
+Naast het configbestand maakt het script zelf een map `opslag` aan voor de
+tellers en de gebruikte tokens. Daarin staat geen IP-adres, alleen een HMAC
+ervan.
+
+Klopt er iets niet aan de instellingen, dan antwoordt het script met 503 en
+staat de reden in het foutenlog van het domein, met `contactformulier:`
+ervoor. Berichten die de botwering tegenhoudt, staan daar ook.
+
+### Turnstile
+
+Maak in het Cloudflare-dashboard een Turnstile-widget aan voor de hostname
+`aartdenbraber.nl` en zet de sitekey en de secret in de config. Laat je ze
+allebei leeg, dan werkt het formulier zonder Turnstile en blijven de andere
+lagen aan. Het script van Cloudflare laadt pas als iemand het formulier
+aanraakt. Wie alleen het cv leest, maakt dus geen verbinding met Cloudflare.
+
+### De botwering
+
+Het recept is hetzelfde als bij de formulieren van EV Company in
+`wecatalyze-apis`.
+
+1. Een token met tijdval. Bij het laden haalt de site een token op dat de
+   server met HMAC tekent. Een bericht moet dat token dragen, het moet minstens
+   drie seconden oud zijn en het werkt maar één keer. Een bot die ophaalt en
+   meteen post, valt hierop af. Na zes uur verloopt het token; de site haalt
+   dan zelf een nieuw en probeert het nog een keer.
+2. Een honeypot. Het formulier heeft buiten beeld een veld `fax` dat mensen
+   niet kunnen bereiken. Staat daar iets in, dan antwoordt het script alsof
+   het bericht verstuurd is en gooit het weg.
+3. Controle van de invoer, en een limiet van tien berichten per uur per
+   IP-adres en vijftig per dag in totaal.
+4. Cloudflare Turnstile, stil: de widget laat zich alleen zien als Cloudflare
+   twijfelt. Geeft Cloudflare geen antwoord, dan gaat het bericht toch door,
+   met een regel in het log.
+
+Een filter op de inhoud zit er bewust niet in. Dat houdt vooral echte
+berichten tegen.
+
+### De mail
+
+Het script verstuurt met `mail()` vanaf `noreply@aartdenbraber.nl` en zet het
+adres van de bezoeker in `Reply-To`. De SPF-record van aartdenbraber.nl staat
+de server toe, en met `-f` staat de envelope-afzender op hetzelfde domein. Een
+DKIM-record heeft aartdenbraber.nl niet. Belandt de mail toch in de spam, zet
+dan DKIM aan in DirectAdmin en zet het record bij Junda, waar de DNS staat.
+
+### Lokaal testen
+
+In `npm start` draait geen PHP, dus daar blijft het formulier weg. Test met de
+build en de ingebouwde server van PHP:
+
+```bash
+npm run build
+CONTACTFORMULIER_CONFIG=/pad/naar/config.php php -S 127.0.0.1:8080 -t build
+```
+
+Zet in die lokale config `testmap` op een map, dan worden berichten
+`.eml`-bestanden in plaats van echte mail. De testsleutels van Cloudflare
+(sitekey `1x00000000000000000000AA`, secret
+`1x0000000000000000000000000000000AA`) laten elk bericht door. Voor de
+controle bij Cloudflare heeft PHP de extensie `curl` of `openssl` nodig.
+
+De PHP-tests hebben geen server nodig:
+
+```bash
+php scripts/test-contactformulier.php
+```
+
+De workflow draait ze voor elke uitrol.
 
 ## Hosting
 
