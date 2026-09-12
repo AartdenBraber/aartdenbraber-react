@@ -4,6 +4,9 @@ import './Contact.scss';
 import { SiteContent } from '../../content';
 import { useRevealOnView } from '../../hooks/useRevealOnView';
 import { useLanguage } from '../../i18n/LanguageContext';
+import FocusSpotlight from '../FocusSpotlight/FocusSpotlight';
+import WordReveal from '../WordReveal/WordReveal';
+import '../WordReveal/WordReveal.scss';
 import { Antwoord, ONDERWERPEN, Onderwerp, Veld, verstuurBericht } from './contactApi';
 import ContactLink from './ContactLink';
 import { useContactformulier } from './ContactformulierContext';
@@ -18,6 +21,9 @@ const TE_ONTHULLEN = '.contact-afsluiter-kop, .contact-afsluiter-tekst, .contact
  * binnen een seconde, maar wie meteen op versturen klikt kan er net voor zitten.
  */
 const TURNSTILE_WACHTTIJD_MS = 15000;
+
+/** Dezelfde foto als in de hero, dus die staat al in de cache. */
+const HERO_FOTO = '/images/top-bg.jpg';
 
 const VELDEN: Veld[] = ['naam', 'email', 'onderwerp', 'bericht'];
 
@@ -167,7 +173,13 @@ const Formulier: React.FC = () => {
     if (fase === 'verzonden') {
         return (
             <div ref={bevestigingRef} className="contact-verzonden" role="status" tabIndex={-1}>
-                <p className="contact-verzonden-kop">{tekst.verzonden.titel}</p>
+                {/* Komt als één regel omhoog uit een venstertje, met dezelfde
+                    beweging als de koppen; zie WordReveal.scss. */}
+                <p className="contact-verzonden-kop">
+                    <span className="word-mask">
+                        <span className="word">{tekst.verzonden.titel}</span>
+                    </span>
+                </p>
                 <p>{tekst.verzonden.tekst}</p>
             </div>
         );
@@ -279,6 +291,7 @@ const Formulier: React.FC = () => {
             <div className="contact-verstuur">
                 <button type="submit" className="contact-knop" aria-disabled={fase === 'versturen'}>
                     {fase === 'versturen' ? tekst.bezig : tekst.versturen}
+                    {fase !== 'versturen' && <span className="contact-knop-pijl" aria-hidden="true" />}
                 </button>
                 <p className="contact-privacy">{tekst.privacy}</p>
             </div>
@@ -369,32 +382,37 @@ const Paneel: React.FC = () => {
             onMouseDown={drukOmlaag}
             onClick={klik}
         >
-            <div className="contact-paneel-binnen">
-                <div className="contact-paneel-kop">
-                    <h2 id="contact-kop" className="contact-kop">
-                        {tekst.titel}
-                    </h2>
-                    <button
-                        ref={sluitknopRef}
-                        type="button"
-                        className="contact-sluit"
-                        aria-label={tekst.sluiten}
-                        onClick={sluitPaneel}
-                    >
-                        <svg
-                            aria-hidden="true"
-                            viewBox="0 0 24 24"
-                            width="20"
-                            height="20"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                        >
-                            <path d="M6 6l12 12M18 6L6 18" />
-                        </svg>
-                    </button>
+            {/* Bovenin een stukje hero: dezelfde wazige foto met het zoeklicht,
+                de kop die woord voor woord binnenkomt en de dunne streepjes
+                erboven en eronder. Dat speelt bij elke keer openen opnieuw, want
+                een dichte dialoog staat op display: none. */}
+            <div className="contact-paneel-kop">
+                <FocusSpotlight image={HERO_FOTO} />
+                <div className="contact-paneel-kop-inhoud">
+                    <WordReveal as="h2" id="contact-kop" className="contact-kop" text={tekst.titel} delay={180} />
                 </div>
+                <button
+                    ref={sluitknopRef}
+                    type="button"
+                    className="contact-sluit"
+                    aria-label={tekst.sluiten}
+                    onClick={sluitPaneel}
+                >
+                    <svg
+                        aria-hidden="true"
+                        viewBox="0 0 24 24"
+                        width="20"
+                        height="20"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                    >
+                        <path d="M6 6l12 12M18 6L6 18" />
+                    </svg>
+                </button>
+            </div>
+            <div className="contact-paneel-binnen">
                 <p className="contact-intro">{tekst.intro}</p>
 
                 <Formulier />
