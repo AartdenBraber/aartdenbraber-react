@@ -128,12 +128,17 @@ jobs:
           # De foutmelding van lftp gaat mee in de annotatie. Die is zonder
           # inloggen via de API te lezen, het log zelf niet. En deze stap faalt
           # ook als het inloggen of de verbinding misgaat, niet alleen als
-          # index.html ontbreekt. lftp zet het wachtwoord nooit in zijn
-          # meldingen, dat komt via --env-password binnen.
-          if ! lftp -f "$HOME/controle.lftp" 2> "$HOME/controle.err"; then
-            cat "$HOME/controle.err" >&2
-            fout=$(paste -sd' ' "$HOME/controle.err" | tr -d '[:cntrl:]' | sed 's/%/%25/g' | cut -c1-400)
-            echo "::error::lftp kon index.html in DEPLOY_PATH niet lezen: ${fout:-geen melding van lftp}. Controleer de FTP-gegevens en DEPLOY_PATH. De uitrol is gestopt voordat er iets verwijderd werd."
+          # index.html ontbreekt.
+          #
+          # Met -d schrijft lftp ook op wat er over de lijn gaat. Een melding als
+          # "max-retries exceeded" zegt niet of de verbinding, TLS of het inloggen
+          # misging; de laatste regels van dat verloop zeggen dat wel. lftp
+          # vervangt het wachtwoord in PASS al door XXXX, en die regel gaat er
+          # hier voor de zekerheid ook nog uit.
+          if ! lftp -d -f "$HOME/controle.lftp" 2> "$HOME/controle.err"; then
+            grep -v 'PASS ' "$HOME/controle.err" >&2
+            fout=$(grep -v 'PASS ' "$HOME/controle.err" | grep -E -i 'fatal|error|connect|<---|certificate|ssl|tls|timed out|refused|reset|login' | tail -n 10 | paste -sd' ' | tr -d '[:cntrl:]' | sed 's/%/%25/g' | cut -c1-1500)
+            echo "::error::lftp kon index.html in DEPLOY_PATH niet lezen: ${fout:-geen melding van lftp}. De uitrol is gestopt voordat er iets verwijderd werd."
             exit 1
           fi
 
