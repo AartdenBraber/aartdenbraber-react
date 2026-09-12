@@ -4,9 +4,7 @@ import './Contact.scss';
 import { SiteContent } from '../../content';
 import { useRevealOnView } from '../../hooks/useRevealOnView';
 import { useLanguage } from '../../i18n/LanguageContext';
-import FocusSpotlight from '../FocusSpotlight/FocusSpotlight';
-import WordReveal from '../WordReveal/WordReveal';
-import '../WordReveal/WordReveal.scss';
+
 import { Antwoord, ONDERWERPEN, Onderwerp, Veld, verstuurBericht } from './contactApi';
 import ContactLink from './ContactLink';
 import { useContactformulier } from './ContactformulierContext';
@@ -22,7 +20,7 @@ const TE_ONTHULLEN = '.contact-afsluiter-kop, .contact-afsluiter-tekst, .contact
  */
 const TURNSTILE_WACHTTIJD_MS = 15000;
 
-/** Dezelfde foto als in de hero, dus die staat al in de cache. */
+/** Dezelfde foto als in de hero, dus die staat al in de cache; zie .contact-paneel-kop. */
 const HERO_FOTO = '/images/top-bg.jpg';
 
 const VELDEN: Veld[] = ['naam', 'email', 'onderwerp', 'bericht'];
@@ -173,13 +171,7 @@ const Formulier: React.FC = () => {
     if (fase === 'verzonden') {
         return (
             <div ref={bevestigingRef} className="contact-verzonden" role="status" tabIndex={-1}>
-                {/* Komt als één regel omhoog uit een venstertje, met dezelfde
-                    beweging als de koppen; zie WordReveal.scss. */}
-                <p className="contact-verzonden-kop">
-                    <span className="word-mask">
-                        <span className="word">{tekst.verzonden.titel}</span>
-                    </span>
-                </p>
+                <p className="contact-verzonden-kop">{tekst.verzonden.titel}</p>
                 <p>{tekst.verzonden.tekst}</p>
             </div>
         );
@@ -450,14 +442,17 @@ const Paneel: React.FC = () => {
             onClick={klik}
         >
             <div ref={vensterRef} className="contact-venster">
-                {/* Bovenin een stukje hero: dezelfde wazige foto met het zoeklicht,
-                    de kop die woord voor woord binnenkomt en de dunne streepjes
-                    erboven en eronder. Dat speelt bij elke keer openen opnieuw, want
-                    een dichte dialoog staat op display: none. */}
-                <div className="contact-paneel-kop">
-                    <FocusSpotlight image={HERO_FOTO} />
+                {/* Bovenin een rustig stukje hero: dezelfde wazige foto, met de kop
+                    tussen de dunne streepjes erboven en eronder. Het enige dat hier
+                    beweegt is het venster zelf. */}
+                <div
+                    className="contact-paneel-kop"
+                    style={{ '--kop-foto': `url(${HERO_FOTO})` } as React.CSSProperties}
+                >
                     <div className="contact-paneel-kop-inhoud">
-                        <WordReveal as="h2" id="contact-kop" className="contact-kop" text={tekst.titel} delay={180} />
+                        <h2 id="contact-kop" className="contact-kop">
+                            {tekst.titel}
+                        </h2>
                     </div>
                     <button
                         ref={sluitknopRef}

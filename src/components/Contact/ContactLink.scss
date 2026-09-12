@@ -71,11 +71,10 @@
 /* Onder de introductie en onder het cv. De tekstmaat daar is groot, dus de maat
    staat hier vast.
 
-   Bij hover en focus wordt de knop de leisteen van het cv, en volgt een rood
-   licht de muis binnen de rand, met de dunne lichte ring van het zoeklicht in
-   de hero eromheen. ContactLink.tsx zet de plek in --licht-x en --licht-y;
-   zonder muis staat het licht in het midden. Wit haalt op het hart van het
-   licht nog 5:1. */
+   Bij hover en focus volgt een zachte rode gloed de muis binnen de rand, een
+   verre echo van het zoeklicht in de hero. ContactLink.tsx zet de plek in
+   --licht-x en --licht-y; zonder muis staat het licht in het midden. De tekst
+   blijft donker en de knop licht, dus het contrast verandert niet. */
 .contact-link--intro {
   --licht-x: 50%;
   --licht-y: 50%;
@@ -91,54 +90,37 @@
   font-size: 1.125rem;
   letter-spacing: 1px;
   line-height: 1.2;
-  transition:
-    background-color 0.3s ease,
-    color 0.3s ease;
+  transition: border-color 0.3s ease;
 
-  &::before,
-  &::after {
+  &::before {
     content: "";
     position: absolute;
     inset: 0;
     z-index: -1;
     pointer-events: none;
+    background: radial-gradient(
+      circle 120px at var(--licht-x) var(--licht-y),
+      rgba(237, 82, 83, 0.16) 0%,
+      rgba(237, 82, 83, 0.06) 60%,
+      transparent 100%
+    );
     opacity: 0;
     transition: opacity 0.3s ease;
   }
 
-  &::before {
-    background: radial-gradient(
-      circle 90px at var(--licht-x) var(--licht-y),
-      rgba(237, 82, 83, 0.75) 0%,
-      rgba(237, 82, 83, 0.3) 55%,
-      transparent 100%
-    );
-  }
-  &::after {
-    background: radial-gradient(
-      circle 90px at var(--licht-x) var(--licht-y),
-      transparent 86%,
-      rgba(255, 255, 255, 0.28) 93%,
-      transparent 100%
-    );
-  }
-
   &:hover,
   &:focus-visible {
-    background: #263238;
-    color: #fff;
+    border-color: #d63c3d;
   }
   &:hover::before,
-  &:hover::after,
-  &:focus-visible::before,
-  &:focus-visible::after {
+  &:focus-visible::before {
     opacity: 1;
   }
 
   &:hover .contact-link-pijl,
   &:focus-visible .contact-link-pijl {
     animation: none;
-    transform: rotate(-45deg) translate(4px, 4px);
+    transform: rotate(-45deg) translate(3px, 3px);
   }
 }
 
@@ -171,7 +153,6 @@
 @media (prefers-reduced-motion: reduce) {
   .contact-link,
   .contact-link::before,
-  .contact-link::after,
   .contact-link-pijl {
     transition: none;
     animation: none;

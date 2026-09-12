@@ -140,6 +140,20 @@ html:has(.contact-paneel[open]) {
   color: #fff;
   text-align: center;
 
+  /* De foto van de hero, even wazig als daar, maar stil: geen zoeklicht. De
+     plek komt uit --kop-foto, dat Contact.tsx zet, zodat de build het pad naar
+     public/ niet probeert op te lossen. De foto loopt iets buiten het vak, anders
+     vervaagt de rand van het waas naar wit. */
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -40px;
+    z-index: 0;
+    pointer-events: none;
+    background: var(--kop-foto) center 30% / cover no-repeat;
+    filter: blur(20px);
+  }
+
   /* De foto loopt onderaan over in de grond van het paneel. Zo zijn kop en
      formulier één vlak, en de witte kop blijft leesbaar op de lichtere plekken
      van de foto. */
