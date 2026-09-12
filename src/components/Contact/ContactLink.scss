@@ -68,25 +68,112 @@
   }
 }
 
-/* Onder de introductie. De tekstmaat daar is groot, dus de maat staat hier vast. */
+/* Onder de introductie en onder het cv. De tekstmaat daar is groot, dus de maat
+   staat hier vast.
+
+   Bij hover en focus wordt de knop de leisteen van het cv, en volgt een rood
+   licht de muis binnen de rand, met de dunne lichte ring van het zoeklicht in
+   de hero eromheen. ContactLink.tsx zet de plek in --licht-x en --licht-y;
+   zonder muis staat het licht in het midden. Wit haalt op het hart van het
+   licht nog 5:1. */
 .contact-link--intro {
+  --licht-x: 50%;
+  --licht-y: 50%;
+
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  gap: 0.75em;
   margin-top: 1rem;
-  padding: 15px 30px;
+  padding: 15px 28px 15px 30px;
   border: 2px solid #ed5253;
   color: #14181a;
   font-size: 1.125rem;
   letter-spacing: 1px;
   line-height: 1.2;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  &::before {
+    background: radial-gradient(
+      circle 90px at var(--licht-x) var(--licht-y),
+      rgba(237, 82, 83, 0.75) 0%,
+      rgba(237, 82, 83, 0.3) 55%,
+      transparent 100%
+    );
+  }
+  &::after {
+    background: radial-gradient(
+      circle 90px at var(--licht-x) var(--licht-y),
+      transparent 86%,
+      rgba(255, 255, 255, 0.28) 93%,
+      transparent 100%
+    );
+  }
 
   &:hover,
   &:focus-visible {
-    background: rgba(237, 82, 83, 0.1);
-    border-color: #d63c3d;
+    background: #263238;
+    color: #fff;
+  }
+  &:hover::before,
+  &:hover::after,
+  &:focus-visible::before,
+  &:focus-visible::after {
+    opacity: 1;
+  }
+
+  &:hover .contact-link-pijl,
+  &:focus-visible .contact-link-pijl {
+    animation: none;
+    transform: rotate(-45deg) translate(4px, 4px);
+  }
+}
+
+/* Hetzelfde pijltje als in "Bekijk mijn cv", maar naar rechts. Het wijst net
+   als daar steeds even de kant op waar de knop je heen brengt, zodat er ook op
+   een telefoon, zonder hover, iets beweegt. */
+.contact-link-pijl {
+  flex: none;
+  width: 9px;
+  height: 9px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  border-radius: 2px;
+  transform: rotate(-45deg);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: contact-link-duw 2.4s ease-in-out infinite;
+}
+
+@keyframes contact-link-duw {
+  0%,
+  60%,
+  100% {
+    transform: rotate(-45deg) translate(0, 0);
+  }
+  75% {
+    transform: rotate(-45deg) translate(3px, 3px);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .contact-link {
+  .contact-link,
+  .contact-link::before,
+  .contact-link::after,
+  .contact-link-pijl {
     transition: none;
+    animation: none;
   }
 }

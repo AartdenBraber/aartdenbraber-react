@@ -5,6 +5,18 @@ import { useContactformulier } from './ContactformulierContext';
 import { useContactPaneel } from './ContactPaneelContext';
 
 /**
+ * Het zoeklicht in de knop volgt de muis. De plek gaat als twee eigen
+ * eigenschappen naar de opmaak; zie ContactLink.scss. Zonder muis, bij focus
+ * met het toetsenbord, staat het licht in het midden.
+ */
+const volgMuis = (event: React.PointerEvent<HTMLButtonElement>) => {
+    const knop = event.currentTarget;
+    const vak = knop.getBoundingClientRect();
+    knop.style.setProperty('--licht-x', `${event.clientX - vak.left}px`);
+    knop.style.setProperty('--licht-y', `${event.clientY - vak.top}px`);
+};
+
+/**
  * Een knop die het contactpaneel opent. Staat er alleen als het formulier er
  * ook staat.
  *
@@ -26,8 +38,10 @@ const ContactLink: React.FC<{ variant: 'balk' | 'intro' }> = ({ variant }) => {
                 className="contact-link contact-link--intro"
                 aria-haspopup="dialog"
                 onClick={(event) => openPaneel(event.currentTarget)}
+                onPointerMove={volgMuis}
             >
-                {t.contact.introLink}
+                <span className="contact-link-tekst">{t.contact.introLink}</span>
+                <span className="contact-link-pijl" aria-hidden="true" />
             </button>
         );
     }
