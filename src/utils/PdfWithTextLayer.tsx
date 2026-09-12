@@ -21,6 +21,9 @@ interface PdfWithTextLayerProps {
 /** Waarop het canvas getekend wordt. Hoger levert scherpere letters bij zoomen. */
 const TEKEN_SCHAAL = 1.5;
 
+/** Hoe lang het cv van de vorige taal erover doet om weg te vagen. */
+const OVERVLOEI_MS = 400;
+
 // De laatste groep moet met letters eindigen. Anders valt `react@18.2.0` uit een
 // technische opsomming er ook onder, en dan staat er in de tekstlaag een melding
 // over een e-mailadres boven een versienummer.
@@ -86,10 +89,21 @@ const zonderEmail = <T extends { str?: string }>(items: T[], vervanging: string)
  * rekent in procenten van de pagina op schaal 1 en schaalt mee met
  * `--scale-factor`, die we zetten zodra de breedte verandert.
  *
- * Bij een taalwissel komt er een ander adres binnen; dan moet het oude cv weg
- * en het nieuwe ervoor in de plaats. De vlag `geannuleerd` zorgt dat een
- * halfklare tekening van het vorige pdf niet alsnog tussen de nieuwe pagina's
- * belandt.
+ * Bij een taalwissel komt er een ander adres binnen. Het nieuwe cv wordt dan
+ * eerst helemaal getekend in een laag die nog nergens in hangt, terwijl het
+ * oude gewoon blijft staan. Pas als de laatste pagina af is, gaat de nieuwe
+ * laag op zijn plek en vaagt de oude erbovenop weg. Hiervoor ging het oude cv
+ * eruit zodra het nieuwe pdf binnen was, en kwamen de pagina's er daarna één
+ * voor één bij. Dat zag je als een flits: de donkere sectie met losse witte
+ * vellen erin, en dan pas het nieuwe cv.
+ *
+ * Het oude cv blijft ook om een tweede reden tot het laatst in de pagina staan.
+ * Zonder zijn hoogte stort het document in van ruim twintigduizend pixels naar
+ * een paar honderd, klemt de browser de scrollpositie, en staat wie op pagina
+ * acht van taal wisselde ineens weer bovenaan.
+ *
+ * De vlag `geannuleerd` zorgt dat een halfklare tekening van het vorige pdf
+ * niet alsnog in beeld komt.
  */
 const PdfWithTextLayer: React.FC<PdfWithTextLayerProps> = ({ url, label, emailVervanging }) => {
     const containerRef = useRef<HTMLDivElement | null>(null);
@@ -100,8 +114,14 @@ const PdfWithTextLayer: React.FC<PdfWithTextLayerProps> = ({ url, label, emailVe
         const container = containerRef.current;
         if (!container) return;
 
+        // Alle pagina's van dit pdf. De eerste keer hangt deze laag er meteen
+        // in en groeit hij pagina voor pagina aan; bij een taalwissel pas als
+        // hij af is.
+        const stand = document.createElement('div');
+        stand.className = 'pdf-stand';
+
         const schaalTekstlagen = () => {
-            container.querySelectorAll<HTMLElement>('.pdf-page').forEach((pagina) => {
+            stand.querySelectorAll<HTMLElement>('.pdf-page').forEach((pagina) => {
                 const basisBreedte = Number(pagina.dataset.basisbreedte);
                 if (!basisBreedte) return;
                 pagina.style.setProperty(
@@ -117,32 +137,64 @@ const PdfWithTextLayer: React.FC<PdfWithTextLayerProps> = ({ url, label, emailVe
         const meter =
             typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(schaalTekstlagen);
 
-        // Staat er al iets van dit pdf? Zo niet, dan is wat er hangt van de
-        // vorige taal en moet het weg als het misgaat; staat er al wel wat, dan
-        // laten we die pagina's staan in plaats van ze alsnog te wissen.
-        let nieuweStandBegonnen = false;
-
         // pdf.js start per getDocument een eigen worker. Zonder destroy blijft
         // die leven met het hele geparste cv erin: gemeten liep dat op van één
         // worker en 8MB naar zes workers en 23MB na vijf taalwissels.
         let taak: ReturnType<typeof getDocument> | null = null;
+
+        // Staat klaar zolang het vorige cv aan het wegvagen is. Wie in die
+        // fractie alweer van taal wisselt, krijgt de wissel eerst afgemaakt,
+        // zodat de volgende ronde maar één cv aantreft.
+        let ruimOudOp: (() => void) | null = null;
+
+        const wissel = () => {
+            const oud = Array.from(container.children);
+            oud.forEach((laag) => {
+                laag.classList.add('pdf-stand--verdwijnt');
+                // Het wegvagen is alleen iets om naar te kijken. Voorlezen,
+                // tabben en ctrl+F horen meteen bij het nieuwe cv.
+                laag.setAttribute('aria-hidden', 'true');
+                laag.setAttribute('inert', '');
+            });
+            container.insertBefore(stand, container.firstChild);
+
+            const weg = () => oud.forEach((laag) => laag.remove());
+            ruimOudOp = weg;
+
+            // Met beweging uit wisselt het in één keer, net als het onthullen
+            // bij het scrollen. Ook dan zit er geen gat tussen.
+            const bewegingUit =
+                typeof window.matchMedia === 'function' &&
+                window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            if (bewegingUit || typeof stand.animate !== 'function') {
+                weg();
+                return;
+            }
+
+            const vagen = oud.map((laag) =>
+                laag.animate([{ opacity: 1 }, { opacity: 0 }], {
+                    duration: OVERVLOEI_MS,
+                    easing: 'ease-in-out',
+                    fill: 'forwards',
+                }),
+            );
+            // Twee keer `weg`: een afgebroken animatie verwerpt `finished`, en
+            // ook dan hoort de oude laag eruit.
+            Promise.all(vagen.map((animatie) => animatie.finished)).then(weg, weg);
+        };
 
         const laadEnTeken = async () => {
             taak = getDocument(url);
             const pdf = await taak.promise;
             if (geannuleerd) return;
 
-            // Pas leegmaken nu het nieuwe cv binnen is, zodat er bij een trage
-            // verbinding niet eerst een gat valt. De hoogte houden we vast tot
-            // de nieuwe pagina's er staan: zonder dat stort het document in van
-            // ruim twintigduizend pixels naar een paar honderd, klemt de
-            // browser de scrollpositie, en staat wie op pagina acht van taal
-            // wisselde ineens weer bovenaan.
-            const hoogte = container.getBoundingClientRect().height;
-            meter?.disconnect();
-            if (hoogte > 0) container.style.minHeight = `${hoogte}px`;
-            container.innerHTML = '';
-            nieuweStandBegonnen = true;
+            // Staat er nog geen enkele pagina, dan valt er niets over te
+            // vloeien en is opbouwen waar je bij kijkt sneller in beeld.
+            const overvloeien = container.querySelector('.pdf-page') !== null;
+            if (!overvloeien) {
+                container.innerHTML = '';
+                container.appendChild(stand);
+            }
 
             for (let i = 1; i <= pdf.numPages; i++) {
                 const page = await pdf.getPage(i);
@@ -184,28 +236,31 @@ const PdfWithTextLayer: React.FC<PdfWithTextLayerProps> = ({ url, label, emailVe
                 }).promise;
                 if (geannuleerd) return;
 
-                container.appendChild(pagina);
+                // Ook in een laag die nog nergens in hangt: de meter meldt de
+                // pagina dan zodra die er wel in staat.
+                stand.appendChild(pagina);
                 meter?.observe(pagina);
             }
 
-            container.style.minHeight = '';
+            if (overvloeien) wissel();
             schaalTekstlagen();
         };
 
         // Zonder dit mislukt het tekenen in stilte en zie je alleen een lege
-        // plek waar het cv hoort. Het oude cv gaat er dan ook uit: bij een
-        // taalwissel die strandt bleef anders het vorige cv staan onder een
-        // downloadknop en een aria-label van de andere taal.
+        // plek waar het cv hoort. Hangt de nieuwe laag er nog niet in, dan
+        // staat er alleen het cv van de vorige taal, en dat gaat er dan ook
+        // uit: bij een taalwissel die strandt bleef anders het vorige cv staan
+        // onder een downloadknop en een aria-label van de andere taal.
         laadEnTeken().catch((fout) => {
             if (geannuleerd) return;
-            if (!nieuweStandBegonnen) container.innerHTML = '';
-            container.style.minHeight = '';
+            if (!stand.isConnected) container.innerHTML = '';
             console.error('Het cv kon niet getekend worden:', fout);
         });
 
         return () => {
             geannuleerd = true;
             meter?.disconnect();
+            ruimOudOp?.();
             // Stopt de worker en gooit het geparste document weg. De lopende
             // render verwerpt daardoor; dat is precies wat we willen en de
             // catch hierboven zwijgt erover omdat `geannuleerd` al staat.

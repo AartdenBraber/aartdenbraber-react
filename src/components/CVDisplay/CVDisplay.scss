@@ -18,6 +18,19 @@ section.showcase {
   min-height: 100svh;
 }
 
+/* Bij een taalwissel staat het nieuwe cv al op zijn plek en ligt het cv van de
+   vorige taal er nog even bovenop, terwijl het wegvaagt. PdfWithTextLayer zet
+   die klasse en haalt de laag weg zodra hij onzichtbaar is. Vingers en de muis
+   gaan er dwars doorheen naar het nieuwe cv. */
+.pdf-pages {
+  position: relative;
+}
+.pdf-stand--verdwijnt {
+  position: absolute;
+  inset: 0 0 auto;
+  pointer-events: none;
+}
+
 /* Elke pagina van het pdf: de tekening, en daar precies overheen de tekst. */
 .pdf-page {
   position: relative;
