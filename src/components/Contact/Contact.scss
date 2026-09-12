@@ -1,52 +1,127 @@
 /*--------------------------------------------------------------
-# Contact: het formulier onder het cv
+# Contact: het paneel met het formulier, en de afsluiter onder het cv
 --------------------------------------------------------------*/
-.contact {
-  /* De links in de balk en onder de intro wijzen hierheen. De balk bovenin mag
-     de kop niet afdekken. */
-  scroll-margin-top: 4.5rem;
 
-  padding: 5em 20px;
-  padding-left: max(20px, env(safe-area-inset-left));
-  padding-right: max(20px, env(safe-area-inset-right));
-  padding-bottom: calc(5em + env(safe-area-inset-bottom, 0px));
+/*--------------------------------------------------------------
+## Het paneel
+--------------------------------------------------------------*/
+/* Schuift van rechts over de pagina. De browser zet een dialoog midden in beeld
+   met een rand en een marge; dat gaat er allemaal af. Op een telefoon vult hij
+   het hele scherm. */
+.contact-paneel {
+  position: fixed;
+  inset: 0 0 0 auto;
+  z-index: 1000;
+  box-sizing: border-box;
+  width: min(36rem, 100%);
+  max-width: 100%;
+  height: 100%;
+  max-height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
 
   background: #fff;
   color: #556f7c;
+  box-shadow: -12px 0 40px rgba(20, 24, 26, 0.25);
   line-height: 1.6;
 
   /* Dezelfde reden als bij de intro: de 1px van de body rekt lopende tekst uit. */
   letter-spacing: 0.02em;
+
+  /* Het paneel scrolt zelf. Loopt dat tegen zijn eind aan, dan hoort de pagina
+     eronder niet mee te gaan. */
+  overflow-y: auto;
+  overscroll-behavior: contain;
+
+  &::backdrop {
+    background: rgba(38, 50, 56, 0.55);
+  }
+
+  &[open] {
+    animation: contact-paneel-in 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  &[open]::backdrop {
+    animation: contact-achtergrond-in 0.3s ease-out;
+  }
 }
 
-.contact-binnen {
-  max-width: 40rem;
-  margin: 0 auto;
+@keyframes contact-paneel-in {
+  from {
+    transform: translateX(100%);
+  }
+}
+@keyframes contact-achtergrond-in {
+  from {
+    opacity: 0;
+  }
 }
 
-/*--------------------------------------------------------------
-## Kop en inleiding, op de maat van de intro
---------------------------------------------------------------*/
+/* De pagina eronder staat stil zolang het paneel open is, en blijft waar hij
+   was. Met de schuifbalk verdwijnt ook zijn breedte. Contact.tsx meet die vlak
+   voor het openen, en hier komt hij terug als marge; anders schuift alles een
+   stukje op. scrollbar-gutter: stable hield de ruimte ook vrij, maar dan ook
+   naast het paneel: gemeten op 1280px stond het 15px van de rand. */
+html:has(.contact-paneel[open]) {
+  overflow: hidden;
+  padding-right: var(--contact-schuifbalk, 0px);
+}
+
+.contact-paneel-binnen {
+  padding: 1.5rem 1.75rem;
+  padding-right: max(1.75rem, env(safe-area-inset-right));
+  padding-bottom: calc(2.5rem + env(safe-area-inset-bottom, 0px));
+}
+
+.contact-paneel-kop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
 .contact-kop {
   display: block;
-  margin: 0 0 1rem;
+  margin: 0.35rem 0 0;
   color: #263238;
-  text-align: center;
+  font-size: clamp(1.75rem, 1.6rem + 0.6vw, 2.25rem);
+  line-height: 1.15;
+}
 
-  /* Twee keer de tekstmaat, net als de kop van de intro. */
-  font-size: clamp(2.5rem, 2.272rem + 0.97vw, 3rem);
-  line-height: 1.1;
+.contact-sluit {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid #cfd8dc;
+  border-radius: 999px;
+  background: transparent;
+  color: #263238;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+
+  &:hover,
+  &:focus-visible {
+    background: #eceff1;
+    border-color: #90a4ae;
+  }
 }
 
 .contact-intro {
-  margin: 0 0 2.5rem;
-  text-align: center;
-  font-size: clamp(1.25rem, 1.136rem + 0.485vw, 1.5rem);
+  margin: 0 0 2rem;
+  font-size: 1.125rem;
 }
 
-@media all and (max-width: 600px) {
-  .contact-intro {
-    text-align: left;
+@media (max-width: 480px) {
+  .contact-paneel-binnen {
+    padding: 1rem 1.25rem;
+    padding-bottom: calc(2rem + env(safe-area-inset-bottom, 0px));
   }
 }
 
@@ -245,21 +320,15 @@
   line-height: 1.5;
 }
 
-/* Komt op de plek van het formulier, onder de kop en de inleiding, en lijnt
-   daarom net zo uit als die inleiding. Zonder kader: het is de volgende regel
-   tekst, geen melding die ergens bovenop ligt. */
+/* Komt op de plek van het formulier, onder de kop en de inleiding. Zonder
+   kader: het is de volgende regel tekst, geen melding die ergens bovenop ligt. */
 .contact-verzonden {
   padding-top: 0.5rem;
   color: #263238;
   font-size: 1.125rem;
-  text-align: center;
-
-  @media all and (max-width: 600px) {
-    text-align: left;
-  }
 
   /* Dit blok krijgt alleen focus zodat een schermlezer het voorleest; er valt
-     niets aan te bedienen. Een focusring bovenop de rode rand is dan ruis. */
+     niets aan te bedienen. */
   &:focus {
     outline: none;
   }
@@ -278,10 +347,46 @@
   line-height: 1.2;
 }
 
+/*--------------------------------------------------------------
+## De afsluiter onder het cv
+--------------------------------------------------------------*/
+.contact-afsluiter {
+  padding: 5em 20px;
+  padding-left: max(20px, env(safe-area-inset-left));
+  padding-right: max(20px, env(safe-area-inset-right));
+  padding-bottom: calc(5em + env(safe-area-inset-bottom, 0px));
+
+  background: #fff;
+  color: #556f7c;
+  text-align: center;
+  line-height: 1.6;
+  letter-spacing: 0.02em;
+}
+
+/* Twee keer de tekstmaat, net als de kop van de intro. */
+.contact-afsluiter-kop {
+  display: block;
+  margin: 0 0 1rem;
+  color: #263238;
+  font-size: clamp(2.5rem, 2.272rem + 0.97vw, 3rem);
+  line-height: 1.1;
+}
+
+.contact-afsluiter-tekst {
+  max-width: 36rem;
+  margin: 0 auto 1rem;
+  font-size: clamp(1.25rem, 1.136rem + 0.485vw, 1.5rem);
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .contact-paneel[open],
+  .contact-paneel[open]::backdrop {
+    animation: none;
+  }
   .contact-invoer,
   .contact-keuze,
-  .contact-knop {
+  .contact-knop,
+  .contact-sluit {
     transition: none;
   }
 }

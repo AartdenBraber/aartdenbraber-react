@@ -1,7 +1,9 @@
 import React from 'react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import Contact from './Contact';
+import ContactPaneel from './Contact';
+import ContactLink from './ContactLink';
 import { ContactformulierProvider } from './ContactformulierContext';
+import { ContactPaneelProvider } from './ContactPaneelContext';
 import { LanguageProvider } from '../../i18n/LanguageContext';
 
 interface Nepantwoord {
@@ -43,10 +45,20 @@ const toon = () =>
     render(
         <LanguageProvider>
             <ContactformulierProvider>
-                <Contact />
+                <ContactPaneelProvider>
+                    <ContactLink variant="intro" />
+                    <ContactPaneel />
+                </ContactPaneelProvider>
             </ContactformulierProvider>
         </LanguageProvider>,
     );
+
+const paneel = () => document.getElementById('contact');
+
+const openPaneel = async () => {
+    fireEvent.click(await screen.findByRole('button', { name: 'Stuur me een bericht' }));
+    await waitFor(() => expect(paneel()).toHaveAttribute('open'));
+};
 
 const vulIn = () => {
     fireEvent.change(screen.getByLabelText('Naam'), { target: { value: 'Jan Jansen' } });
@@ -62,22 +74,68 @@ afterEach(() => {
     delete (window as { fetch?: unknown }).fetch;
 });
 
-describe('het contactformulier', () => {
-    it('blijft weg als contact.php geen JSON teruggeeft', async () => {
+describe('het contactpaneel', () => {
+    it('blijft weg, met de knop, als contact.php geen JSON teruggeeft', async () => {
         const waarschuwing = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
         zetServer([{ status: 200, inhoud: null, type: 'application/x-httpd-php' }]);
 
         toon();
 
         await waitFor(() => expect(waarschuwing).toHaveBeenCalled());
-        expect(screen.queryByRole('heading', { name: 'Laten we kennismaken.' })).not.toBeInTheDocument();
+        expect(screen.queryByRole('button', { name: 'Stuur me een bericht' })).not.toBeInTheDocument();
+        expect(paneel()).toBeNull();
         waarschuwing.mockRestore();
+    });
+
+    it('gaat open met de knop en zet de focus op sluiten', async () => {
+        zetServer([uitnodiging('token-1')]);
+        toon();
+
+        await openPaneel();
+
+        expect(screen.getByRole('button', { name: 'Sluiten' })).toHaveFocus();
+    });
+
+    it('gaat dicht met sluiten en geeft de focus terug aan de knop', async () => {
+        zetServer([uitnodiging('token-1')]);
+        toon();
+        await openPaneel();
+
+        fireEvent.click(screen.getByRole('button', { name: 'Sluiten' }));
+
+        await waitFor(() => expect(paneel()).not.toHaveAttribute('open'));
+        expect(screen.getByRole('button', { name: 'Stuur me een bericht' })).toHaveFocus();
+    });
+
+    it('bewaart wat je invulde als je het paneel sluit en weer opent', async () => {
+        zetServer([uitnodiging('token-1')]);
+        toon();
+        await openPaneel();
+
+        fireEvent.change(screen.getByLabelText('Bericht'), { target: { value: 'Half af' } });
+        fireEvent.click(screen.getByRole('button', { name: 'Sluiten' }));
+        await waitFor(() => expect(paneel()).not.toHaveAttribute('open'));
+        await openPaneel();
+
+        expect(screen.getByLabelText('Bericht')).toHaveValue('Half af');
+    });
+
+    it('gaat vanzelf open bij /#contact, en na sluiten is dat adres weg', async () => {
+        window.history.pushState({}, '', '/#contact');
+        zetServer([uitnodiging('token-1')]);
+        toon();
+
+        await waitFor(() => expect(paneel()).toHaveAttribute('open'));
+
+        fireEvent.click(screen.getByRole('button', { name: 'Sluiten' }));
+        await waitFor(() => expect(paneel()).not.toHaveAttribute('open'));
+        expect(window.location.hash).toBe('');
     });
 
     it('verstuurt het bericht met het token en een leeg lokveld', async () => {
         zetServer([uitnodiging('token-1')], [{ status: 200, inhoud: { ok: true } }]);
         toon();
-        await screen.findByRole('heading', { name: 'Laten we kennismaken.' });
+        await openPaneel();
 
         vulIn();
         verstuur();
@@ -101,7 +159,7 @@ describe('het contactformulier', () => {
             [{ status: 400, inhoud: { ok: false, code: 'ongeldig', velden: { email: 'ongeldig' } } }],
         );
         toon();
-        await screen.findByRole('heading', { name: 'Laten we kennismaken.' });
+        await openPaneel();
 
         vulIn();
         verstuur();
@@ -124,7 +182,7 @@ describe('het contactformulier', () => {
             ],
         );
         toon();
-        await screen.findByRole('heading', { name: 'Laten we kennismaken.' });
+        await openPaneel();
 
         vulIn();
         verstuur();
@@ -136,7 +194,7 @@ describe('het contactformulier', () => {
     it('meldt het als er te veel berichten verstuurd zijn', async () => {
         zetServer([uitnodiging('token-1')], [{ status: 429, inhoud: { ok: false, code: 'te_veel' } }]);
         toon();
-        await screen.findByRole('heading', { name: 'Laten we kennismaken.' });
+        await openPaneel();
 
         vulIn();
         verstuur();

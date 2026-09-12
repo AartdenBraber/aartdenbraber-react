@@ -18,8 +18,8 @@ De site draait dan op http://localhost:3000.
 | `npm run build` | Productiebundel in `build/`                    |
 
 De site is één pagina: een hero met zoeklichteffect, een korte introductie en
-daaronder het cv, pagina voor pagina getekend met pdf.js. Onder het cv staat een
-contactformulier.
+daaronder het cv, pagina voor pagina getekend met pdf.js. Het contactformulier
+opent als paneel over de pagina.
 
 ## Structuur
 
@@ -73,14 +73,18 @@ je het tabblad naar voren haalt. Dat is geen fout in de site.
 
 ## Contactformulier
 
-Onder het cv staat een contactformulier, met een link ernaartoe onder de
-introductie en in de balk bovenin. De site stuurt een bericht naar
-`public/contact.php`, en dat script stuurt het per mail door. Het gaat gewoon
-mee met de build.
+Het formulier zit in een paneel dat van rechts over de pagina schuift; op een
+telefoon vult het het scherm. De knop onder de introductie, de envelop in de
+balk bovenin en de knop onder het cv openen het, net als een link naar
+`/#contact`. Wie halverwege het cv contact zoekt, blijft zo op dezelfde plek in
+het cv, en wat al ingevuld was blijft staan als het paneel dichtgaat.
+
+De site stuurt een bericht naar `public/contact.php`, en dat script stuurt het
+per mail door. Het gaat gewoon mee met de build.
 
 Het formulier staat er pas als dat script antwoordt. Bij het laden van de
 pagina haalt de site een token op bij `/contact.php`. Lukt dat niet, dan
-blijven het formulier en beide links weg. Een bezoeker ziet dus nooit een
+blijven het paneel en alle knoppen ernaartoe weg. Een bezoeker ziet dus nooit een
 formulier dat het niet doet, ook niet zolang de instellingen op de server nog
 ontbreken.
 

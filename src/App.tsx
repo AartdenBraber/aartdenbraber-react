@@ -4,8 +4,9 @@ import Hero from './components/Hero/Hero';
 import Intro from './components/Intro/Intro';
 import CVDisplay from './components/CVDisplay/CVDisplay';
 import StickyBar from './components/StickyBar/StickyBar';
-import Contact from './components/Contact/Contact';
+import ContactPaneel, { ContactAfsluiter } from './components/Contact/Contact';
 import { ContactformulierProvider } from './components/Contact/ContactformulierContext';
+import { ContactPaneelProvider } from './components/Contact/ContactPaneelContext';
 import { LanguageProvider, useLanguage } from './i18n/LanguageContext';
 
 /**
@@ -33,8 +34,12 @@ const Pagina: React.FC = () => (
       <Hero />
       <Intro />
       <CVDisplay />
-      <Contact />
+      <ContactAfsluiter />
     </main>
+
+    {/* Het formulier schuift over de pagina heen, zodat wie halverwege het cv
+        contact zoekt niet naar het eind hoeft en zijn plek houdt. */}
+    <ContactPaneel />
   </div>
 );
 
@@ -42,7 +47,9 @@ function App() {
   return (
     <LanguageProvider>
       <ContactformulierProvider>
-        <Pagina />
+        <ContactPaneelProvider>
+          <Pagina />
+        </ContactPaneelProvider>
       </ContactformulierProvider>
     </LanguageProvider>
   );

@@ -1,6 +1,14 @@
 /*--------------------------------------------------------------
-# De links naar het contactformulier
+# De knoppen die het contactpaneel openen
 --------------------------------------------------------------*/
+/* Een knop krijgt van de browser een grijze achtergrond en een pijl als cursor.
+   :where houdt de specificiteit op nul, zodat de hover van de varianten
+   hieronder er gewoon overheen gaat. */
+:where(.contact-link) {
+  background: transparent;
+  cursor: pointer;
+}
+
 .contact-link {
   display: inline-flex;
   align-items: center;

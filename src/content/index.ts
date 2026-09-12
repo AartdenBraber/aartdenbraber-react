@@ -43,6 +43,10 @@ export interface SiteContent {
     link: string;
     /** De link onder de introductie, boven het cv. */
     introLink: string;
+    /** Het label van de knop die het paneel dichtdoet. */
+    sluiten: string;
+    /** Staat onder het cv, boven de knop die het paneel opent. */
+    afsluiter: string;
     titel: string;
     intro: string;
     velden: {

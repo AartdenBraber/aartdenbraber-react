@@ -57,6 +57,8 @@ export const nl: SiteContent = {
   contact: {
     link: 'Contact',
     introLink: 'Stuur me een bericht',
+    sluiten: 'Sluiten',
+    afsluiter: 'Heb je een opdracht voor een developer, of zoek je iemand die een nieuwe website voor je bouwt?',
     titel: 'Laten we kennismaken.',
     intro:
       'Heb je een opdracht voor een developer, of zoek je iemand die een nieuwe website voor je bouwt? Vertel hieronder waar het om gaat.',
