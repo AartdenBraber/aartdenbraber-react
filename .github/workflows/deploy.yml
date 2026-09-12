@@ -13,14 +13,24 @@ on:
         type: boolean
         default: false
 
-# Twee uitrollen tegelijk zouden elkaars bestanden overschrijven.
+# Twee uitrollen tegelijk zouden elkaars bestanden overschrijven, dus er draait
+# er altijd één. Een nieuwe uitrol breekt een lopende af: de nieuwste commit
+# bevat alles van de vorige, en een uitrol die aan de FTP-verbinding vastzit
+# hield op 12 september 2026 anders de hele wachtrij op. Afbreken midden in de
+# upload laat de oude site staan; zie de drie fasen bij "Uploaden naar de
+# server".
 concurrency:
   group: uitrollen
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   uitrollen:
     runs-on: ubuntu-latest
+
+    # Zonder limiet stopt GitHub een vastgelopen job pas na zes uur. Een gewone
+    # uitrol duurt een paar minuten; met drie verbindingspogingen hooguit een
+    # kwartier.
+    timeout-minutes: 25
 
     # De servergegevens staan in de environment "public": FTP_PASSWORD als
     # secret, de rest als variables. Zonder deze regel ziet de job er niets
@@ -113,6 +123,7 @@ jobs:
       # FTP-account niet in de webroot begint maar hoger in de boom.
       - name: Nagaan of DEPLOY_PATH de webroot is
         if: steps.gegevens.outputs.compleet == 'ja'
+        timeout-minutes: 15
         env:
           LFTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
           FTP_HOST: ${{ vars.FTP_HOST }}
@@ -177,6 +188,7 @@ jobs:
       # er niets verwijderd, want cmd:fail-exit stopt voor fase 3.
       - name: Uploaden naar de server
         if: steps.gegevens.outputs.compleet == 'ja'
+        timeout-minutes: 10
         env:
           LFTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
           FTP_HOST: ${{ vars.FTP_HOST }}
