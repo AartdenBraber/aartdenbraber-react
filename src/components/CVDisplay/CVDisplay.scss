@@ -4,7 +4,12 @@
 # Cv: het pdf, pagina voor pagina op een canvas, met de downloadknop ervoor
 --------------------------------------------------------------*/
 section.showcase {
-  background: #263238;
+  /* Wit, als het papier van het cv. Het stond op het donkere #263238 en dat
+     kwam onder de laatste pagina als een balk in beeld: de downloadknop is
+     sticky en houdt in de stroom zijn eigen strook van 84px vrij. Nu loopt die
+     strook door als ondermarge van het papier. De strook weghalen kan niet, want
+     dan blijft de laatste regel van het cv voorgoed onder de knop liggen. */
+  background: #fff;
 
   /* De knop in de hero wijst hierheen. De marge houdt rekening met de balk die
      na de hero bovenin verschijnt; anders landt de eerste cv-pagina eronder. */
@@ -117,10 +122,9 @@ section.showcase {
      oftewel een egale plaat. Zo goed als doorzichtig komt op 0,047 en dan zie
      je de pagina's er echt onderdoor schuiven.
 
-     Dat kan alleen met een omloop om de letters. De achtergrond loopt namelijk
-     van wit papier tot de donkere sectiekleur, en geen enkele vaste tekstkleur
-     houdt dat allebei: zwart op de donkere strook is 1,4:1. De witte omloop is
-     wat je feitelijk leest, en zwart daarop is 21:1. */
+     Dat kan alleen met een omloop om de letters: onder de knop schuiven de
+     zwarte regels van het cv door, en zwart op zwart lees je niet. De witte
+     omloop is wat je feitelijk leest, en zwart daarop is 21:1. */
   background: transparent;
 
   /* Terug op de 5px waarmee deze knop begon. Meer blur maakt hem niet
@@ -173,7 +177,7 @@ section.showcase {
 }
 
 /* Het icoon krijgt dezelfde witte omloop als de letters, anders verdwijnt het
-   boven de donkere strook onder het cv. */
+   tussen de regels van het cv eronder. */
 .pdf-download-icoon {
   flex: none;
   width: 20px;
