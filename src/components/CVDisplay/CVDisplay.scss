@@ -154,6 +154,17 @@ section.showcase {
   }
 }
 
+/* Met deze zijruimte is de knop 325px breed. Op een scherm smaller dan 357px
+   is de doos smaller dan dat, en brak het label over twee regels: de knop werd
+   76px hoog, en dan klopt de halve knop onder .big-bad-button niet meer. Zo
+   past hij met 283px op één regel, ook op 320px. */
+@media (max-width: 356px) {
+  .big-bad-button a {
+    padding-left: 28px;
+    padding-right: 24px;
+  }
+}
+
 .big-bad-button .little-span {
   position: relative;
   display: inline-block;
@@ -191,13 +202,19 @@ section.showcase {
    Daarvoor stond hij vast in beeld op een lage laag met de hero en de intro
    eroverheen; hij bestond dus op de hele pagina en stond overal in de
    tabvolgorde, ook waar niemand hem zag. */
+
+/* De knop hangt om een punt zonder hoogte, een halve knop erboven en een halve
+   eronder. De ruimte is wat hij zwevend boven 1,5rem houdt, en bovenaan het cv
+   onder de rand van het blok. */
+$knop-half: 32px;
+$knop-ruimte: 10px;
+
 .big-bad-button {
   position: sticky;
 
-  /* 42px meer dan de afstand die je ziet: de knop hangt 32px onder dit punt,
-     en zo staat hij zwevend 1,5rem plus tien pixels boven de rand van het
-     scherm. */
-  bottom: calc(1.5rem + 42px + env(safe-area-inset-bottom, 0px));
+  /* Het punt staat een halve knop hoger dan de onderkant van de knop, dus die
+     telt hier mee. */
+  bottom: calc(1.5rem + #{$knop-ruimte + $knop-half} + env(safe-area-inset-bottom, 0px));
   z-index: 3;
 
   /* Een punt zonder hoogte op de onderrand van het cv, met de knop eromheen.
@@ -221,12 +238,12 @@ section.showcase {
   /* Half over de onderrand van het cv: 32px is de halve knop. Met de knop er
      helemaal boven lag hij aan het eind op een telefoon over de laatste regel,
      want onder die regel is het papier daar maar 50 tot 64px hoog. Zo blijft
-     er op 360 tot 414px 25px of meer vrij en op 320px 6px; de rand zelf zie je
+     er op 360 tot 414px 25px of meer vrij en op 320px 18px; de rand zelf zie je
      niet, want het cv en de afsluiter eronder zijn allebei wit. Gecentreerd met
      auto-marges en niet met left: 50%, want dan krijgt de doos maar de halve
      breedte en breekt het label. */
   position: absolute;
-  bottom: -32px;
+  bottom: -1 * $knop-half;
   left: 0;
   right: 0;
   width: fit-content;
@@ -235,6 +252,19 @@ section.showcase {
   /* Op een telefoon niet breder dan het scherm; anders brak het label over
      twee regels. */
   max-width: calc(100vw - 2rem);
+}
+
+/* Bovenaan mag de knop niet over de rand. Het punt stopt tegen de bovenkant
+   van de inhoud van dit blok, en de knop steekt er een halve knop boven uit:
+   zolang het cv net onderin beeld kwam, hing hij zo over de intro. Sticky
+   rekent vanaf de binnenkant van de padding, dus die legt het punt een halve
+   knop plus de ruimte lager. De pagina's schuiven met een negatieve marge
+   terug naar de bovenrand. */
+section.showcase {
+  padding-top: $knop-ruimte + $knop-half;
+}
+.showcase > .pdf-pages {
+  margin-top: -1 * ($knop-ruimte + $knop-half);
 }
 
 @media (prefers-reduced-motion: reduce) {
