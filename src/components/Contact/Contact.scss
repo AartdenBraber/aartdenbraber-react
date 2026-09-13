@@ -14,7 +14,9 @@
    De browser zet een dialoog midden in beeld met een rand en een marge; dat
    gaat er allemaal af. */
 .contact-paneel {
-  /* De grond is die van het cv-blok. De foutkleur is een lichte tint van het
+  /* De grond is het donkere blauwgrijs van de site, ook de themakleur in
+     public/index.html. Het cv-blok had hem ook, maar dat is wit geworden. De
+     foutkleur is een lichte tint van het
      accentrood: het rood zelf haalt op deze grond 3,7:1, en kleine tekst moet
      4,5 halen. Deze haalt 6,6. */
   --paneel-grond: #263238;
