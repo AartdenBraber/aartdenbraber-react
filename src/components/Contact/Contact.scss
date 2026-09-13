@@ -63,6 +63,13 @@
       16 16,
     pointer;
 
+  /* Op een telefoon lichtte bij elke tik het hele paneel blauw op, ook als je
+     met het zoeklicht bovenin speelde. Chrome op Android kleurt bij een tik het
+     dichtstbijzijnde element met een handcursor, en dat is deze dialoog: de
+     kleur komt van het element dat oplicht, dus hier gaat hij uit. Echte knoppen
+     en keuzes in het venster krijgen hun gewone oplichting terug. */
+  -webkit-tap-highlight-color: transparent;
+
   /* De browser tekent achter een dialoog zijn eigen laag. Die blijft leeg: een
      transitie daarop werkt niet in elke browser. Het waas is hieronder een
      gewone laag in de dialoog, die met het venster mee in- en uitfadet. */
@@ -96,6 +103,7 @@
   background: var(--paneel-grond);
   box-shadow: -16px 0 48px rgba(0, 0, 0, 0.35);
   cursor: auto;
+  -webkit-tap-highlight-color: initial;
 
   /* Het venster scrolt zelf. Loopt dat tegen zijn eind aan, dan hoort de pagina
      eronder niet mee te gaan. */
