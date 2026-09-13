@@ -20,6 +20,15 @@
   transition: all 0.5s ease-in-out, top 0s;
 }
 
+/* Contact en taal staan samen rechts en krimpen niet, net als in de balk die na
+   de hero binnenschuift. */
+.site-header-acties {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .site-branding {
   display: table;
   color: #fff;

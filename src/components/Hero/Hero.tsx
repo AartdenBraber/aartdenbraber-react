@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './Hero.scss';
 import logo from '../../assets/images/logo.png';
+import ContactLink from '../Contact/ContactLink';
 import FocusSpotlight from '../FocusSpotlight/FocusSpotlight';
 import LanguageSwitcher from '../LanguageSwitcher/LanguageSwitcher';
 import WordReveal from '../WordReveal/WordReveal';
@@ -65,7 +66,10 @@ const Hero: React.FC = () => {
                             <p className="site-description">{t.header.siteDescription}</p>
                         </div>
                     </div>
-                    <LanguageSwitcher />
+                    <div className="site-header-acties">
+                        <ContactLink variant="kop" />
+                        <LanguageSwitcher />
+                    </div>
                 </header>
 
                 <div className="hero-title-container">

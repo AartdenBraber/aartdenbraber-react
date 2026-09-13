@@ -70,6 +70,29 @@
   }
 }
 
+/* In de hero is er smaller dan dit geen plek naast de naam en de taalwisselaar,
+   ook niet voor een envelop. Gemeten hebben naam, knop en wisselaar samen 707px
+   nodig, en op 616px liep de header 71px over. De knop onder de introductie
+   staat een veeg verder, en zodra de hero uit beeld is komt de balk. */
+@media (max-width: 767px) {
+  .contact-link--kop {
+    display: none;
+  }
+}
+
+/* De balk schuift binnen; in de hero komt de knop pas als het formulier
+   bereikbaar blijkt, dus daar laat hij zich zachtjes zien in plaats van te
+   verspringen. */
+.contact-link--kop {
+  animation: kop-binnen 0.4s ease-out;
+}
+
+@keyframes kop-binnen {
+  from {
+    opacity: 0;
+  }
+}
+
 /* Onder de introductie en onder het cv, in de knopfamilie van de site; zie
    src/styles/_zoeklicht.scss. De tekstmaat daar is groot, dus de maat staat hier
    vast. De tekst blijft donker en de knop licht, dus het contrast verandert niet. */
@@ -100,5 +123,8 @@
 @media (prefers-reduced-motion: reduce) {
   .contact-link {
     transition: none;
+  }
+  .contact-link--kop {
+    animation: none;
   }
 }

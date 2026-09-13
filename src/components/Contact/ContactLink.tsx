@@ -10,10 +10,12 @@ import { useContactPaneel } from './ContactPaneelContext';
  * ook staat.
  *
  * Een knop en geen link: hij gaat nergens heen, hij opent iets op deze plek.
- * `balk` hoort in de balk bovenin, naast de taalwisselaar. `intro` staat onder
- * de introductie en onder het cv.
+ * `balk` hoort in de balk bovenin, naast de taalwisselaar. `kop` is dezelfde pil
+ * in de header van de hero, zodat contact er vanaf het eerste scherm staat en
+ * niet pas na het scrollen; op een smal scherm valt hij daar weg. `intro` staat
+ * onder de introductie en onder het cv.
  */
-const ContactLink: React.FC<{ variant: 'balk' | 'intro' }> = ({ variant }) => {
+const ContactLink: React.FC<{ variant: 'balk' | 'kop' | 'intro' }> = ({ variant }) => {
     const { t } = useLanguage();
     const { status } = useContactformulier();
     const { openPaneel } = useContactPaneel();
@@ -38,7 +40,7 @@ const ContactLink: React.FC<{ variant: 'balk' | 'intro' }> = ({ variant }) => {
     return (
         <button
             type="button"
-            className="contact-link contact-link--balk"
+            className={`contact-link contact-link--balk${variant === 'kop' ? ' contact-link--kop' : ''}`}
             aria-haspopup="dialog"
             onClick={(event) => openPaneel(event.currentTarget)}
         >
