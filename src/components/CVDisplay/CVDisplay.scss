@@ -4,25 +4,28 @@
 # Cv: het pdf, pagina voor pagina op een canvas, met de downloadknop ervoor
 --------------------------------------------------------------*/
 section.showcase {
-  /* Wit, als het papier van het cv. Het stond op het donkere #263238 en dat
-     kwam onder de laatste pagina als een balk in beeld: de downloadknop is
-     sticky en houdt in de stroom zijn eigen strook van 84px vrij. Nu loopt die
-     strook door als ondermarge van het papier. De strook weghalen kan niet, want
-     dan blijft de laatste regel van het cv voorgoed onder de knop liggen. */
+  /* Wit, als het papier van het cv. Het stond op het donkere #263238, en dat
+     kwam onder de laatste pagina als een balk in beeld. Nu zie je de grond
+     alleen nog zolang het pdf binnenkomt. */
   background: #fff;
 
   /* De knop in de hero wijst hierheen. De marge houdt rekening met de balk die
      na de hero bovenin verschijnt; anders landt de eerste cv-pagina eronder. */
   scroll-margin-top: 4.5rem;
 
-  /* Zolang het pdf nog binnenkomt is dit blok alleen de knopstrook van tachtig
-     pixels. Wie dan op "Bekijk mijn cv" tikt, springt naar een sectie die
+  /* Zolang het pdf nog binnenkomt is dit blok verder leeg. Wie dan op "Bekijk
+     mijn cv" tikt, springt naar een sectie die
      onderaan het document plakt en landt op de intro: gemeten bleef de
      bovenkant van het cv 860px onder de vouw hangen, ook nadat de pagina's er
      waren. Met een scherm hoogte staat de sprong meteen goed en groeit de rest
      eronder aan. */
   min-height: 100vh;
   min-height: 100svh;
+
+  /* Een kolom, zodat de downloadknop in dat lege blok onderaan staat; zie
+     .big-bad-button. */
+  display: flex;
+  flex-direction: column;
 }
 
 /* Bij een taalwissel staat het nieuwe cv al op zijn plek en ligt het cv van de
@@ -95,15 +98,6 @@ section.showcase {
 /*--------------------------------------------------------------
 ## De downloadknop
 --------------------------------------------------------------*/
-/* Was `display: table`. Een tabel en `position: sticky` gaan niet samen, en de
-   strook hoeft alleen maar de knop te centreren. */
-.big-bad-button {
-  display: block;
-  width: 100%;
-  text-align: center;
-  padding: 10px 0;
-}
-
 /* In de knopfamilie van de site; zie src/styles/_zoeklicht.scss. In plaats van
    het pijltje van de familie een downloadicoon: een los pijltje omlaag leek op
    dat van "Bekijk mijn cv" in de hero, en dat scrolt de pagina. */
@@ -199,11 +193,24 @@ section.showcase {
    tabvolgorde, ook waar niemand hem zag. */
 .big-bad-button {
   position: sticky;
-  bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
+
+  /* 42px meer dan de afstand die je ziet: de knop hangt 32px onder dit punt,
+     en zo staat hij zwevend 1,5rem plus tien pixels boven de rand van het
+     scherm. */
+  bottom: calc(1.5rem + 42px + env(safe-area-inset-bottom, 0px));
   z-index: 3;
 
-  /* De strook zelf is leeg en mag geen vingers of muiskliks afvangen die voor
-     het cv eronder bedoeld zijn. */
+  /* Een punt zonder hoogte op de onderrand van het cv, met de knop eromheen.
+     Dit was een strook van 84px met de knop erin, en die strook stond onder de
+     laatste pagina: de knop stopte dus een eind onder het cv, op een eigen
+     balk. Nu zweeft hij mee tot de onderkant van het cv en gaat hij daar met de
+     laatste pagina mee omhoog. De auto-marge zet het punt onderaan zolang het
+     pdf nog binnenkomt; bovenaan het lege blok hing de knop over de intro. */
+  height: 0;
+  margin-top: auto;
+
+  /* Het punt zelf mag geen vingers of muiskliks afvangen die voor het cv
+     eronder bedoeld zijn. */
   pointer-events: none;
 }
 .big-bad-button a {
@@ -211,10 +218,22 @@ section.showcase {
 }
 
 .pdf-download-button-container {
-  display: inline-block;
+  /* Half over de onderrand van het cv: 32px is de halve knop. Met de knop er
+     helemaal boven lag hij aan het eind op een telefoon over de laatste regel,
+     want onder die regel is het papier daar maar 50 tot 64px hoog. Zo blijft
+     er op 360 tot 414px 25px of meer vrij en op 320px 6px; de rand zelf zie je
+     niet, want het cv en de afsluiter eronder zijn allebei wit. Gecentreerd met
+     auto-marges en niet met left: 50%, want dan krijgt de doos maar de halve
+     breedte en breekt het label. */
+  position: absolute;
+  bottom: -32px;
+  left: 0;
+  right: 0;
+  width: fit-content;
+  margin: 0 auto;
 
-  /* De doos begint gecentreerd en mag op een telefoon niet breder worden dan
-     het scherm; anders brak het label over twee regels. */
+  /* Op een telefoon niet breder dan het scherm; anders brak het label over
+     twee regels. */
   max-width: calc(100vw - 2rem);
 }
 
