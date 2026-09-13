@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { RefObject, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 import './Contact.scss';
 import { SiteContent } from '../../content';
@@ -517,6 +517,60 @@ const Paneel: React.FC = () => {
 };
 
 /**
+ * De donkere zijbalk van het cv loopt onder de laatste pagina door de afsluiter
+ * in, en klapt open tot de volle breedte zodra die in beeld komt. Het cv gaat
+ * zo over in het slot van de pagina in plaats van erboven op te houden.
+ *
+ * De dichte stand komt uit javascript, net als bij useRevealOnView: zonder
+ * javascript, zonder waarnemer of bij minder beweging is de afsluiter gewoon
+ * blauw. De marge is in pixels, niet in procenten; met -10% kwam de knop
+ * onderaan op een hoog scherm nooit in beeld.
+ */
+const useZijbalkOpenen = (sectieRef: RefObject<HTMLElement>) => {
+    useLayoutEffect(() => {
+        const sectie = sectieRef.current;
+        if (!sectie || typeof IntersectionObserver === 'undefined') return;
+        if (
+            typeof window.matchMedia === 'function' &&
+            window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        ) {
+            return;
+        }
+
+        const open = () => {
+            delete sectie.dataset.zijbalk;
+        };
+        sectie.dataset.zijbalk = 'dicht';
+
+        let ietsGehoord = false;
+        const waarnemer = new IntersectionObserver(
+            (meldingen) => {
+                ietsGehoord = true;
+                if (!meldingen[meldingen.length - 1].isIntersecting) return;
+                open();
+                waarnemer.disconnect();
+            },
+            { rootMargin: '0px 0px -64px 0px' },
+        );
+        waarnemer.observe(sectie);
+
+        // Maakt de browser geen frames, dan meldt de waarnemer niets en bleef
+        // de afsluiter wit met witte tekst.
+        const noodrem = window.setTimeout(() => {
+            if (ietsGehoord) return;
+            waarnemer.disconnect();
+            open();
+        }, 2000);
+
+        return () => {
+            window.clearTimeout(noodrem);
+            waarnemer.disconnect();
+            open();
+        };
+    }, [sectieRef]);
+};
+
+/**
  * Onder het cv. Wie het hele cv doorlas, komt hier uit en kan van daaruit het
  * paneel openen.
  */
@@ -525,12 +579,17 @@ const Afsluiter: React.FC = () => {
     const sectieRef = useRef<HTMLElement>(null);
 
     useRevealOnView(sectieRef, TE_ONTHULLEN);
+    useZijbalkOpenen(sectieRef);
 
     return (
         <section ref={sectieRef} className="contact-afsluiter" aria-labelledby="contact-afsluiter-kop">
-            <h2 id="contact-afsluiter-kop" className="contact-afsluiter-kop">
-                {t.contact.titel}
-            </h2>
+            {/* Tussen twee streepjes, zoals de kop in de hero en in het paneel:
+                de pagina begint en eindigt met hetzelfde gebaar. */}
+            <div className="contact-afsluiter-kop-inhoud">
+                <h2 id="contact-afsluiter-kop" className="contact-afsluiter-kop">
+                    {t.contact.titel}
+                </h2>
+            </div>
             <p className="contact-afsluiter-tekst">{t.contact.afsluiter}</p>
             <ContactLink variant="intro" />
         </section>

@@ -1,3 +1,4 @@
+@use '../../styles/cv' as *;
 @use '../../styles/zoeklicht' as *;
 
 /*--------------------------------------------------------------
@@ -533,32 +534,111 @@
 /*--------------------------------------------------------------
 ## De afsluiter onder het cv
 --------------------------------------------------------------*/
+/* In het blauw van de zijbalk van het cv. Die balk loopt onder de laatste
+   pagina door en klapt hier open tot de volle breedte; zie useZijbalkOpenen in
+   Contact.tsx. De blauwe laag ligt onder de inhoud, zodat alleen de laag wordt
+   bijgesneden en de tekst en de knop niet. */
 .contact-afsluiter {
-  padding: 5em 20px;
+  position: relative;
+  isolation: isolate;
+  padding: 4em 20px;
   padding-left: max(20px, env(safe-area-inset-left));
   padding-right: max(20px, env(safe-area-inset-right));
   padding-bottom: calc(5em + env(safe-area-inset-bottom, 0px));
 
   background: #fff;
-  color: #556f7c;
+  color: rgba(255, 255, 255, 0.8);
   text-align: center;
   line-height: 1.6;
   letter-spacing: 0.02em;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: $cv-blauw;
+    clip-path: inset(0 0 0 0);
+    transition: clip-path 1.1s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* Dicht is hij precies zo breed als de balk in het cv erboven. */
+  &[data-zijbalk='dicht']::before {
+    clip-path: inset(0 calc(100% - #{$cv-zijbalk}) 0 0);
+  }
+
+  /* De tekst komt pas als het blauw er grotendeels onder ligt; wit op wit
+     zie je niet binnenkomen. */
+  [data-reveal] {
+    transition-delay: calc(220ms + var(--reveal-step, 0) * 80ms);
+  }
+}
+
+/* Tussen twee dunne streepjes, net als de kop in de hero en in het paneel. */
+.contact-afsluiter-kop-inhoud {
+  position: relative;
+  margin-bottom: 1.25rem;
+  padding: 48px 0;
+
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    width: 2px;
+    height: 28px;
+    margin-left: -1px;
+    background: rgba(255, 255, 255, 0.5);
+  }
+  &::before {
+    top: 0;
+  }
+  &::after {
+    bottom: 0;
+  }
 }
 
 /* Twee keer de tekstmaat, net als de kop van de intro. */
 .contact-afsluiter-kop {
   display: block;
-  margin: 0 0 1rem;
-  color: #263238;
+  margin: 0;
+  color: #fff;
   font-size: clamp(2.5rem, 2.272rem + 0.97vw, 3rem);
   line-height: 1.1;
+  text-wrap: balance;
 }
 
 .contact-afsluiter-tekst {
   max-width: 36rem;
-  margin: 0 auto 1rem;
+  margin: 0 auto 1.5rem;
   font-size: clamp(1.25rem, 1.136rem + 0.485vw, 1.5rem);
+  text-wrap: pretty;
+}
+
+/* Op het blauw de donkere variant van de knopfamilie, zoals Versturen in het
+   paneel: witte tekst, een vleugje donker erachter en een sterkere gloed, want
+   0,16 zie je op deze grond niet. Zo staat onderaan een andere knop dan de
+   lichte onder de intro en de matglazen downloadknop. */
+.contact-afsluiter .contact-link--intro {
+  background: rgba(0, 0, 0, 0.18);
+  color: #fff;
+
+  @include zoeklicht-knop(0.32);
+
+  &:hover,
+  &:focus-visible {
+    border-color: #f47273;
+  }
+  &:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 3px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contact-afsluiter::before {
+    transition: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

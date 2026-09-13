@@ -1,0 +1,10 @@
+/*--------------------------------------------------------------
+# De zijbalk van het cv
+--------------------------------------------------------------*/
+/* Elke pagina van het cv-pdf heeft links een donkere balk. Gemeten in het
+   canvas: rgb(67, 74, 84), en 22 van de 892 pixels breed. Het canvas is altijd
+   zo breed als de sectie, dus de breedte klopt als percentage op elke
+   schermbreedte. De rand onder het cv en de afsluiter laten die balk hiermee
+   doorlopen. */
+$cv-blauw: #434a54;
+$cv-zijbalk: 2.466%;

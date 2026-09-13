@@ -1,3 +1,4 @@
+@use '../../styles/cv' as *;
 @use '../../styles/zoeklicht' as *;
 
 /*--------------------------------------------------------------
@@ -262,6 +263,20 @@ $knop-ruimte: 10px;
    terug naar de bovenrand. */
 section.showcase {
   padding-top: $knop-ruimte + $knop-half;
+}
+
+/* Onderaan een strook papier van een halve knop plus wat lucht, met de zijbalk
+   erin doorgetrokken. De knop hangt aan het eind nog steeds half over de
+   onderrand van het cv, maar zijn onderste helft ligt nu op wit en niet op het
+   blauw van de afsluiter eronder. Die strook staat alleen in de padding; de
+   pagina's dekken de rest van het blok. */
+$papier-onder: $knop-half + 16px;
+
+section.showcase {
+  padding-bottom: $papier-onder;
+  background:
+    linear-gradient(to right, $cv-blauw $cv-zijbalk, #fff $cv-zijbalk) bottom / 100% $papier-onder no-repeat,
+    #fff;
 }
 .showcase > .pdf-pages {
   margin-top: -1 * ($knop-ruimte + $knop-half);
