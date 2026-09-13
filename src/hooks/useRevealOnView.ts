@@ -62,7 +62,12 @@ export const useRevealOnView = (containerRef: RefObject<HTMLElement>, selector: 
       },
       // Iets voorbij de onderrand, zodat een alinea al beweegt terwijl hij
       // binnenkomt in plaats van pas als hij er half staat.
-      { rootMargin: '0px 0px -10% 0px' },
+      //
+      // Vast in pixels en niet in procenten van het venster. Het was -10%, en
+      // de knop onderaan de afsluiter staat helemaal naar beneden gescrold
+      // 136px boven de onderrand. Bij een venster hoger dan 1360px kwam hij dus
+      // nooit voorbij die grens en bleef hij onzichtbaar; gemeten op 1440x1500.
+      { rootMargin: '0px 0px -64px 0px' },
     );
 
     items.forEach((item) => waarnemer.observe(item));
