@@ -479,14 +479,15 @@
   letter-spacing: 1px;
   cursor: pointer;
 
-  @include zoeklicht-knop(0.32);
+  @include zoeklicht-knop(0.32, $rand: #ffa0a1);
   @include zoeklicht-pijl-door('.contact-knop-pijl');
 
   &[aria-disabled='true'] {
     cursor: progress;
     border-color: rgba(237, 82, 83, 0.5);
   }
-  &[aria-disabled='true']::before {
+  &[aria-disabled='true']::before,
+  &[aria-disabled='true']::after {
     opacity: 0;
   }
 }
@@ -623,7 +624,7 @@
   background: rgba(0, 0, 0, 0.18);
   color: #fff;
 
-  @include zoeklicht-knop(0.32);
+  @include zoeklicht-knop(0.32, $rand: #ffa0a1);
 
   &:hover,
   &:focus-visible {
