@@ -206,13 +206,14 @@ section.showcase {
    tabvolgorde, ook waar niemand hem zag. */
 
 /* De knop staat boven een punt zonder hoogte. Knop-ruimte is de lucht om de
-   knop: zwevend boven de 1,5rem, en binnen de boven- en onderrand van het cv. */
+   knop, overal dezelfde: boven de schermrand als hij zweeft, en binnen de
+   boven- en onderrand van het cv. */
 $knop-hoogte: 64px;
-$knop-ruimte: 10px;
+$knop-ruimte: 32px;
 
 .big-bad-button {
   position: sticky;
-  bottom: calc(1.5rem + #{$knop-ruimte} + env(safe-area-inset-bottom, 0px));
+  bottom: calc(#{$knop-ruimte} + env(safe-area-inset-bottom, 0px));
   z-index: 3;
 
   /* Een punt zonder hoogte bij de onderrand van het cv, met de knop erboven.
