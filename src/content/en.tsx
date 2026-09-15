@@ -52,7 +52,7 @@ export const en: SiteContent = {
     rest: ' CV as PDF',
     sectionLabel: 'The CV of Aart den Braber, page by page',
     emailVerborgen: '(email address not copyable, to block bots)',
-    zoomHint: 'Pinch to zoom in',
+    zoomHint: 'Zoom in with two fingers',
   },
   contact: {
     link: 'Contact',

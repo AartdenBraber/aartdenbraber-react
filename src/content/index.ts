@@ -35,7 +35,7 @@ export interface SiteContent {
     sectionLabel: string;
     /** Komt in de tekstlaag te staan op de plek van het e-mailadres. */
     emailVerborgen: string;
-    /** Eenmalige aanwijzing bij het cv, alleen op een aanraakscherm. */
+    /** Aanwijzing op de eerste cv-pagina, alleen op een aanraakscherm. */
     zoomHint: string;
   };
   contact: {
