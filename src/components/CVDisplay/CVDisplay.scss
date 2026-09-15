@@ -141,7 +141,11 @@ section.showcase {
   padding: 20px 44px 20px 50px;
   transition: border-color 0.3s ease;
 
-  @include zoeklicht-knop(0.18);
+  /* Sterker dan de 0,16 van de lichte knop onder de intro: deze gloed ligt op
+     matglas boven zwarte cv-regels, en daar viel 0,18 weg. Het licht dat al
+     binnenvalt als de muis nadert gaat hier tot 80% van vol, zodat hover er
+     minder bovenuit springt. */
+  @include zoeklicht-knop(0.3, 0.8);
 
   &:hover,
   &:focus-visible {

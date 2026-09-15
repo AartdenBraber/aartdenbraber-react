@@ -17,8 +17,8 @@
    is 0,16 genoeg; op het donker van het paneel zie je dat niet en is meer
    nodig. Op de knop is de gloed nu 1,45 keer zo sterk, zodat hover duidelijk
    meer is dan het licht dat al binnenvalt als de muis nadert. Dat naderende
-   licht komt tot 60% van vol, ongeveer de oude hover. */
-@mixin zoeklicht-knop($kracht: 0.16) {
+   licht komt tot $nabij van vol: standaard 60%, ongeveer de oude hover. */
+@mixin zoeklicht-knop($kracht: 0.16, $nabij: 0.6) {
   --licht-x: var(--muis-x, 50%);
   --licht-y: var(--muis-y, 50%);
 
@@ -40,7 +40,7 @@
       rgba(237, 82, 83, $kracht * 0.58) 60%,
       transparent 100%
     );
-    opacity: calc(var(--licht-nabij, 0) * 0.6);
+    opacity: calc(var(--licht-nabij, 0) * #{$nabij});
     transition: opacity 0.2s ease-out;
   }
 
