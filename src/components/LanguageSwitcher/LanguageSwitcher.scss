@@ -19,12 +19,14 @@
   font-family: inherit;
 
   button {
-    /* 38x32 was met een duim niet te raken. */
+    /* 38x32 was met een duim niet te raken. Met de code erin is de knop zo
+       breed als de envelop ernaast. */
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    min-width: 44px;
     min-height: 44px;
-    padding: 0.5rem 0.85rem;
+    padding: 0.5rem 0;
     border: none;
     border-radius: 0;
     background: transparent;
@@ -34,7 +36,7 @@
     transition: all 0.3s ease;
 
     /* Het label komt uit de opmaak, niet uit de knop zelf. Smal scherm: de
-       code in hoofdletters. Vanaf 616px is er ruimte voor de volle naam. */
+       code in hoofdletters. De volle naam staat onderaan, zodra er plek is. */
     &::after {
       content: attr(data-lang);
       text-transform: uppercase;
@@ -62,18 +64,34 @@
   }
 }
 
+@mixin volle-namen {
+  padding: 0.5rem 0.85rem;
+
+  &::after {
+    text-transform: none;
+  }
+
+  &[data-lang='en']::after {
+    content: 'English';
+  }
+
+  &[data-lang='nl']::after {
+    content: 'Nederlands';
+  }
+}
+
+/* In de balk is er vanaf 616px ruimte voor de volle namen. In de hero is de
+   naam groter en gaat de envelop voor: naast de envelop passen de volle namen
+   daar gemeten vanaf 672px, met een schuifbalk van 15px meegerekend. Het
+   breekpunt ligt 8px hoger, als speling. */
 @media (min-width: 616px) {
-  .language-switcher button {
-    &::after {
-      text-transform: none;
-    }
+  .language-switcher--balk button {
+    @include volle-namen;
+  }
+}
 
-    &[data-lang='en']::after {
-      content: 'English';
-    }
-
-    &[data-lang='nl']::after {
-      content: 'Nederlands';
-    }
+@media (min-width: 680px) {
+  .language-switcher--kop button {
+    @include volle-namen;
   }
 }

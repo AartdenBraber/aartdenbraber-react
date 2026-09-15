@@ -11,7 +11,7 @@ import { useContactPaneel } from './ContactPaneelContext';
  * Een knop en geen link: hij gaat nergens heen, hij opent iets op deze plek.
  * `balk` hoort in de balk bovenin, naast de taalwisselaar. `kop` is dezelfde pil
  * in de header van de hero, zodat contact er vanaf het eerste scherm staat en
- * niet pas na het scrollen; op een smal scherm valt hij daar weg. `intro` staat
+ * niet pas na het scrollen; onder 768px is het daar een envelop. `intro` staat
  * onder de introductie en onder het cv.
  */
 const ContactLink: React.FC<{ variant: 'balk' | 'kop' | 'intro' }> = ({ variant }) => {

@@ -32,9 +32,10 @@
 .site-branding {
   display: table;
   color: #fff;
-  white-space: nowrap;
 
-  /* Mag krimpen, anders duwt de naam de taalwisselaar van het scherm af. */
+  /* Mag krimpen, anders duwt de naam de knoppen van het scherm af. Wordt het
+     te krap, dan breekt de naam af in plaats van onder de envelop door te
+     lopen. */
   min-width: 0;
 }
 
@@ -67,6 +68,7 @@
   line-height: 1em;
   font-weight: normal;
   font-family: var(--font-heading);
+  text-wrap: balance;
   transition: font-size 0.5s ease-in-out;
 }
 .site-description {
@@ -75,6 +77,7 @@
   padding-top: 5px;
   margin: 0;
   font-family: var(--font-body);
+  text-wrap: balance;
   transition: all 0.5s ease-in-out;
 }
 
@@ -267,7 +270,9 @@
   }
 }
 
-@media all and (max-width: 480px) {
+/* De kleinere maat van de header liep tot 480px. Met de envelop naast de
+   taalwisselaar is er voor de grote maat minder plek, dus nu tot 562px. */
+@media all and (max-width: 561px) {
   /* Header */
   .site-header {
     padding: 15px;
@@ -289,13 +294,11 @@
   }
 }
 
-/* Onder 420px past "Aart den Braber" naast de taalwisselaar alleen nog als
-   allebei een maat kleiner worden. Gemeten liep de naam op 360px 23px over de
-   knoppen heen en op 375px 8px. */
-@media all and (max-width: 420px) {
-  /* Elke pixel telt hier: op 375px was de header precies zo breed als het
-     scherm, dus zonder deze marge liep hij eroverheen zodra een terugvalletter
-     ingezet werd. */
+/* Nog een maat kleiner: eerst tot 420px, met de envelop erbij tot 480px.
+   Gemeten brak de naam op de maat hierboven, met een schuifbalk van 15px
+   ernaast, tot 478px af. */
+@media all and (max-width: 480px) {
+  /* Elke pixel telt hier, dus minder ruimte tussen de naam en de knoppen. */
   .site-header {
     gap: 0.5rem;
   }
@@ -311,15 +314,10 @@
   }
 }
 
-/* Onder 360px past de rij niet meer op één regel: gemeten was de header 369px
-   breed in een venster van 320 en 360, dus de taalwisselaar viel er naast en werd
-   door de `overflow: hidden` van de hero afgesneden. Dan is de knop niet meer
-   te raken. De naam mag hier afbreken; de header wordt een regel hoger en de
-   wisselaar blijft staan waar hij hoort. */
+/* Hier past de naam niet meer op één regel naast de knoppen. Hij breekt af
+   (zie .site-branding), met een kleinere maat en minder regelafstand. De
+   header wordt hoger en de knoppen blijven staan waar ze horen. */
 @media all and (max-width: 374px) {
-  .site-branding {
-    white-space: normal;
-  }
   .site-title {
     font-size: 1.25em;
     line-height: 1.1em;

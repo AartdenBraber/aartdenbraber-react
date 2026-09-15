@@ -63,12 +63,16 @@ const Hero: React.FC = () => {
                             {/* De naam is merk, niet de kop van de pagina. Die
                                 rol heeft de herokop hieronder. */}
                             <p className="site-title">Aart den Braber</p>
-                            <p className="site-description">{t.header.siteDescription}</p>
+                            {/* Een harde spatie voor elk streepje. Breekt de
+                                regel op een smal scherm af, dan blijft het
+                                streepje bij het woord ervoor en begint de
+                                volgende regel niet met "-". */}
+                            <p className="site-description">{t.header.siteDescription.replace(/ - /g, '\u00a0- ')}</p>
                         </div>
                     </div>
                     <div className="site-header-acties">
                         <ContactLink variant="kop" />
-                        <LanguageSwitcher />
+                        <LanguageSwitcher variant="kop" />
                     </div>
                 </header>
 

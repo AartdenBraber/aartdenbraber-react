@@ -47,19 +47,17 @@
   flex: none;
 }
 
-/* Op een smal scherm alleen een envelop, zoals de taalwisselaar daar EN en NL
-   toont in plaats van de volle namen. Met het woord erin bleef er van de naam
-   links in de balk te weinig over: gemeten op 320px was dat "Aart d". Het woord
+/* Alleen de envelop, zo breed als een taalknop met EN of NL erin. Het woord
    blijft staan voor een schermlezer. */
-@media (max-width: 615px) {
-  .contact-link--balk {
-    width: 44px;
-    padding: 0;
-  }
-  .contact-link--balk .contact-link-icoon {
+@mixin alleen-envelop {
+  width: 44px;
+  padding: 0;
+
+  .contact-link-icoon {
     display: block;
   }
-  .contact-link--balk .contact-link-label {
+
+  .contact-link-label {
     position: absolute;
     width: 1px;
     height: 1px;
@@ -70,13 +68,21 @@
   }
 }
 
-/* In de hero is er smaller dan dit geen plek naast de naam en de taalwisselaar,
-   ook niet voor een envelop. Gemeten hebben naam, knop en wisselaar samen 707px
-   nodig, en op 616px liep de header 71px over. De knop onder de introductie
-   staat een veeg verder, en zodra de hero uit beeld is komt de balk. */
+/* Op een smal scherm alleen een envelop, zoals de taalwisselaar daar EN en NL
+   toont in plaats van de volle namen. Met het woord erin bleef er van de naam
+   links in de balk te weinig over: gemeten op 320px was dat "Aart d". */
+@media (max-width: 615px) {
+  .contact-link--balk {
+    @include alleen-envelop;
+  }
+}
+
+/* In de hero staat de envelop er op elke breedte en gaat hij voor de volle
+   taalnamen. Het woord past naast de volle namen gemeten pas vanaf 722px, met
+   een schuifbalk van 15px meegerekend, dus tot 768px blijft het een envelop. */
 @media (max-width: 767px) {
   .contact-link--kop {
-    display: none;
+    @include alleen-envelop;
   }
 }
 

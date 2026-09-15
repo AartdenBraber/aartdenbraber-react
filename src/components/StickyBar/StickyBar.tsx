@@ -50,7 +50,7 @@ const StickyBar: React.FC = () => {
             </a>
             <div className="sticky-bar-acties">
                 <ContactLink variant="balk" />
-                <LanguageSwitcher />
+                <LanguageSwitcher variant="balk" />
             </div>
         </div>
     );

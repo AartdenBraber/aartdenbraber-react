@@ -6,7 +6,8 @@ import { Language } from '../../content';
 /**
  * De knoppen zijn met opzet leeg: de opmaak zet het label erin met
  * `content: attr(data-lang)`, zodat er op een smal scherm EN en NL staat en
- * vanaf 616px de volle namen. Zie LanguageSwitcher.scss.
+ * de volle namen zodra er plek is. Waar dat is, hangt af van wat ernaast staat:
+ * in de balk vanaf 616px, in de hero vanaf 680px. Zie LanguageSwitcher.scss.
  *
  * Gegenereerde inhoud krijgt een schermlezer niet betrouwbaar te pakken, dus
  * de naam staat daarnaast in aria-label. Die namen staan in hun eigen taal en
@@ -18,12 +19,16 @@ const TALEN: { code: Language; naam: string }[] = [
   { code: 'nl', naam: 'Nederlands' },
 ];
 
-const LanguageSwitcher: React.FC = () => {
+const LanguageSwitcher: React.FC<{ variant: 'balk' | 'kop' }> = ({ variant }) => {
   const { language, setLanguage, t } = useLanguage();
 
   return (
     <div className="language-switcher-container">
-      <div className="language-switcher" role="group" aria-label={t.languageSwitcher.label}>
+      <div
+        className={`language-switcher language-switcher--${variant}`}
+        role="group"
+        aria-label={t.languageSwitcher.label}
+      >
         {TALEN.map(({ code, naam }) => (
           <button
             key={code}
