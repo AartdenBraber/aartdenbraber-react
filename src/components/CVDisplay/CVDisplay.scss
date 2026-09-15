@@ -158,7 +158,7 @@ section.showcase {
 
 /* Met deze zijruimte is de knop 325px breed. Op een scherm smaller dan 357px
    is de doos smaller dan dat, en brak het label over twee regels: de knop werd
-   76px hoog, en dan klopt de halve knop onder .big-bad-button niet meer. Zo
+   76px hoog, en dan klopt $knop-hoogte onder .big-bad-button niet meer. Zo
    past hij met 283px op één regel, ook op 320px. */
 @media (max-width: 356px) {
   .big-bad-button a {
@@ -205,10 +205,9 @@ section.showcase {
    eroverheen; hij bestond dus op de hele pagina en stond overal in de
    tabvolgorde, ook waar niemand hem zag. */
 
-/* De knop hangt om een punt zonder hoogte. Knop-ruimte is de lucht die hem
-   zwevend op 1,5rem boven de viewportrand houdt; knop-half is de halve
-   knophoogte waarmee hij bovenaan over de rand van het blok steekt. */
-$knop-half: 32px;
+/* De knop staat boven een punt zonder hoogte. Knop-ruimte is de lucht om de
+   knop: zwevend boven de 1,5rem, en binnen de boven- en onderrand van het cv. */
+$knop-hoogte: 64px;
 $knop-ruimte: 10px;
 
 .big-bad-button {
@@ -216,7 +215,7 @@ $knop-ruimte: 10px;
   bottom: calc(1.5rem + #{$knop-ruimte} + env(safe-area-inset-bottom, 0px));
   z-index: 3;
 
-  /* Een punt zonder hoogte op de onderrand van het cv, met de knop eromheen.
+  /* Een punt zonder hoogte bij de onderrand van het cv, met de knop erboven.
      Dit was een strook van 84px met de knop erin, en die strook stond onder de
      laatste pagina: de knop stopte dus een eind onder het cv, op een eigen
      balk. Nu zweeft hij mee tot de onderkant van het cv en gaat hij daar met de
@@ -234,8 +233,7 @@ $knop-ruimte: 10px;
 }
 
 .pdf-download-button-container {
-  /* De onderrand van de knop staat op het punt, dus hij stopt precies waar
-     het cv stopt en hangt niet over de afsluiter eronder. Gecentreerd met
+  /* De onderrand van de knop staat op het punt. Gecentreerd met
      auto-marges en niet met left: 50%, want dan krijgt de doos maar de halve
      breedte en breekt het label. */
   position: absolute;
@@ -250,17 +248,17 @@ $knop-ruimte: 10px;
   max-width: calc(100vw - 2rem);
 }
 
-/* Bovenaan mag de knop niet over de rand. Het punt stopt tegen de bovenkant
-   van de inhoud van dit blok, en de knop steekt er een halve knop boven uit:
-   zolang het cv net onderin beeld kwam, hing hij zo over de intro. Sticky
-   rekent vanaf de binnenkant van de padding, dus die legt het punt een halve
-   knop plus de ruimte lager. De pagina's schuiven met een negatieve marge
-   terug naar de bovenrand. */
+/* Sticky houdt het punt binnen de padding van dit blok. Die padding geeft de
+   knop aan beide randen van het cv dezelfde ruimte: bovenaan komt de
+   knophoogte erbij, want de knop staat boven het punt. De pagina's schuiven met
+   negatieve marges terug naar de randen. */
 section.showcase {
-  padding-top: $knop-ruimte + $knop-half;
+  padding-top: $knop-hoogte + $knop-ruimte;
+  padding-bottom: $knop-ruimte;
 }
 .showcase > .pdf-pages {
-  margin-top: -1 * ($knop-ruimte + $knop-half);
+  margin-top: -1 * ($knop-hoogte + $knop-ruimte);
+  margin-bottom: -1 * $knop-ruimte;
 }
 
 @media (prefers-reduced-motion: reduce) {
