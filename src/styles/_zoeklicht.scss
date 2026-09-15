@@ -2,20 +2,25 @@
 # De knopfamilie
 --------------------------------------------------------------*/
 /* Eén stijl voor de knoppen die je ergens heen brengen: "Stuur me een bericht",
-   "Download CV als PDF" en Versturen. Een rode rand, en bij hover of focus een
-   zachte rode gloed die de muis volgt, een verre echo van het zoeklicht in de
-   hero. volgMuisLicht in src/utils/zoeklicht.ts zet --licht-x en --licht-y;
-   zonder muis staat het licht in het midden.
+   "Download CV als PDF" en Versturen. Een rode rand, en een zachte rode gloed
+   die de muis volgt, een verre echo van het zoeklicht in de hero. Nadert de
+   muis de knop, dan valt het licht al binnen aan die kant; op de knop of met
+   focus is het vol. useZoeklichtNabij in src/utils/zoeklicht.ts zet daarvoor
+   --muis-x, --muis-y en --licht-nabij op elke knop met `data-zoeklicht`. Zonder
+   muis staat het licht in het midden.
 
    Gebruik: eerst de eigen eigenschappen van de knop, dan de mixins, dan pas
    geneste regels als :hover. Sass waarschuwt voor eigenschappen na geneste
    regels, en de build van de workflow ziet elke waarschuwing als fout. */
 
-/* $kracht is de dekking in het hart van de gloed. Op een lichte grond is 0,16
-   genoeg; op het donker van het paneel zie je dat niet en is meer nodig. */
+/* $kracht was de dekking in het hart van de gloed bij hover. Op een lichte grond
+   is 0,16 genoeg; op het donker van het paneel zie je dat niet en is meer
+   nodig. Op de knop is de gloed nu 1,45 keer zo sterk, zodat hover duidelijk
+   meer is dan het licht dat al binnenvalt als de muis nadert. Dat naderende
+   licht komt tot 60% van vol, ongeveer de oude hover. */
 @mixin zoeklicht-knop($kracht: 0.16) {
-  --licht-x: 50%;
-  --licht-y: 50%;
+  --licht-x: var(--muis-x, 50%);
+  --licht-y: var(--muis-y, 50%);
 
   position: relative;
   isolation: isolate;
@@ -27,19 +32,28 @@
     inset: 0;
     z-index: -1;
     pointer-events: none;
+
+    /* De straal is BEREIK in zoeklicht.ts. */
     background: radial-gradient(
-      circle 120px at var(--licht-x) var(--licht-y),
-      rgba(237, 82, 83, $kracht) 0%,
-      rgba(237, 82, 83, $kracht * 0.4) 60%,
+      circle 130px at var(--licht-x) var(--licht-y),
+      rgba(237, 82, 83, $kracht * 1.45) 0%,
+      rgba(237, 82, 83, $kracht * 0.58) 60%,
       transparent 100%
     );
-    opacity: 0;
-    transition: opacity 0.3s ease;
+    opacity: calc(var(--licht-nabij, 0) * 0.6);
+    transition: opacity 0.2s ease-out;
   }
 
   &:hover::before,
   &:focus-visible::before {
     opacity: 1;
+    transition-duration: 0.15s;
+  }
+
+  /* Met het toetsenbord staat het licht in het midden, waar de muis ook is. */
+  &:focus-visible:not(:hover) {
+    --licht-x: 50%;
+    --licht-y: 50%;
   }
 
   @media (prefers-reduced-motion: reduce) {

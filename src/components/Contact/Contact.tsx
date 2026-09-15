@@ -6,7 +6,6 @@ import { useRevealOnView } from '../../hooks/useRevealOnView';
 import { useLanguage } from '../../i18n/LanguageContext';
 import FocusSpotlight from '../FocusSpotlight/FocusSpotlight';
 import WordReveal from '../WordReveal/WordReveal';
-import { volgMuisLicht } from '../../utils/zoeklicht';
 
 import { Antwoord, ONDERWERPEN, Onderwerp, Veld, verstuurBericht } from './contactApi';
 import ContactLink from './ContactLink';
@@ -288,7 +287,7 @@ const Formulier: React.FC = () => {
                     type="submit"
                     className="contact-knop"
                     aria-disabled={fase === 'versturen'}
-                    onPointerMove={volgMuisLicht}
+                    data-zoeklicht
                 >
                     {fase === 'versturen' ? tekst.bezig : tekst.versturen}
                     {fase !== 'versturen' && <span className="contact-knop-pijl" aria-hidden="true" />}

@@ -3,7 +3,6 @@ import './CVDisplay.scss';
 import PdfWithTextLayer from '../../utils/PdfWithTextLayer';
 import PinchHint from '../PinchHint/PinchHint';
 import { useLanguage } from '../../i18n/LanguageContext';
-import { volgMuisLicht } from '../../utils/zoeklicht';
 
 /**
  * De downloadknop doet met opzet niet mee aan het onthullen bij het scrollen.
@@ -42,7 +41,7 @@ const CVDisplay: React.FC = () => {
 
             <div className="big-bad-button">
                 <span className="pdf-download-button-container js-pdf-download-button-container">
-                    <a href={t.cv.url} target="_blank" rel="noopener noreferrer nofollow" onPointerMove={volgMuisLicht}>
+                    <a href={t.cv.url} target="_blank" rel="noopener noreferrer nofollow" data-zoeklicht>
                         <span className="little-span">
                             <span className="action-word">{t.cv.actionWord}</span>
                             {t.cv.rest}

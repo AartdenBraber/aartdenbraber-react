@@ -8,6 +8,7 @@ import ContactPaneel, { ContactAfsluiter } from './components/Contact/Contact';
 import { ContactformulierProvider } from './components/Contact/ContactformulierContext';
 import { ContactPaneelProvider } from './components/Contact/ContactPaneelContext';
 import { LanguageProvider, useLanguage } from './i18n/LanguageContext';
+import { useZoeklichtNabij } from './utils/zoeklicht';
 
 /**
  * De hero vult het hele scherm. Wie met een toetsenbord of een schermlezer
@@ -23,25 +24,30 @@ const SkipLink: React.FC = () => {
   );
 };
 
-const Pagina: React.FC = () => (
-  <div className="site-content">
-    <SkipLink />
-    <StickyBar />
+const Pagina: React.FC = () => {
+  // De knoppen met de rode rand vangen het licht al als de muis in de buurt komt.
+  useZoeklichtNabij();
 
-    {/* Eén main om de hele pagina. Er stonden er twee: deze en een lege
-        container onderaan. */}
-    <main>
-      <Hero />
-      <Intro />
-      <CVDisplay />
-      <ContactAfsluiter />
-    </main>
+  return (
+    <div className="site-content">
+      <SkipLink />
+      <StickyBar />
 
-    {/* Het formulier schuift over de pagina heen, zodat wie halverwege het cv
-        contact zoekt niet naar het eind hoeft en zijn plek houdt. */}
-    <ContactPaneel />
-  </div>
-);
+      {/* Eén main om de hele pagina. Er stonden er twee: deze en een lege
+          container onderaan. */}
+      <main>
+        <Hero />
+        <Intro />
+        <CVDisplay />
+        <ContactAfsluiter />
+      </main>
+
+      {/* Het formulier schuift over de pagina heen, zodat wie halverwege het cv
+          contact zoekt niet naar het eind hoeft en zijn plek houdt. */}
+      <ContactPaneel />
+    </div>
+  );
+};
 
 function App() {
   return (

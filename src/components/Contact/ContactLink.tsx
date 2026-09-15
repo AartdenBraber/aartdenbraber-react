@@ -1,7 +1,6 @@
 import React from 'react';
 import './ContactLink.scss';
 import { useLanguage } from '../../i18n/LanguageContext';
-import { volgMuisLicht } from '../../utils/zoeklicht';
 import { useContactformulier } from './ContactformulierContext';
 import { useContactPaneel } from './ContactPaneelContext';
 
@@ -29,7 +28,7 @@ const ContactLink: React.FC<{ variant: 'balk' | 'kop' | 'intro' }> = ({ variant 
                 className="contact-link contact-link--intro"
                 aria-haspopup="dialog"
                 onClick={(event) => openPaneel(event.currentTarget)}
-                onPointerMove={volgMuisLicht}
+                data-zoeklicht
             >
                 <span className="contact-link-tekst">{t.contact.introLink}</span>
                 <span className="contact-link-pijl" aria-hidden="true" />
