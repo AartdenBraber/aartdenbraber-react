@@ -24,7 +24,7 @@ export const nl: SiteContent = {
     body: (
       <>
         <p>
-          Mijn naam is <strong>Aart den Braber</strong>, freelance developer uit Nederland. Ik ben
+          Mijn naam is <strong>Aart den Braber</strong>, een freelance developer uit Nederland. Ik ben
           gespecialiseerd in <strong>frontend development</strong> (Angular, TypeScript, UX) en
           <strong> backend development</strong> met <strong>Node.js en Java</strong>.
         </p>
