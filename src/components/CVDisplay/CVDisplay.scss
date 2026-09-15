@@ -205,15 +205,25 @@ section.showcase {
    eroverheen; hij bestond dus op de hele pagina en stond overal in de
    tabvolgorde, ook waar niemand hem zag. */
 
-/* De knop staat boven een punt zonder hoogte. Knop-ruimte is de lucht om de
+/* De knop staat boven een punt zonder hoogte. --knop-ruimte is de lucht om de
    knop, overal dezelfde: boven de schermrand als hij zweeft, en binnen de
-   boven- en onderrand van het cv. */
+   boven- en onderrand van het cv. Op een telefoon maar 5px: het Engelse cv
+   loopt op 375px tot 58px boven de onderrand, en met 32px lag de knop aan het
+   eind 38px over die laatste regels. */
 $knop-hoogte: 64px;
-$knop-ruimte: 32px;
+
+section.showcase {
+  --knop-ruimte: 32px;
+}
+@media all and (max-width: 480px) {
+  section.showcase {
+    --knop-ruimte: 5px;
+  }
+}
 
 .big-bad-button {
   position: sticky;
-  bottom: calc(#{$knop-ruimte} + env(safe-area-inset-bottom, 0px));
+  bottom: calc(var(--knop-ruimte) + env(safe-area-inset-bottom, 0px));
   z-index: 3;
 
   /* Een punt zonder hoogte bij de onderrand van het cv, met de knop erboven.
@@ -254,12 +264,12 @@ $knop-ruimte: 32px;
    knophoogte erbij, want de knop staat boven het punt. De pagina's schuiven met
    negatieve marges terug naar de randen. */
 section.showcase {
-  padding-top: $knop-hoogte + $knop-ruimte;
-  padding-bottom: $knop-ruimte;
+  padding-top: calc(#{$knop-hoogte} + var(--knop-ruimte));
+  padding-bottom: var(--knop-ruimte);
 }
 .showcase > .pdf-pages {
-  margin-top: -1 * ($knop-hoogte + $knop-ruimte);
-  margin-bottom: -1 * $knop-ruimte;
+  margin-top: calc(-1 * (#{$knop-hoogte} + var(--knop-ruimte)));
+  margin-bottom: calc(-1 * var(--knop-ruimte));
 }
 
 @media (prefers-reduced-motion: reduce) {
