@@ -1,4 +1,3 @@
-@use '../../styles/cv' as *;
 @use '../../styles/zoeklicht' as *;
 
 /*--------------------------------------------------------------
@@ -206,18 +205,15 @@ section.showcase {
    eroverheen; hij bestond dus op de hele pagina en stond overal in de
    tabvolgorde, ook waar niemand hem zag. */
 
-/* De knop hangt om een punt zonder hoogte, een halve knop erboven en een halve
-   eronder. De ruimte is wat hij zwevend boven 1,5rem houdt, en bovenaan het cv
-   onder de rand van het blok. */
+/* De knop hangt om een punt zonder hoogte. Knop-ruimte is de lucht die hem
+   zwevend op 1,5rem boven de viewportrand houdt; knop-half is de halve
+   knophoogte waarmee hij bovenaan over de rand van het blok steekt. */
 $knop-half: 32px;
 $knop-ruimte: 10px;
 
 .big-bad-button {
   position: sticky;
-
-  /* Het punt staat een halve knop hoger dan de onderkant van de knop, dus die
-     telt hier mee. */
-  bottom: calc(1.5rem + #{$knop-ruimte + $knop-half} + env(safe-area-inset-bottom, 0px));
+  bottom: calc(1.5rem + #{$knop-ruimte} + env(safe-area-inset-bottom, 0px));
   z-index: 3;
 
   /* Een punt zonder hoogte op de onderrand van het cv, met de knop eromheen.
@@ -238,15 +234,12 @@ $knop-ruimte: 10px;
 }
 
 .pdf-download-button-container {
-  /* Half over de onderrand van het cv: 32px is de halve knop. Met de knop er
-     helemaal boven lag hij aan het eind op een telefoon over de laatste regel,
-     want onder die regel is het papier daar maar 50 tot 64px hoog. Zo blijft
-     er op 360 tot 414px 25px of meer vrij en op 320px 18px; de rand zelf zie je
-     niet, want het cv en de afsluiter eronder zijn allebei wit. Gecentreerd met
+  /* De onderrand van de knop staat op het punt, dus hij stopt precies waar
+     het cv stopt en hangt niet over de afsluiter eronder. Gecentreerd met
      auto-marges en niet met left: 50%, want dan krijgt de doos maar de halve
      breedte en breekt het label. */
   position: absolute;
-  bottom: -1 * $knop-half;
+  bottom: 0;
   left: 0;
   right: 0;
   width: fit-content;
@@ -265,19 +258,6 @@ $knop-ruimte: 10px;
    terug naar de bovenrand. */
 section.showcase {
   padding-top: $knop-ruimte + $knop-half;
-}
-
-/* Onderaan een strook papier van een halve knop plus wat lucht, met de zijbalk
-   erin doorgetrokken. De knop hangt aan het eind nog steeds half over de
-   onderrand van het cv, maar zijn onderste helft ligt nu op wit en niet op het
-   blauw van de afsluiter eronder. Die strook staat alleen in de padding; de
-   pagina's dekken de rest van het blok. */
-$papier-onder: $knop-half + 16px;
-
-section.showcase {
-  background:
-    linear-gradient(to right, $cv-blauw $cv-zijbalk, #fff $cv-zijbalk) bottom / 100% $papier-onder no-repeat,
-    #fff;
 }
 .showcase > .pdf-pages {
   margin-top: -1 * ($knop-ruimte + $knop-half);
