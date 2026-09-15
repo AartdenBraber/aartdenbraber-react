@@ -56,10 +56,8 @@ const doof = (knop: HTMLElement, nabij: number) => {
  * pagina, en per frame hooguit één keer rekenen.
  *
  * Een vinger doet hetzelfde: het licht komt waar hij het scherm raakt, ook naast
- * de knop, en volgt hem zolang hij erop blijft. Eerst deed dit alleen iets met
- * een muis, en op een telefoon bleef na een tik :hover aan de knop plakken met
- * het licht in het midden. Staat het paneel open, dan gloeien alleen de knoppen
- * daarin; de rest ligt onder de grond.
+ * de knop, en beweegt mee als hij sleept. Staat het paneel open, dan gloeien
+ * alleen de knoppen daarin; de rest ligt onder de grond.
  */
 export const useZoeklichtNabij = () => {
     useEffect(() => {
@@ -88,22 +86,15 @@ export const useZoeklichtNabij = () => {
             plan();
         };
 
-        // Bij pointerdown komt de plek van een vinger binnen; die heeft er pas
-        // een als hij het scherm raakt. Een muis komt hier ook langs, en dat kan
-        // geen kwaad.
+        // Een muis of pen. Een vinger niet: daar komt geen pointermove meer
+        // zodra de browser het slepen overneemt als scrollen, en dan bleef het
+        // licht staan waar de vinger begon.
         const wijs = (event: PointerEvent) => {
-            if (event.pointerType === 'touch') window.clearTimeout(loslaten);
+            if (event.pointerType === 'touch') return;
             x = event.clientX;
             y = event.clientY;
             binnen = true;
             plan();
-        };
-        // Een vinger laat los, of gaat scrollen: dan komt pointercancel. Het
-        // licht blijft nog even staan en dooft dan.
-        const los = (event: PointerEvent) => {
-            if (event.pointerType !== 'touch') return;
-            window.clearTimeout(loslaten);
-            loslaten = window.setTimeout(doven, NA_LOSLATEN_MS);
         };
         // Zonder relatedTarget ging de muis het venster uit. Een vinger meldt
         // dat na elke keer loslaten; die dooft via `los`.
@@ -111,26 +102,48 @@ export const useZoeklichtNabij = () => {
             if (event.pointerType === 'touch' || event.relatedTarget) return;
             doven();
         };
-        // Bij scrollen staat de muis stil en schuiven de knoppen eronder door.
-        // Capture, zodat ook het scrollen in het paneel meetelt.
+
+        // Een vinger, via touch-events zoals het zoeklicht in de hero: die
+        // blijven komen terwijl de pagina onder de vinger scrollt.
+        const raak = (event: TouchEvent) => {
+            const vinger = event.touches[0];
+            if (!vinger) return;
+            window.clearTimeout(loslaten);
+            x = vinger.clientX;
+            y = vinger.clientY;
+            binnen = true;
+            plan();
+        };
+        // Na het loslaten blijft het licht nog even staan en dooft het dan.
+        // Zolang er nog een vinger op het scherm ligt, blijft het aan.
+        const los = (event: TouchEvent) => {
+            if (event.touches.length > 0) return;
+            window.clearTimeout(loslaten);
+            loslaten = window.setTimeout(doven, NA_LOSLATEN_MS);
+        };
+
+        // Bij scrollen schuiven de knoppen onder een stilstaande muis of vinger
+        // door. Capture, zodat ook het scrollen in het paneel meetelt.
         const scroll = () => {
             if (binnen) plan();
         };
 
-        document.addEventListener('pointerdown', wijs, { passive: true });
         document.addEventListener('pointermove', wijs, { passive: true });
-        document.addEventListener('pointerup', los, { passive: true });
-        document.addEventListener('pointercancel', los, { passive: true });
         document.addEventListener('pointerout', uit);
+        document.addEventListener('touchstart', raak, { passive: true });
+        document.addEventListener('touchmove', raak, { passive: true });
+        document.addEventListener('touchend', los, { passive: true });
+        document.addEventListener('touchcancel', los, { passive: true });
         window.addEventListener('blur', doven);
         window.addEventListener('scroll', scroll, { passive: true, capture: true });
 
         return () => {
-            document.removeEventListener('pointerdown', wijs);
             document.removeEventListener('pointermove', wijs);
-            document.removeEventListener('pointerup', los);
-            document.removeEventListener('pointercancel', los);
             document.removeEventListener('pointerout', uit);
+            document.removeEventListener('touchstart', raak);
+            document.removeEventListener('touchmove', raak);
+            document.removeEventListener('touchend', los);
+            document.removeEventListener('touchcancel', los);
             window.removeEventListener('blur', doven);
             window.removeEventListener('scroll', scroll, { capture: true });
             window.clearTimeout(loslaten);

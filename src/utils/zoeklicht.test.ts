@@ -65,11 +65,33 @@ describe('useZoeklichtNabij', () => {
         });
     };
 
+    // jsdom kent geen Touch, dus de vingers gaan als gewone objecten mee.
+    const vinger = (type: string, ...plekken: Array<[number, number]>) => {
+        const event = new Event(type, { bubbles: true });
+        Object.defineProperty(event, 'touches', {
+            value: plekken.map(([clientX, clientY]) => ({ clientX, clientY })),
+        });
+        act(() => {
+            document.dispatchEvent(event);
+        });
+    };
+
     const knopOpDePagina = () => {
         const { getByRole } = render(React.createElement(Pagina));
         const knop = getByRole('button');
         knop.getBoundingClientRect = () => vak;
         return knop;
+    };
+
+    const vangUitstel = () => {
+        const uitgesteld: Array<() => void> = [];
+        const echteTimeout = window.setTimeout;
+        jest.spyOn(window, 'setTimeout').mockImplementation(((terug: () => void, wacht?: number) => {
+            if (wacht !== NA_LOSLATEN_MS) return echteTimeout.call(window, terug, wacht);
+            uitgesteld.push(terug);
+            return 0;
+        }) as unknown as typeof window.setTimeout);
+        return uitgesteld;
     };
 
     it('laat het licht al binnenvallen als de muis de knop nadert', () => {
@@ -84,26 +106,32 @@ describe('useZoeklichtNabij', () => {
     it('laat het licht komen waar een vinger het scherm raakt, ook naast de knop', () => {
         const knop = knopOpDePagina();
 
-        wijzer('pointerdown', 300 + BEREIK / 2, 65, 'touch');
-        expect(knop.style.getPropertyValue('--licht-nabij')).toBe('0.500');
+        vinger('touchstart', [300 + BEREIK / 2, 65]);
 
-        wijzer('pointerdown', 120, 65, 'touch');
+        expect(knop.style.getPropertyValue('--licht-nabij')).toBe('0.500');
+    });
+
+    it('laat het licht meebewegen als de vinger sleept', () => {
+        const knop = knopOpDePagina();
+
+        vinger('touchstart', [120, 65]);
+        // De browser neemt het slepen over als scrollen; daarna komt er geen
+        // pointermove meer, wel touchmove.
+        wijzer('pointercancel', 120, 65, 'touch');
+        vinger('touchmove', [200, 70]);
+        vinger('touchmove', [280, 75]);
+
+        expect(knop.style.getPropertyValue('--muis-x')).toBe('180px');
+        expect(knop.style.getPropertyValue('--muis-y')).toBe('35px');
         expect(knop.style.getPropertyValue('--licht-nabij')).toBe('1.000');
-        expect(knop.style.getPropertyValue('--muis-x')).toBe('20px');
     });
 
     it('houdt het licht na het loslaten van een vinger nog even vast en dooft dan', () => {
         const knop = knopOpDePagina();
-        const uitgesteld: Array<() => void> = [];
-        const echteTimeout = window.setTimeout;
-        jest.spyOn(window, 'setTimeout').mockImplementation(((terug: () => void, wacht?: number) => {
-            if (wacht !== NA_LOSLATEN_MS) return echteTimeout.call(window, terug, wacht);
-            uitgesteld.push(terug);
-            return 0;
-        }) as unknown as typeof window.setTimeout);
+        const uitgesteld = vangUitstel();
 
-        wijzer('pointerdown', 170, 65, 'touch');
-        wijzer('pointerup', 170, 65, 'touch');
+        vinger('touchstart', [170, 65]);
+        vinger('touchend');
         // Na elke keer loslaten meldt een vinger ook dat hij "weg" is.
         wijzer('pointerout', 170, 65, 'touch');
 
@@ -112,6 +140,16 @@ describe('useZoeklichtNabij', () => {
 
         act(() => uitgesteld[0]());
         expect(knop.style.getPropertyValue('--licht-nabij')).toBe('0.000');
+    });
+
+    it('blijft aan zolang er nog een vinger op het scherm ligt', () => {
+        knopOpDePagina();
+        const uitgesteld = vangUitstel();
+
+        vinger('touchstart', [170, 65], [400, 400]);
+        vinger('touchend', [400, 400]);
+
+        expect(uitgesteld).toHaveLength(0);
     });
 
     it('dooft als de muis het venster uit gaat', () => {

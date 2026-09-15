@@ -30,7 +30,7 @@
   /* De rand van de knopfamilie; de lichtrand ligt daar precies overheen, en
      straalt $bloei naar buiten uit. */
   $dikte: 2px;
-  $bloei: 6px;
+  $bloei: 4px;
 
   --licht-x: var(--muis-x, 50%);
   --licht-y: var(--muis-y, 50%);
@@ -66,11 +66,11 @@
      ronde hoeken, dus dat past precies.
 
      Het vlak begint $bloei links van en boven de knop, en daar schuift de plek
-     van de muis mee. Bij het naderen komt het 1,25 keer zo snel op als het
-     licht binnenin: op 40px van de knop is het bijna vol. Een opacity boven 1
-     wordt gewoon 1. */
+     van de muis mee. Bij het naderen volgt het 1,1 keer de nabijheid: op 40px
+     van de knop is het driekwart. Het was 1,25, met een zoom van 6px en een
+     bredere kern, en dat was net te veel. Een opacity boven 1 wordt gewoon 1. */
   &::after {
-    $zacht: rgba(0, 0, 0, 0.4);
+    $zacht: rgba(0, 0, 0, 0.3);
     $masker:
       linear-gradient(#000 0 0) content-box,
       linear-gradient(to right, transparent, $zacht $bloei, #000 $bloei, #000 calc(100% - #{$bloei}), $zacht calc(100% - #{$bloei}), transparent),
@@ -84,15 +84,15 @@
     background: radial-gradient(
       circle 130px at calc(var(--licht-x) + #{$bloei}) calc(var(--licht-y) + #{$bloei}),
       $rand 0%,
-      $rand 35%,
-      rgba($rand, 0.7) 65%,
+      $rand 20%,
+      rgba($rand, 0.6) 60%,
       rgba($rand, 0) 100%
     );
     -webkit-mask: $masker;
     -webkit-mask-composite: xor, source-in;
     mask: $masker;
     mask-composite: exclude, intersect;
-    opacity: calc(var(--licht-nabij, 0) * 1.25);
+    opacity: calc(var(--licht-nabij, 0) * 1.1);
     transition: opacity 0.2s ease-out;
   }
 
