@@ -7,6 +7,13 @@ import { useEffect } from 'react';
  */
 export const BEREIK = 130;
 
+/**
+ * Zo lang blijft het licht staan nadat een vinger het scherm loslaat. Een tik
+ * duurt korter dan de gloed nodig heeft om op te komen, dus zonder deze tijd
+ * zag je van een tik niets.
+ */
+export const NA_LOSLATEN_MS = 450;
+
 type Vak = Pick<DOMRect, 'left' | 'top' | 'right' | 'bottom'>;
 
 /**
@@ -48,9 +55,11 @@ const doof = (knop: HTMLElement, nabij: number) => {
  * zoals het zoeklicht in de hero de muis volgt. Eén luisteraar voor de hele
  * pagina, en per frame hooguit één keer rekenen.
  *
- * Alleen voor een muis of pen. Een vinger heeft geen plek zolang hij het scherm
- * niet raakt, en bij een tik is de knop al ingedrukt. Staat het paneel open,
- * dan gloeien alleen de knoppen daarin; de rest ligt onder de grond.
+ * Een vinger doet hetzelfde: het licht komt waar hij het scherm raakt, ook naast
+ * de knop, en volgt hem zolang hij erop blijft. Eerst deed dit alleen iets met
+ * een muis, en op een telefoon bleef na een tik :hover aan de knop plakken met
+ * het licht in het midden. Staat het paneel open, dan gloeien alleen de knoppen
+ * daarin; de rest ligt onder de grond.
  */
 export const useZoeklichtNabij = () => {
     useEffect(() => {
@@ -58,6 +67,7 @@ export const useZoeklichtNabij = () => {
         let y = 0;
         let binnen = false;
         let frame = 0;
+        let loslaten = 0;
 
         const teken = () => {
             frame = 0;
@@ -73,23 +83,33 @@ export const useZoeklichtNabij = () => {
         const plan = () => {
             if (!frame) frame = requestAnimationFrame(teken);
         };
+        const doven = () => {
+            binnen = false;
+            plan();
+        };
 
-        const beweeg = (event: PointerEvent) => {
-            if (event.pointerType === 'touch') return;
+        // Bij pointerdown komt de plek van een vinger binnen; die heeft er pas
+        // een als hij het scherm raakt. Een muis komt hier ook langs, en dat kan
+        // geen kwaad.
+        const wijs = (event: PointerEvent) => {
+            if (event.pointerType === 'touch') window.clearTimeout(loslaten);
             x = event.clientX;
             y = event.clientY;
             binnen = true;
             plan();
         };
-        // Zonder relatedTarget ging de muis het venster uit.
-        const uit = (event: PointerEvent) => {
-            if (event.relatedTarget) return;
-            binnen = false;
-            plan();
+        // Een vinger laat los, of gaat scrollen: dan komt pointercancel. Het
+        // licht blijft nog even staan en dooft dan.
+        const los = (event: PointerEvent) => {
+            if (event.pointerType !== 'touch') return;
+            window.clearTimeout(loslaten);
+            loslaten = window.setTimeout(doven, NA_LOSLATEN_MS);
         };
-        const weg = () => {
-            binnen = false;
-            plan();
+        // Zonder relatedTarget ging de muis het venster uit. Een vinger meldt
+        // dat na elke keer loslaten; die dooft via `los`.
+        const uit = (event: PointerEvent) => {
+            if (event.pointerType === 'touch' || event.relatedTarget) return;
+            doven();
         };
         // Bij scrollen staat de muis stil en schuiven de knoppen eronder door.
         // Capture, zodat ook het scrollen in het paneel meetelt.
@@ -97,16 +117,23 @@ export const useZoeklichtNabij = () => {
             if (binnen) plan();
         };
 
-        document.addEventListener('pointermove', beweeg, { passive: true });
+        document.addEventListener('pointerdown', wijs, { passive: true });
+        document.addEventListener('pointermove', wijs, { passive: true });
+        document.addEventListener('pointerup', los, { passive: true });
+        document.addEventListener('pointercancel', los, { passive: true });
         document.addEventListener('pointerout', uit);
-        window.addEventListener('blur', weg);
+        window.addEventListener('blur', doven);
         window.addEventListener('scroll', scroll, { passive: true, capture: true });
 
         return () => {
-            document.removeEventListener('pointermove', beweeg);
+            document.removeEventListener('pointerdown', wijs);
+            document.removeEventListener('pointermove', wijs);
+            document.removeEventListener('pointerup', los);
+            document.removeEventListener('pointercancel', los);
             document.removeEventListener('pointerout', uit);
-            window.removeEventListener('blur', weg);
+            window.removeEventListener('blur', doven);
             window.removeEventListener('scroll', scroll, { capture: true });
+            window.clearTimeout(loslaten);
             if (frame) cancelAnimationFrame(frame);
         };
     }, []);

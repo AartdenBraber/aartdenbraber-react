@@ -5,9 +5,10 @@
    "Download CV als PDF" en Versturen. Een rode rand, en een zachte rode gloed
    die de muis volgt, een verre echo van het zoeklicht in de hero. Nadert de
    muis de knop, dan valt het licht al binnen aan die kant en licht de rand daar
-   op; op de knop of met focus is het vol. useZoeklichtNabij in src/utils/zoeklicht.ts zet daarvoor
-   --muis-x, --muis-y en --licht-nabij op elke knop met `data-zoeklicht`. Zonder
-   muis staat het licht in het midden.
+   op; op de knop of met focus is het vol. Een vinger doet hetzelfde, op de plek
+   waar hij het scherm raakt. useZoeklichtNabij in src/utils/zoeklicht.ts zet
+   daarvoor --muis-x, --muis-y en --licht-nabij op elke knop met
+   `data-zoeklicht`. Met het toetsenbord staat het licht in het midden.
 
    Gebruik: eerst de eigen eigenschappen van de knop, dan de mixins, dan pas
    geneste regels als :hover. Sass waarschuwt voor eigenschappen na geneste
@@ -26,8 +27,10 @@
    lag te dicht bij #ed5253: op 40px van de knop werd de rand gemeten van
    (237, 82, 83) naar (239, 68, 70), en dat zag je niet. */
 @mixin zoeklicht-knop($kracht: 0.16, $nabij: 0.8, $rand: #d9131a) {
-  /* De rand van de knopfamilie; de lichtrand ligt daar precies overheen. */
+  /* De rand van de knopfamilie; de lichtrand ligt daar precies overheen, en
+     straalt $bloei naar buiten uit. */
   $dikte: 2px;
+  $bloei: 6px;
 
   --licht-x: var(--muis-x, 50%);
   --licht-y: var(--muis-y, 50%);
@@ -56,36 +59,61 @@
   }
 
   /* De rand licht op aan de kant van de muis: hetzelfde licht als binnenin,
-     gemaskeerd tot een ring zo dik als de rand. Het masker laat het hele vlak
-     door en haalt het binnenste er weer af. Dit vlak is zo groot als de knop
-     met rand, net als het vak waartegen zoeklicht.ts de muis afmeet, dus de
-     plek klopt zonder correctie. */
+     gemaskeerd tot de rand plus een zoom van $bloei die naar buiten uitdooft.
+     Alleen de rand van kleur laten verschieten las als een andere rand, niet
+     als licht. Het masker is een rechthoek met zachte randen, twee verlopen die
+     elkaar snijden, met het binnenste van de knop eruit; de knoppen hebben geen
+     ronde hoeken, dus dat past precies.
+
+     Het vlak begint $bloei links van en boven de knop, en daar schuift de plek
+     van de muis mee. Bij het naderen komt het 1,25 keer zo snel op als het
+     licht binnenin: op 40px van de knop is het bijna vol. Een opacity boven 1
+     wordt gewoon 1. */
   &::after {
+    $zacht: rgba(0, 0, 0, 0.4);
+    $masker:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(to right, transparent, $zacht $bloei, #000 $bloei, #000 calc(100% - #{$bloei}), $zacht calc(100% - #{$bloei}), transparent),
+      linear-gradient(to bottom, transparent, $zacht $bloei, #000 $bloei, #000 calc(100% - #{$bloei}), $zacht calc(100% - #{$bloei}), transparent);
+
     content: "";
     position: absolute;
-    inset: -$dikte;
-    padding: $dikte;
+    inset: -($dikte + $bloei);
+    padding: $dikte + $bloei;
     pointer-events: none;
     background: radial-gradient(
-      circle 130px at var(--licht-x) var(--licht-y),
+      circle 130px at calc(var(--licht-x) + #{$bloei}) calc(var(--licht-y) + #{$bloei}),
       $rand 0%,
-      rgba($rand, 0.6) 45%,
+      $rand 35%,
+      rgba($rand, 0.7) 65%,
       rgba($rand, 0) 100%
     );
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    mask-composite: exclude;
-    opacity: calc(var(--licht-nabij, 0) * #{$nabij});
+    -webkit-mask: $masker;
+    -webkit-mask-composite: xor, source-in;
+    mask: $masker;
+    mask-composite: exclude, intersect;
+    opacity: calc(var(--licht-nabij, 0) * 1.25);
     transition: opacity 0.2s ease-out;
   }
 
-  &:hover::before,
+  /* Vol met focus van het toetsenbord, en zolang de knop ingedrukt wordt. */
   &:focus-visible::before,
-  &:hover::after,
-  &:focus-visible::after {
+  &:focus-visible::after,
+  &:active::before,
+  &:active::after {
     opacity: 1;
     transition-duration: 0.15s;
+  }
+
+  /* En met de muis erop, maar alleen waar een muis is. Op een telefoon blijft
+     :hover na een tik aan de knop plakken, en dan bleef het licht vol in het
+     midden staan, waar de vinger ook was. */
+  @media (hover: hover) {
+    &:hover::before,
+    &:hover::after {
+      opacity: 1;
+      transition-duration: 0.15s;
+    }
   }
 
   /* Met het toetsenbord staat het licht in het midden, waar de muis ook is. */

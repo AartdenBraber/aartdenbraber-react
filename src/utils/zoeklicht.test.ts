@@ -1,6 +1,6 @@
 import React from 'react';
 import { act, render } from '@testing-library/react';
-import { BEREIK, nabijheid, useZoeklichtNabij, zetLicht } from './zoeklicht';
+import { BEREIK, NA_LOSLATEN_MS, nabijheid, useZoeklichtNabij, zetLicht } from './zoeklicht';
 
 const vak = { left: 100, top: 40, right: 300, bottom: 90, width: 200, height: 50 } as DOMRect;
 
@@ -57,44 +57,68 @@ describe('useZoeklichtNabij', () => {
     });
     afterEach(() => jest.restoreAllMocks());
 
-    const beweeg = (clientX: number, clientY: number, pointerType = 'mouse') => {
-        const event = new MouseEvent('pointermove', { clientX, clientY, bubbles: true });
+    const wijzer = (type: string, clientX: number, clientY: number, pointerType = 'mouse') => {
+        const event = new MouseEvent(type, { clientX, clientY, relatedTarget: null, bubbles: true });
         Object.defineProperty(event, 'pointerType', { value: pointerType });
         act(() => {
             document.dispatchEvent(event);
         });
     };
 
-    it('laat het licht al binnenvallen als de muis de knop nadert', () => {
+    const knopOpDePagina = () => {
         const { getByRole } = render(React.createElement(Pagina));
         const knop = getByRole('button');
         knop.getBoundingClientRect = () => vak;
+        return knop;
+    };
 
-        beweeg(300 + BEREIK / 2, 65);
+    it('laat het licht al binnenvallen als de muis de knop nadert', () => {
+        const knop = knopOpDePagina();
+
+        wijzer('pointermove', 300 + BEREIK / 2, 65);
 
         expect(knop.style.getPropertyValue('--licht-nabij')).toBe('0.500');
         expect(knop.style.getPropertyValue('--muis-x')).toBe(`${200 + BEREIK / 2}px`);
     });
 
-    it('doet niets met een vinger', () => {
-        const { getByRole } = render(React.createElement(Pagina));
-        const knop = getByRole('button');
-        knop.getBoundingClientRect = () => vak;
+    it('laat het licht komen waar een vinger het scherm raakt, ook naast de knop', () => {
+        const knop = knopOpDePagina();
 
-        beweeg(170, 65, 'touch');
+        wijzer('pointerdown', 300 + BEREIK / 2, 65, 'touch');
+        expect(knop.style.getPropertyValue('--licht-nabij')).toBe('0.500');
 
-        expect(knop.style.getPropertyValue('--licht-nabij')).toBe('');
+        wijzer('pointerdown', 120, 65, 'touch');
+        expect(knop.style.getPropertyValue('--licht-nabij')).toBe('1.000');
+        expect(knop.style.getPropertyValue('--muis-x')).toBe('20px');
+    });
+
+    it('houdt het licht na het loslaten van een vinger nog even vast en dooft dan', () => {
+        const knop = knopOpDePagina();
+        const uitgesteld: Array<() => void> = [];
+        const echteTimeout = window.setTimeout;
+        jest.spyOn(window, 'setTimeout').mockImplementation(((terug: () => void, wacht?: number) => {
+            if (wacht !== NA_LOSLATEN_MS) return echteTimeout.call(window, terug, wacht);
+            uitgesteld.push(terug);
+            return 0;
+        }) as unknown as typeof window.setTimeout);
+
+        wijzer('pointerdown', 170, 65, 'touch');
+        wijzer('pointerup', 170, 65, 'touch');
+        // Na elke keer loslaten meldt een vinger ook dat hij "weg" is.
+        wijzer('pointerout', 170, 65, 'touch');
+
+        expect(knop.style.getPropertyValue('--licht-nabij')).toBe('1.000');
+        expect(uitgesteld).toHaveLength(1);
+
+        act(() => uitgesteld[0]());
+        expect(knop.style.getPropertyValue('--licht-nabij')).toBe('0.000');
     });
 
     it('dooft als de muis het venster uit gaat', () => {
-        const { getByRole } = render(React.createElement(Pagina));
-        const knop = getByRole('button');
-        knop.getBoundingClientRect = () => vak;
+        const knop = knopOpDePagina();
 
-        beweeg(170, 65);
-        act(() => {
-            document.dispatchEvent(new MouseEvent('pointerout', { relatedTarget: null }));
-        });
+        wijzer('pointermove', 170, 65);
+        wijzer('pointerout', 170, 65);
 
         expect(knop.style.getPropertyValue('--licht-nabij')).toBe('0.000');
     });
