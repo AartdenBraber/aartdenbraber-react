@@ -18,7 +18,7 @@ import { useZoeklichtNabij } from './utils/zoeklicht';
 const SkipLink: React.FC = () => {
   const { t } = useLanguage();
   return (
-    <a className="skip-link" href="#inhoud">
+    <a className="skip-link" href="#inhoud" data-meet="naar inhoud">
       {t.nav.skipToContent}
     </a>
   );

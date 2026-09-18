@@ -8,6 +8,7 @@ import '@fontsource-variable/literata/opsz.css';
 import '@fontsource/raleway/400.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { startMeten } from './utils/meten';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -17,6 +18,10 @@ root.render(
     <App />
   </React.StrictMode>
 );
+
+// Bezoekersstatistiek voor eigen gebruik, zie src/utils/meten.ts. Alleen in de
+// build die live gaat: in de ontwikkelserver draait geen PHP.
+if (process.env.NODE_ENV === 'production') startMeten();
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

@@ -36,6 +36,7 @@ const LanguageSwitcher: React.FC<{ variant: 'balk' | 'kop' }> = ({ variant }) =>
             lang={code}
             className={code === language ? 'active' : ''}
             data-lang={code}
+            data-meet={`taal ${code}`}
             aria-label={naam}
             aria-pressed={code === language}
             onClick={() => setLanguage(code)}

@@ -35,3 +35,7 @@ __pycache__/
 
 # wordt voor start en build uit node_modules gekopieerd
 /public/pdf.worker.min.js
+
+# wat public/meet.php schrijft als je build/ lokaal met php -S serveert zonder
+# STATISTIEK_MAP; op de server staat die map boven de webroot
+/statistiek

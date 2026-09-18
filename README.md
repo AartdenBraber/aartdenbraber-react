@@ -30,6 +30,7 @@ src/
   components/   Eén map per component, met de bijbehorende .scss ernaast
   hooks/        useRevealOnView, met de opmaak van het onthullen ernaast
   utils/        PdfWithTextLayer tekent het cv op canvassen, useParallax schuift de achtergrond
+                meten.ts stuurt de bezoekersstatistiek naar public/meet.php
   styles/       Wat voor de hele site geldt: bootstrap.scss en global.scss
 ```
 
@@ -172,6 +173,116 @@ php scripts/test-contactformulier.php
 ```
 
 De workflow draait ze voor elke uitrol.
+
+## Bezoekersstatistiek
+
+De site houdt voor eigen gebruik bij waar bezoekers vandaan komen en wat ze
+aanklikken. Een dashboard is er niet: `scripts/server_statistiek.py` haalt de
+gegevens op en zet een samenvatting in de terminal.
+
+```bash
+python scripts/server_statistiek.py
+python scripts/server_statistiek.py --dagen 7
+python scripts/server_statistiek.py --bron cgbuitenpost
+python scripts/server_statistiek.py --ruw
+```
+
+Zonder opties krijg je de laatste dertig dagen: bezoeken per dag, herkomst,
+hoe ver bezoekers in het cv kwamen, de klikken en de laatste vijftien
+bezoeken. `--bron` toont alleen de bezoeken met dat woord in `rel`, `ref`, een
+utm-veld of de verwijzende site, elk met wat die bezoeker deed. `--ruw` geeft
+de gebeurtenissen zelf, een JSON-regel per stuk.
+
+Een link met herkomst is een gewoon adres met `?rel=` erachter, zoals
+`https://aartdenbraber.nl/?rel=cgbuitenpost` of `/en?rel=cgbuitenpost`. Wisselt
+de bezoeker van taal, dan blijft `?rel=` in het adres staan.
+
+### Wat er gemeten wordt
+
+`src/utils/meten.ts` stuurt per paginalading een paar kleine berichten naar
+`public/meet.php`, met `navigator.sendBeacon`:
+
+- `bezoek` bij het laden: pad, taal, anker, de parameters `rel`, `ref` en
+  `utm_*` uit het adres, de hostnaam van de verwijzende site en de breedte van
+  het venster. De server zet er het besturingssysteem en de browserfamilie bij,
+  waaronder de app van LinkedIn.
+- `klik` bij een klik op een link of knop. De naam komt uit `data-meet`, de
+  plek uit het dichtstbijzijnde `data-meet-plek`. Zo komt een klik in het
+  Engels en in het Nederlands op dezelfde regel uit. Een knop zonder
+  `data-meet` telt ook mee, met zijn tekst als naam.
+- `eind` als de pagina uit beeld gaat: hoe lang hij in beeld was, hoe ver er
+  gescrold is en tot welke cv-pagina.
+- `bericht` als het contactformulier verstuurd is of een fout gaf. Daarbij
+  gaat alleen het onderwerp of de foutcode mee, nooit de inhoud.
+
+Bezoekers krijgen geen cookie en er komt niets in de opslag van de browser.
+Een bezoek is één paginalading met een willekeurig nummer dat alleen in het
+geheugen staat. Herladen telt dus als een nieuw bezoek, en wie een week later
+terugkomt, is niet te herkennen. Het IP-adres en de volledige user agent komen
+niet op schijf.
+
+Bots tellen niet mee, en een browser met `navigator.webdriver` of
+`HeadlessChrome` in de user agent ook niet. De visuele controles met headless
+Chrome vervuilen de cijfers dus niet. In `npm start` wordt niets gemeten, alleen
+de productiebuild meet.
+
+### Opslag
+
+`meet.php` schrijft per dag een bestand met een JSON-regel per gebeurtenis, in
+een map boven de webroot:
+
+```
+/home/aartdenbraber/domains/aartdenbraber.nl/statistiek/2026-09-18.jsonl
+```
+
+Die map maakt het script zelf aan, er hoeft op de server niets klaar te
+staan. De uitrol komt er niet bij. Dagbestanden ouder dan 400 dagen gaan
+vanzelf weg, en een dagbestand groeit niet verder dan 5 MB.
+
+Na elke uitrol vraagt de workflow `/meet.php` op. Geeft dat geen
+`{"ok":true}`, dan kan het script zijn map niet aanmaken of niet beschrijven.
+De run krijgt dan een waarschuwing, en de reden staat in het foutenlog van het
+domein met `statistiek:` ervoor.
+
+### Zelf niet meetellen
+
+Open `https://aartdenbraber.nl/meet.php?niet-meten` in elke browser waarin je
+je eigen site bekijkt, ook op je telefoon. Die browser krijgt een cookie
+`niet_meten` en telt 400 dagen niet mee. `?wel-meten` haalt het cookie weer
+weg.
+
+### De leessleutel
+
+`/meet.php?lees` geeft de gebeurtenissen alleen terug met de leessleutel in de
+kop `X-Statistiek-Sleutel`. In een kop en niet in het adres, zodat de sleutel
+niet in de toegangslogs van de server komt. De sleutel staat als
+`AADB_STATISTIEK_SLEUTEL` in `.env.server`. In `meet.php` staat alleen de
+SHA-256 ervan, want de repo is openbaar.
+
+Een nieuwe sleutel maak je met
+`python scripts/server_statistiek.py --nieuwe-sleutel`. Het script zet hem in
+`.env.server` en toont de hash; die hoort in `ST_LEESSLEUTEL_SHA256` in
+`public/meet.php`. Tot die versie live staat, kan het script niet lezen.
+
+### Lokaal testen
+
+```bash
+npm run build
+STATISTIEK_MAP=/pad/naar/een/map php -S 127.0.0.1:8080 -t build
+python scripts/server_statistiek.py --url http://127.0.0.1:8080
+```
+
+Test je met headless Chrome, geef dan een gewone user agent mee met
+`--user-agent` bij het starten, en zet `navigator.webdriver` op false. Een
+override via het DevTools-protocol is niet genoeg: het laatste bericht, dat
+bij het wegnavigeren vertrekt, gaat dan toch met `HeadlessChrome` de deur uit
+en telt niet mee.
+
+De PHP-tests hebben geen server nodig:
+
+```bash
+php scripts/test-statistiek.php
+```
 
 ## Beheer vanaf je eigen machine
 

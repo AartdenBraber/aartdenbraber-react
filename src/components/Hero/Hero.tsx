@@ -46,7 +46,7 @@ const Hero: React.FC = () => {
     const greeting = getGreeting(t.hero.greetings);
 
     return (
-        <section id="top" className="top-hero js-top-hero clearfix" data-hour={hour}>
+        <section id="top" className="top-hero js-top-hero clearfix" data-hour={hour} data-meet-plek="hero">
             <FocusSpotlight image={topBg} />
 
             <div className="hero-content">
@@ -94,7 +94,7 @@ const Hero: React.FC = () => {
                         vensterhoogte die zelden gelijk is aan de hero. Het
                         soepele scrollen staat in global.scss en luistert daar
                         naar prefers-reduced-motion. */}
-                    <a className="hero-cta" href="#portfolio">
+                    <a className="hero-cta" href="#portfolio" data-meet="cv bekijken">
                         <span className="hero-cta-label">{t.hero.cta}</span>
                         <span className="hero-cta-icon" aria-hidden="true"></span>
                     </a>

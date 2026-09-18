@@ -26,6 +26,7 @@ const Intro: React.FC = () => {
             id="inhoud"
             ref={sectieRef}
             className="page-content homepage-intro parallax clearfix"
+            data-meet-plek="intro"
         >
             <div ref={achtergrondRef} className="parallax-bg background-cover"></div>
 

@@ -19,7 +19,7 @@ const CVDisplay: React.FC = () => {
     const { t } = useLanguage();
 
     return (
-        <section className="page-content showcase" id="portfolio" aria-label={t.cv.sectionLabel}>
+        <section className="page-content showcase" id="portfolio" aria-label={t.cv.sectionLabel} data-meet-plek="cv">
             <PinchHint />
 
             {/* Het vergroten laten we aan de browser. Hier zat een eigen
@@ -41,7 +41,7 @@ const CVDisplay: React.FC = () => {
 
             <div className="big-bad-button">
                 <span className="pdf-download-button-container js-pdf-download-button-container">
-                    <a href={t.cv.url} target="_blank" rel="noopener noreferrer nofollow" data-zoeklicht>
+                    <a href={t.cv.url} target="_blank" rel="noopener noreferrer nofollow" data-zoeklicht data-meet="cv downloaden">
                         <span className="little-span">
                             <span className="action-word">{t.cv.actionWord}</span>
                             {t.cv.rest}

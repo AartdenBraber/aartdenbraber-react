@@ -51,13 +51,16 @@ jobs:
       - name: Types controleren
         run: npx tsc --noEmit
 
-      # Het contactformulier is een PHP-script dat met de build meegaat. PHP
-      # staat al op de runner. Zakt het script hier, dan gaat er niets uit.
-      - name: Contactformulier testen
+      # Het contactformulier en de statistiek zijn PHP-scripts die met de build
+      # meegaan. PHP staat al op de runner. Zakt een van beide hier, dan gaat er
+      # niets uit.
+      - name: PHP-scripts testen
         run: |
           php --version
           php -l public/contact.php
+          php -l public/meet.php
           php scripts/test-contactformulier.php
+          php scripts/test-statistiek.php
 
       # CI=true laat Create React App waarschuwingen als fouten behandelen.
       # Er gaat niets naar de server als de tests of de build struikelen.
@@ -254,6 +257,17 @@ jobs:
 
           echo "Engelse versie:"
           curl -sS --fail --max-time 20 https://aartdenbraber.nl/en | grep -o '<title>[^<]*</title>'
+
+          # Een kale GET op meet.php zegt of de statistiek zijn map boven de
+          # webroot kan aanmaken en beschrijven. Lukt dat niet, dan draait de
+          # site gewoon door en gaan alleen de metingen verloren; daarom een
+          # waarschuwing en geen fout. De reden staat in het foutenlog van het
+          # domein, met "statistiek:" ervoor.
+          meet=$(curl -sS --max-time 20 https://aartdenbraber.nl/meet.php || true)
+          echo "/meet.php -> $meet"
+          if [ "$meet" != '{"ok":true}' ]; then
+            echo "::warning::/meet.php gaf niet {\"ok\":true} maar: ${meet:-niets}. De statistiek wordt niet bewaard."
+          fi
 
           for bestand in /CV-Aart-den-Braber-NL.pdf /CV-Aart-den-Braber-EN.pdf /pdf.worker.min.js; do
             soort=$(curl -sS -o /dev/null -w '%{content_type}' --max-time 20 "https://aartdenbraber.nl$bestand")

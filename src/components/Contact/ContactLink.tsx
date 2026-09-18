@@ -27,6 +27,7 @@ const ContactLink: React.FC<{ variant: 'balk' | 'kop' | 'intro' }> = ({ variant 
                 type="button"
                 className="contact-link contact-link--intro"
                 aria-haspopup="dialog"
+                data-meet="contact openen"
                 onClick={(event) => openPaneel(event.currentTarget)}
                 data-zoeklicht
             >
@@ -41,6 +42,7 @@ const ContactLink: React.FC<{ variant: 'balk' | 'kop' | 'intro' }> = ({ variant 
             type="button"
             className={`contact-link contact-link--balk${variant === 'kop' ? ' contact-link--kop' : ''}`}
             aria-haspopup="dialog"
+            data-meet="contact openen"
             onClick={(event) => openPaneel(event.currentTarget)}
         >
             <svg

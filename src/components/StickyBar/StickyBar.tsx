@@ -42,8 +42,8 @@ const StickyBar: React.FC = () => {
     }, []);
 
     return (
-        <div className="sticky-bar" hidden={!zichtbaar}>
-            <a className="sticky-bar-naam" href="#top">
+        <div className="sticky-bar" hidden={!zichtbaar} data-meet-plek="balk">
+            <a className="sticky-bar-naam" href="#top" data-meet="naar boven">
                 <span className="sticky-bar-pijl" aria-hidden="true"></span>
                 <span className="sticky-bar-tekst">Aart den Braber</span>
                 <span className="visueel-verborgen">, {t.nav.backToTop.toLowerCase()}</span>

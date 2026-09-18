@@ -8,6 +8,7 @@ import FocusSpotlight from '../FocusSpotlight/FocusSpotlight';
 import WordReveal from '../WordReveal/WordReveal';
 
 import { Antwoord, ONDERWERPEN, Onderwerp, Veld, verstuurBericht } from './contactApi';
+import { meet } from '../../utils/meten';
 import ContactLink from './ContactLink';
 import { useContactformulier } from './ContactformulierContext';
 import { PANEEL_HASH, useContactPaneel } from './ContactPaneelContext';
@@ -134,6 +135,7 @@ const Formulier: React.FC = () => {
         bezig.current = false;
 
         if (antwoord.ok) {
+            meet('bericht', { onderwerp: waarden.onderwerp || 'geen' });
             // Het formulier en daarmee de plek van de widget verdwijnen zo meteen.
             turnstile.verwijder();
             setFase('verzonden');
@@ -143,6 +145,7 @@ const Formulier: React.FC = () => {
         const velden = antwoord.code === 'ongeldig' ? antwoord.velden ?? {} : {};
         const eersteFout = VELDEN.find((veld) => velden[veld]);
         const code = antwoord.code ?? 'netwerk';
+        meet('bericht', { fout: code });
 
         // Eerst de foutregels in de pagina, dan pas de focus. Anders staat de
         // beschrijving er nog niet als het veld voorgelezen wordt.
@@ -286,6 +289,7 @@ const Formulier: React.FC = () => {
                 <button
                     type="submit"
                     className="contact-knop"
+                    data-meet="versturen"
                     aria-disabled={fase === 'versturen'}
                     data-zoeklicht
                 >
@@ -471,6 +475,7 @@ const Paneel: React.FC = () => {
             ref={dialoogRef}
             id={PANEEL_HASH.slice(1)}
             className="contact-paneel"
+            data-meet-plek="paneel"
             aria-labelledby="contact-kop"
             onMouseDown={drukOmlaag}
             onClick={klik}
@@ -488,6 +493,7 @@ const Paneel: React.FC = () => {
                         ref={sluitknopRef}
                         type="button"
                         className="contact-sluit"
+                        data-meet="paneel sluiten"
                         aria-label={tekst.sluiten}
                         onClick={sluitPaneel}
                     >
@@ -581,7 +587,7 @@ const Afsluiter: React.FC = () => {
     useZijbalkOpenen(sectieRef);
 
     return (
-        <section ref={sectieRef} className="contact-afsluiter" aria-labelledby="contact-afsluiter-kop">
+        <section ref={sectieRef} className="contact-afsluiter" aria-labelledby="contact-afsluiter-kop" data-meet-plek="afsluiter">
             {/* Tussen twee streepjes, zoals de kop in de hero en in het paneel:
                 de pagina begint en eindigt met hetzelfde gebaar. */}
             <div className="contact-afsluiter-kop-inhoud">
