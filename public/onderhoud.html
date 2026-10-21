@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Even offline</title>
+<style>
+  :root {
+    --achtergrond: #f3f4f5;
+    --vlak: #ffffff;
+    --tekst: #1b1e22;
+    --tekst-zacht: #575b60;
+    --lijn: #dfe2e5;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --achtergrond: #1b1e22;
+      --vlak: #26292d;
+      --tekst: #edf0ef;
+      --tekst-zacht: #b8bcc0;
+      --lijn: #3a3e43;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 24px 16px;
+    background: var(--achtergrond);
+    color: var(--tekst);
+    font: 17px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  main {
+    max-width: 560px;
+    background: var(--vlak);
+    border: 1px solid var(--lijn);
+    border-radius: 6px;
+    padding: 32px 28px;
+  }
+  h1 { font-size: 1.6rem; line-height: 1.25; margin: 0 0 16px; }
+  p { margin: 0 0 14px; }
+  .en { margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--lijn); }
+  .klein { color: var(--tekst-zacht); font-size: 0.9rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1>De website van Aart den Braber is even offline</h1>
+  <p>In PHP, software waar heel veel websites op draaien, zijn twee ernstige
+  beveiligingslekken gevonden. Uit voorzorg staat deze site uit tot de server
+  is bijgewerkt.</p>
+  <p class="klein">Het gaat om CVE-2026-109618 en CVE-2026-109619.</p>
+  <div class="en" lang="en">
+    <p>Two serious security flaws were found in PHP, software that runs a
+    great many websites. As a precaution this site is offline until the
+    server has been updated.</p>
+  </div>
+</main>
+</body>
+</html>

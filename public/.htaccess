@@ -1,3 +1,20 @@
+# BEGIN Prosum onderhoud
+# Alles krijgt een 503 met onderhoud.html, zonder PHP. Aanleiding:
+# CVE-2026-109618 en -109619 (21-10-2026), twee lekken in PHP zelf. Weg:
+# dit blok en public/onderhoud.html verwijderen en opnieuw uitrollen.
+ErrorDocument 503 /onderhoud.html
+ErrorDocument 403 /onderhoud.html
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteRule ^onderhoud\.html$ - [L]
+RewriteRule ^ - [R=503,L]
+</IfModule>
+# Tweede laag: submappen met een eigen RewriteEngine slaan de regel hierboven over.
+<FilesMatch "\.(php|phtml|phar)$">
+Require all denied
+</FilesMatch>
+# END Prosum onderhoud
+
 # Dit bestand stond alleen op de server en niet in de repo, waardoor niemand
 # kon zien waarom /en werkte. Het gaat nu mee met de build.
 
