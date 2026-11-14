@@ -39,7 +39,8 @@ permissions: {}
 jobs:
   aanroepen:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    # Twee pogingen van hooguit vier minuten met een halve minuut ertussen.
+    timeout-minutes: 10
 
     steps:
       - name: nu-push.php aanroepen
@@ -52,27 +53,54 @@ jobs:
           fi
 
           antwoord="$RUNNER_TEMP/antwoord"
-          status=$(curl -sS -o "$antwoord" -w '%{http_code}' --max-time 240 \
-            -H "X-Nu-Push-Sleutel: $SLEUTEL" \
-            -A 'aartdenbraber-react nu-push' \
-            https://aartdenbraber.nl/rss/nu-push.php)
-          echo "Status $status, $(wc -c < "$antwoord") bytes terug."
+          poging=1
+          while :; do
+            status=$(curl -sS -o "$antwoord" -w '%{http_code}' --max-time 240 \
+              -H "X-Nu-Push-Sleutel: $SLEUTEL" \
+              -A 'aartdenbraber-react nu-push' \
+              https://aartdenbraber.nl/rss/nu-push.php)
+            grootte=$(wc -c < "$antwoord")
+            echo "Poging $poging: status $status, $grootte bytes terug."
 
-          # De rewrite in .htaccess geeft voor een onbekend pad index.html terug
-          # met status 200. Daaraan zie je dat het script weg is.
-          if grep -q 'id="root"' "$antwoord"; then
-            echo "::error::Er kwam index.html terug in plaats van nu-push.php. Staat het script nog in public_html/rss?"
-            exit 1
-          fi
+            # De rewrite in .htaccess geeft voor een onbekend pad index.html
+            # terug met status 200. Daaraan zie je dat het script weg is.
+            if grep -q 'id="root"' "$antwoord"; then
+              echo "::error::Er kwam index.html terug in plaats van nu-push.php. Staat het script nog in public_html/rss?"
+              exit 1
+            fi
 
-          case "$status" in
-            200) ;;
-            403)
-              echo "::error::nu-push.php weigert de sleutel (403). Staat de SHA-256 van NU_PUSH_SLEUTEL in de versie van nu-push.php op de server?"
+            # nu-push.php stuurt nooit iets terug: zijn uitvoer gaat naar het
+            # log op de server. Een leeg antwoord komt dus van het script zelf.
+            if [ "$grootte" -eq 0 ]; then
+              case "$status" in
+                200)
+                  exit 0
+                  ;;
+                403)
+                  echo "::error::nu-push.php weigert de sleutel (403). Staat de SHA-256 van NU_PUSH_SLEUTEL in de versie van nu-push.php op de server?"
+                  exit 1
+                  ;;
+                *)
+                  echo "::error::nu-push.php gaf status $status. Kijk in /home/aartdenbraber/nu-push.log en in het foutenlog van het domein."
+                  exit 1
+                  ;;
+              esac
+            fi
+
+            # Wel inhoud betekent dat er iets voor het script stond, en dan
+            # heeft het niet gedraaid. Op 14 november 2026 kwam er zo een keer
+            # een pagina van 12 kB terug, waarschijnlijk van de botwering van
+            # de hosting (Imunify360), terwijl een run een minuut later gewoon
+            # lukte. Daarom nog één poging. Er gaat niets verloren: wat het
+            # script nog niet verstuurd heeft, gaat bij de volgende run mee.
+            # Alleen de titel van die pagina komt in het log, want dit log is
+            # openbaar.
+            titel=$(grep -o -i '<title>[^<]*</title>' "$antwoord" | head -n 1 | sed -E 's/<[^>]+>//g' | tr -d '\r\n' | cut -c1-120)
+            if [ "$poging" -ge 2 ]; then
+              echo "::error::nu-push.php is niet bereikt: status $status met een pagina van $grootte bytes (titel: ${titel:-geen}). Waarschijnlijk houdt de botwering van de hosting het IP-adres van deze runner tegen."
               exit 1
-              ;;
-            *)
-              echo "::error::nu-push.php gaf status $status. Kijk in /home/aartdenbraber/nu-push.log en in het foutenlog van het domein."
-              exit 1
-              ;;
-          esac
+            fi
+            echo "::warning::Status $status met een pagina van $grootte bytes (titel: ${titel:-geen}) in plaats van een leeg antwoord. Over een halve minuut nog een keer."
+            poging=2
+            sleep 30
+          done
