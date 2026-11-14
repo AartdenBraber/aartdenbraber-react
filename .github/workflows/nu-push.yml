@@ -1,0 +1,78 @@
+name: nu.nl-push
+
+# Roept elk kwartier https://aartdenbraber.nl/rss/nu-push.php aan. Dat script
+# staat alleen op de server, in public_html/rss, en komt niet uit deze repo.
+# Eigenlijk hoort het in een cronjob op de server, maar bij AXC staat cron uit,
+# voor de gebruiker aartdenbraber en ook voor de reseller erboven. Vandaar dit.
+#
+# De aanroep gaat met een sleutel in de kop X-Nu-Push-Sleutel, niet in het
+# adres, zodat hij niet in de toegangslogs van de server belandt. De sleutel
+# staat als repository-secret NU_PUSH_SLEUTEL in GitHub; nu-push.php kent alleen
+# de SHA-256 ervan. Zonder geldige sleutel geeft het script 403 en doet het
+# niets.
+#
+# De repo is openbaar en daarmee ook de logs van deze workflow. Daarom komt de
+# uitvoer van nu-push.php hier niet in het log; die schrijft het script zelf
+# weg in /home/aartdenbraber/nu-push.log.
+#
+# Twee dingen om te weten over geplande workflows bij GitHub:
+# - Ze lopen niet op de minuut. Bij drukte schuiven ze op, en soms vallen ze
+#   weg. Rond het hele uur is het het drukst, dus deze draait daar niet.
+# - In een openbare repo zet GitHub ze uit na 60 dagen zonder activiteit in de
+#   repo. Dan staat er een melding in de Actions-tab met een knop om hem weer
+#   aan te zetten; een commit naar main werkt ook.
+on:
+  schedule:
+    # In UTC, maar voor een kwartierritme maakt dat niet uit.
+    - cron: '7,22,37,52 * * * *'
+  workflow_dispatch:
+
+# Nooit twee pushes tegelijk. Loopt er nog een als de volgende aan de beurt is,
+# dan wacht die. Afbreken zou een half verstuurde push kunnen geven.
+concurrency:
+  group: nu-push
+  cancel-in-progress: false
+
+# De job praat alleen met de eigen site en heeft niets van GitHub nodig.
+permissions: {}
+
+jobs:
+  aanroepen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: nu-push.php aanroepen
+        env:
+          SLEUTEL: ${{ secrets.NU_PUSH_SLEUTEL }}
+        run: |
+          if [ -z "$SLEUTEL" ]; then
+            echo "::warning::De secret NU_PUSH_SLEUTEL ontbreekt, dus nu-push.php is niet aangeroepen."
+            exit 0
+          fi
+
+          antwoord="$RUNNER_TEMP/antwoord"
+          status=$(curl -sS -o "$antwoord" -w '%{http_code}' --max-time 240 \
+            -H "X-Nu-Push-Sleutel: $SLEUTEL" \
+            -A 'aartdenbraber-react nu-push' \
+            https://aartdenbraber.nl/rss/nu-push.php)
+          echo "Status $status, $(wc -c < "$antwoord") bytes terug."
+
+          # De rewrite in .htaccess geeft voor een onbekend pad index.html terug
+          # met status 200. Daaraan zie je dat het script weg is.
+          if grep -q 'id="root"' "$antwoord"; then
+            echo "::error::Er kwam index.html terug in plaats van nu-push.php. Staat het script nog in public_html/rss?"
+            exit 1
+          fi
+
+          case "$status" in
+            200) ;;
+            403)
+              echo "::error::nu-push.php weigert de sleutel (403). Staat de SHA-256 van NU_PUSH_SLEUTEL in de versie van nu-push.php op de server?"
+              exit 1
+              ;;
+            *)
+              echo "::error::nu-push.php gaf status $status. Kijk in /home/aartdenbraber/nu-push.log en in het foutenlog van het domein."
+              exit 1
+              ;;
+          esac
