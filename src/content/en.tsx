@@ -25,7 +25,7 @@ export const en: SiteContent = {
       <>
         <p>
           My name is <strong>Aart den Braber</strong>, a freelance developer from the Netherlands. I
-          specialize in <strong>frontend development</strong> (Angular, TypeScript, UX) and
+          specialize in <strong>frontend development</strong> (Angular, Next.js, TypeScript, UX) and
           <strong> backend development</strong> using <strong>Node.js and Java</strong>.
         </p>
 
